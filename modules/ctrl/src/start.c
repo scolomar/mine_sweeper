@@ -2,35 +2,76 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-	#include "alx_ncur.h"
+		/* fflush(stdout) */
+	#include <stdio.h>
+		/* time() & CLOCKS_PER_SEC */
+	#include <time.h>
 
-	#include "about.h"
-	#include "clui.h"
+		/* game_over() */
+	#include "check.h"
+		/* global variables */
 	#include "data.h"
+		/* game_main() */
+	#include "game.h"
+		/* init_...() */
 	#include "init.h"
-	#include "tui.h"
+		/* print_...() */
 	#include "print.h"
+
 	#include "start.h"
 
 
-int	main	(int argc, char *argv[])
+static	void	start		(void);
+static	void	start_custom	(void);
+static	void	start_rand	(void);
+
+
+void	start_switch	(void)
 {
-	alx_start_curses();
-	init_values();
-	parser(argc, argv);
-
-	alx_pause_curses();
-								print_verbose(1, print_cpright, -1);
-	alx_resume_curses();
-
-	start_switch();
-	if (!flag_x) {
-		menu_main();
+	switch (flag_s) {
+	case 1:
+		start_custom();
+		break;
+	case 2:
+		start_rand();
+		break;
 	}
 
-	alx_end_curses();
+	fflush(stdout);
+}
 
-	return	0;
+
+static	void	start_custom	(void)
+{
+	init_custom();
+									print_verbose(3, show_board, -1);
+	start();
+									print_verbose(1, show_board, false);
+									print_verbose(3, show_board, 0);
+}
+
+static	void	start_rand	(void)
+{
+	init_rand();
+									print_verbose(2, show_board, -1);
+	start();
+									print_verbose(1, show_board, false);
+									print_verbose(2, show_board, 0);
+}
+
+
+static	void	start		(void)
+{
+	double	tim_i;
+
+	tim_0 =		clock();
+	game_main();
+	tim_1 =		clock();
+
+	tim_i =		((double) tim_1 - tim_0) / CLOCKS_PER_SEC;
+	tim_tot +=	tim_i;
+
+	game_over();
 }
 
 /*----------------------------------------------------------------------------*/

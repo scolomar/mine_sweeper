@@ -2,35 +2,76 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-	#include "alx_ncur.h"
+	#include <ncurses.h>
+	#include <stdio.h>
 
-	#include "about.h"
-	#include "clui.h"
 	#include "data.h"
-	#include "init.h"
-	#include "tui.h"
+
 	#include "print.h"
-	#include "start.h"
 
 
-int	main	(int argc, char *argv[])
+void	show_board	(WINDOW *win, int pos_row, int pos_col)
 {
-	alx_start_curses();
-	init_values();
-	parser(argc, argv);
+	int	i;
+	int	j;
 
-	alx_pause_curses();
-								print_verbose(1, print_cpright, -1);
-	alx_resume_curses();
+	box(win, 0, 0);
 
-	start_switch();
-	if (!flag_x) {
-		menu_main();
+	for (i = 0; i < P_ROWS; i++) {
+		for (j = 0; j < P_COLS; j++) {
+			const int	k =	1 + i;
+			const int	l =	2 + 2 * j;
+
+			switch (USR_MAT[i][j]) {
+			case USR_HIDDEN:
+				mvwaddstr(win, k, l, "+");
+				break;
+			case USR_CLEAR:
+				if (P_MAT[i][j] == MINE_NO) {
+					mvwaddstr(win, k, l, " ");
+				} else {
+					mvwprintw(win, k, l, "%i", P_MAT[i][j]);
+				}
+				break;
+			case USR_FLAG:
+				mvwaddstr(win, k, l, "!");
+				break;
+			}
+		}
 	}
 
-	alx_end_curses();
+	wmove(win, 1 + pos_row, 2 + 2 * pos_col);
+	wrefresh(win);
+}
 
-	return	0;
+void	print_fail	(void)
+{
+	printf("Fail!\n");
+}
+
+void	print_victory	(void)
+{
+	printf("Victory!\n");
+}
+
+
+void	print_time	(void)
+{
+	printf("Total time: %.3f;   ", tim_tot);
+}
+
+void	print_verbose	(int verbose, void *print_func, int arg)
+{
+
+	if (arg != -1) {
+		if (flag_V >= verbose) {
+			(*(void (*)(bool)) print_func)(arg);
+		}
+	} else {
+		if (flag_V >= verbose) {
+			(*(void (*)()) print_func)();
+		}
+	}
 }
 
 /*----------------------------------------------------------------------------*/

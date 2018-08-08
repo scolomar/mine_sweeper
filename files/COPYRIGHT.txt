@@ -1,0 +1,8 @@
+
+
+	PNP-Solver	Copyright (C) 2016	Alejandro COLOMAR ANDRES
+
+	This program comes with ABSOLUTELY NO WARRANTY.
+	This is free software, and you are welcome to redistribute it
+	under certain conditions; see the file COPYING.txt for details.
+
