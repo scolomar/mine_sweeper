@@ -82,8 +82,8 @@ void	parser	(int argc, char *argv[])
 			exit(EXIT_SUCCESS);
 
 		case 'p':
-			p =		atof(optarg);
-			if (p < 0 || p > 1) {
+			board.p =		atof(optarg);
+			if (board.p < 0 || board.p > 1) {
 				printf("--proportion argument not valid\n");
 				printf("It must be a real [0 U 1]\n");
 				exit(EXIT_FAILURE);

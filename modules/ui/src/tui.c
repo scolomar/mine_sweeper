@@ -202,9 +202,9 @@ static	void	menu_difficulty	(void)
 	wh = true;
 	while (wh) {
 		win =	newwin(h, w, r, c);
-		mvwprintw(win, mnu[1].r, mnu[1].c, "%s rows\t(%i)", mnu[1].t, P_ROWS);
-		mvwprintw(win, mnu[2].r, mnu[2].c, "%s cols\t(%i)", mnu[2].t, P_COLS);
-		mvwprintw(win, mnu[3].r, mnu[3].c, "%s p\t(%lf)", mnu[3].t, p);
+		mvwprintw(win, mnu[1].r, mnu[1].c, "%s rows\t(%i)", mnu[1].t, board.rows);
+		mvwprintw(win, mnu[2].r, mnu[2].c, "%s cols\t(%i)", mnu[2].t, board.cols);
+		mvwprintw(win, mnu[3].r, mnu[3].c, "%s p\t(%lf)", mnu[3].t, board.p);
 		wrefresh(win);
 		sw =	alx_menu_2(win, N, mnu, "Difficulty:");
 
@@ -214,18 +214,18 @@ static	void	menu_difficulty	(void)
 			break;
 
 		case 1:
-			P_ROWS =	alx_w_getint(w2, r2, txt[sw - 1],
-						2, P_ROWS, DIM_MAX, NULL);
+			board.rows =	alx_w_getint(w2, r2, txt[sw - 1],
+						2, board.rows, DIM_MAX, NULL);
 			break;
 
 		case 2:
-			P_COLS =	alx_w_getint(w2, r2, txt[sw - 1],
-						2, P_COLS, DIM_MAX, NULL);
+			board.cols =	alx_w_getint(w2, r2, txt[sw - 1],
+						2, board.cols, DIM_MAX, NULL);
 			break;
 
 		case 3:
-			p =	alx_w_getdbl(w2, r2, txt[sw - 1],
-						0, p, 1, NULL);
+			board.p =	alx_w_getdbl(w2, r2, txt[sw - 1],
+						0, board.p, 1, NULL);
 			break;
 		}
 

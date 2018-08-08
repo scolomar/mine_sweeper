@@ -33,14 +33,14 @@ void	init_rand	(void)
 	init_clr();
 
 	/* put mines */
-	P_MINES =	p * P_ROWS * P_COLS;
+	board.mines =	board.p * board.rows * board.cols;
 	i =	0;
-	while (i < P_MINES) {
+	while (i < board.mines) {
 		l =	(rand() % P_ROWS);
 		c =	(rand() % P_COLS);
 
-		if (P_MAT[l][c] == MINE_NO) {
-			P_MAT[l][c] = MINE_YES;
+		if (board.gnd[l][c] == MINE_NO) {
+			board.gnd[l][c] = MINE_YES;
 			i++;
 		}
 	}
@@ -53,30 +53,10 @@ void	init_rand	(void)
 	 * Read from a file.
 	 */
 void	init_custom	(void)
-{/*
-	int	l;
-	int	c;
-	char	ch;
-	FILE	*fp;
-
-	for (l = 0; l < P_ROWS; l++) {
-		for (c = 0; c < P_COLS; c++) {
-			P_MAT[l][c] = MINE_YES;
-		}
-	}
-
-	fp =	fopen(file_path, "r");
-	if (fp) {
-		if ((ch = fgetc(fp)) != EOF) {
-			ungetc(ch, fp);
-
-			fscanf(fp, "%i", &P_DIM);
-			while (fscanf(fp, "%i %i", &l, &c) == 2) {
-				mat_0[l][c] = MINE_NO;
-			}
-		}
-		fclose(fp);
-	}*/
+{
+/*
+ *
+ */
 }
 
 
@@ -88,8 +68,8 @@ static	void	init_clr	(void)
 	/* clear */
 	for (l = 0; l < P_ROWS; l++) {
 		for (c = 0; c < P_COLS; c++) {
-			P_MAT[l][c] = MINE_NO;
-			USR_MAT[l][c] = USR_HIDDEN;
+			board.gnd[l][c] = MINE_NO;
+			board.usr[l][c] = USR_HIDDEN;
 		}
 	}
 }
@@ -101,14 +81,14 @@ static	void	init_usr	(void)
 	int	c;
 	int	j;
 
-	for (l = 0; l < P_ROWS; l++) {
-		for (c = 0; c < P_COLS; c++) {
-			if (P_MAT[l][c] >= MINE_YES) {
+	for (l = 0; l < board.rows; l++) {
+		for (c = 0; c < board.cols; c++) {
+			if (board.gnd[l][c] >= MINE_YES) {
 				for (i = l-1; i < l+2; i++) {
 					for (j = c-1; j < c+2; j++) {
-						if (i >= 0 && i < P_ROWS &&
+						if (i >= 0 && i < board.rows &&
 								j >= 0 &&
-								j < P_COLS) {
+								j < board.cols) {
 							P_MAT[i][j]++;
 						}
 					}
@@ -117,7 +97,7 @@ static	void	init_usr	(void)
 		}
 	}
 
-	USR_FLAGS =	0;
+	board.flags =	0;
 }
 
 /******************************************************************************

@@ -44,28 +44,21 @@
  ******************************************************************************/
 
 
-int	prb_lvl [2];
-int	prb_sol [3] [DIM_MAX] [DIM_MAX];
+int		prb_lvl [2];
+int		prb_sol [3] [DIM_MAX] [DIM_MAX];
 
-int	prb_mtx [2] [DIM_MAX] [DIM_MAX];
-int	prb_mtx_rows;
-int	prb_mtx_cols;
-int	prb_mtx_mines [2];
-int	prb_mtx_cleared;
-double	p;
+struct Board	board;
 
-int	count;
+clock_t		tim_0;
+clock_t		tim_1;
+double		tim_tot;
 
-clock_t	tim_0;
-clock_t	tim_1;
-double	tim_tot;
+int		flag_s;
+int		flag_V;
+bool		flag_x;
 
-int	flag_s;
-int	flag_V;
-bool	flag_x;
-
-char	file_path [FILENAME_MAX];
-int	seed;
+char		file_path [FILENAME_MAX];
+int		seed;
 
 
 /******************************************************************************
@@ -73,10 +66,10 @@ int	seed;
  ******************************************************************************/
 void	init_values	(void)
 {
-	p =		0.05;
+	board.p =	0.05;
 
-	prb_mtx_rows =	10;
-	prb_mtx_cols =	10;
+	board.rows =	10;
+	board.cols =	10;
 
 	strcpy(file_path, "files/DATA.txt");
 

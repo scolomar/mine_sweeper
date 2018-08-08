@@ -8,7 +8,7 @@
 		/* alx_prn_file() */
 	#include "alx_file.h"
 
-		/* VERSION */
+		/* PROG_... */
 	#include "data.h"
 
 	#include "about.h"
@@ -21,7 +21,7 @@ void	print_help		(void)
 
 void	print_version		(void)
 {
-	printf("PNP-Solver\t" VERSION "\n\n");
+	printf("" PROG_NAME "\t" PROG_VERSION "\n\n");
 }
 
 void	print_usage		(void)
