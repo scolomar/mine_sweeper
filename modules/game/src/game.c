@@ -28,13 +28,13 @@ static	void	game_rmflag		(int pos_row, int pos_col);
 void	game_main	(void)
 {
 
-	const int	total_safe_fields = P_ROWS * P_COLS - P_MINES;
+	const int	total_safe_fields = board.rows * board.cols - board.mines;
 
 									DBG_PRINT(4, show_board, 0);
 	/* Dimensions */
 	WINDOW		*win;
-	const int	h =	P_ROWS + 2;
-	const int	w =	2 * P_COLS + 3;
+	const int	h =	board.rows + 2;
+	const int	w =	2 * board.cols + 3;
 	const int	r =	1;
 	const int	c =	(80 - w) / 2;
 	win =	newwin(h, w, r, c);
@@ -112,12 +112,12 @@ static	void	game_action		(int action, int *pos_row, int *pos_col)
 		if (*pos_row) {
 			(*pos_row)--;
 		} else {
-			*pos_row = P_ROWS - 1;
+			*pos_row = board.rows - 1;
 		}
 		break;
 
 	case ACT_MOVE_DOWN:
-		if (*pos_row != P_ROWS - 1) {
+		if (*pos_row != board.rows - 1) {
 			(*pos_row)++;
 		} else {
 			*pos_row = 0;
@@ -125,7 +125,7 @@ static	void	game_action		(int action, int *pos_row, int *pos_col)
 		break;
 
 	case ACT_MOVE_RIGHT:
-		if (*pos_col != P_COLS - 1) {
+		if (*pos_col != board.cols - 1) {
 			(*pos_col)++;
 		} else {
 			*pos_col = 0;
@@ -136,7 +136,7 @@ static	void	game_action		(int action, int *pos_row, int *pos_col)
 		if (*pos_col) {
 			(*pos_col)--;
 		} else {
-			*pos_col = P_COLS - 1;
+			*pos_col = board.cols - 1;
 		}
 		break;
 
@@ -153,22 +153,22 @@ static	void	game_action		(int action, int *pos_row, int *pos_col)
 		break;
 
 	case ACT_QUIT:
-		USR_CLEARED =	KBOOM;
+		board.cleared =	KBOOM;
 		break;
 	}
 }
 
 static	void	game_discover		(int pos_row, int pos_col)
 {
-	if (P_MAT[pos_row][pos_col] >= MINE_YES) {
-		USR_MAT[pos_row][pos_col] =	KBOOM;
-		USR_CLEARED =	KBOOM;
+	if (board.gnd[pos_row][pos_col] >= MINE_YES) {
+		board.usr[pos_row][pos_col] =	KBOOM;
+		board.cleared =	KBOOM;
 
-	} else if (USR_MAT[pos_row][pos_col] != USR_CLEAR) {
-		USR_MAT[pos_row][pos_col] =	USR_CLEAR;
-		USR_CLEARED++;
+	} else if (board.usr[pos_row][pos_col] != USR_CLEAR) {
+		board.usr[pos_row][pos_col] =	USR_CLEAR;
+		board.cleared++;
 
-		if (P_MAT[pos_row][pos_col] == MINE_NO) {
+		if (board.gnd[pos_row][pos_col] == MINE_NO) {
 			game_discover_recursive(pos_row, pos_col);
 		}
 	}
@@ -181,7 +181,7 @@ static	void	game_discover_recursive	(int pos_row, int pos_col)
 
 	for (i = pos_row-1; i < pos_row+2; i++) {
 		for (j = pos_col-1; j < pos_col+2; j++) {
-			if (i >= 0 && i < P_ROWS && j >= 0 && j < P_COLS) {
+			if (i >= 0 && i < board.rows && j >= 0 && j < board.cols) {
 				game_discover(i, j);
 			}
 		}
@@ -190,17 +190,17 @@ static	void	game_discover_recursive	(int pos_row, int pos_col)
 
 static	void	game_flag		(int pos_row, int pos_col)
 {
-	if (USR_MAT[pos_row][pos_col] == USR_HIDDEN) {
-		USR_MAT[pos_row][pos_col] =	USR_FLAG;
-		USR_FLAGS++;
+	if (board.usr[pos_row][pos_col] == USR_HIDDEN) {
+		board.usr[pos_row][pos_col] =	USR_FLAG;
+		board.flags++;
 	}
 }
 
 static	void	game_rmflag		(int pos_row, int pos_col)
 {
-	if (USR_MAT[pos_row][pos_col] == USR_FLAG) {
-		USR_MAT[pos_row][pos_col] =	USR_HIDDEN;
-		USR_FLAGS--;
+	if (board.usr[pos_row][pos_col] == USR_FLAG) {
+		board.usr[pos_row][pos_col] =	USR_HIDDEN;
+		board.flags--;
 	}
 }
 
