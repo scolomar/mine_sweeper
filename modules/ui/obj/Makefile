@@ -49,16 +49,19 @@ CLUI_INC_DIRS = -I $(INC_DIR) \
 			-I $(PRN_INC_DIR) \
 			-I $(LIBALX_INC_DIR)
 
+GAMEUI_INC_LIBALX =
 GAMEUI_INC_DATA =	data.h
 GAMEUI_INC_GAME =	game.h
 GAMEUI_INC_PRN =	about.h
 GAMEUI_INC =	game_ui.h
 GAMEUI_DEPS = $(SRC_DIR)/game_ui.c \
 			$(patsubst %,$(INC_DIR)/%,$(GAMEUI_INC)) \
+			$(patsubst %,$(LIBALX_INC_DIR)/%,$(GAMEUI_INC_LIBALX)) \
 			$(patsubst %,$(DATA_INC_DIR)/%,$(GAMEUI_INC_DATA)) \
 			$(patsubst %,$(GAME_INC_DIR)/%,$(GAMEUI_INC_GAME)) \
 			$(patsubst %,$(PRN_INC_DIR)/%,$(GAMEUI_INC_PRN))
 GAMEUI_INC_DIRS = -I $(INC_DIR) \
+			-I $(LIBALX_INC_DIR) \
 			-I $(DATA_INC_DIR) \
 			-I $(GAME_INC_DIR) \
 			-I $(PRN_INC_DIR)

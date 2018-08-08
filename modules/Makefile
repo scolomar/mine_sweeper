@@ -8,7 +8,6 @@ PNP_DIR = ../
 
 MODULES_DIR = $(PNP_DIR)/modules/
 
-CHK_DIR = $(MODULES_DIR)/chk/
 CTRL_DIR = $(MODULES_DIR)/ctrl/
 DATA_DIR = $(MODULES_DIR)/data/
 GAME_DIR = $(MODULES_DIR)/game/
@@ -23,7 +22,6 @@ UI_DIR = $(MODULES_DIR)/ui/
 #	action
 
 all:
-	cd $(CHK_DIR) && $(MAKE) && cd ..
 	cd $(CTRL_DIR) && $(MAKE) && cd ..
 	cd $(DATA_DIR) && $(MAKE) && cd ..
 	cd $(GAME_DIR) && $(MAKE) && cd ..
@@ -33,7 +31,6 @@ all:
 
 
 clean:
-	cd $(CHK_DIR) && $(MAKE) clean && cd ..
 	cd $(CTRL_DIR) && $(MAKE) clean && cd ..
 	cd $(DATA_DIR) && $(MAKE) clean && cd ..
 	cd $(GAME_DIR) && $(MAKE) clean && cd ..

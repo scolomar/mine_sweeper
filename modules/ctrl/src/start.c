@@ -7,15 +7,13 @@
 		/* time() & CLOCKS_PER_SEC */
 	#include <time.h>
 
-		/* game_end() */
-	#include "check.h"
 		/* global variables */
 	#include "data.h"
 		/* game_ui() */
 	#include "game_ui.h"
 		/* init_...() */
 	#include "init.h"
-		/* print_...() */
+		/* print_...() & show_board_...() */
 	#include "print.h"
 
 	#include "start.h"
@@ -44,19 +42,19 @@ void	start_switch	(void)
 static	void	start_custom	(void)
 {
 	init_custom();
-									print_verbose(3, show_board, -1);
+									print_verbose(3, show_board_cheat, -1);
 	start();
-									print_verbose(1, show_board, false);
-									print_verbose(3, show_board, 0);
+									print_verbose(1, show_board_cheat, false);
+									print_verbose(3, show_board_cheat, 0);
 }
 
 static	void	start_rand	(void)
 {
 	init_rand();
-									print_verbose(2, show_board, -1);
+									print_verbose(2, show_board_cheat, -1);
 	start();
-									print_verbose(1, show_board, false);
-									print_verbose(2, show_board, 0);
+									print_verbose(1, show_board_cheat, false);
+									print_verbose(2, show_board_cheat, 0);
 }
 
 
@@ -71,7 +69,7 @@ static	void	start		(void)
 	tim_i =		((double) tim_1 - tim_0) / CLOCKS_PER_SEC;
 	tim_tot +=	tim_i;
 
-	game_end();
+	show_board_end();
 }
 
 /*----------------------------------------------------------------------------*/

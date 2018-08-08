@@ -7,10 +7,10 @@
 
 	#include <ncurses.h>
 
-void	show_board	(WINDOW *win, int pos_row, int pos_col);
-void	show_board_win	(void);
-void	show_board_lost	(void);
-void	print_time	(void);
-void	print_verbose	(int verbose, void *print_func, int arg);
+void	show_board_cheat	(void);
+void	show_board_play		(WINDOW *win, int pos_row, int pos_col);
+void	show_board_end		(void);
+void	print_time		(void);
+void	print_verbose		(int verbose, void *print_func, int arg);
 
 # endif				/* print.h */

@@ -45,7 +45,7 @@ void	game_ui			(void)
 	int	pos_col;
 	pos_row =	0;
 	pos_col =	0;
-									DBG_PRINT(4, show_board, 0);
+									DBG_PRINT(4, show_board_cheat, 0);
 
 
 	/* Action */
@@ -54,7 +54,7 @@ void	game_ui			(void)
 	/* Game loop */
 	int	state;
 	do {
-		show_board(win, pos_row, pos_col);
+		show_board_play(win, pos_row, pos_col);
 		action = usr_input(win);
 		game_action(action, &pos_row, &pos_col);
 
@@ -95,6 +95,10 @@ static	int	usr_input		(WINDOW *win)
 
 	case ' ':
 		action =	ACT_PLACE_FLAG;
+		break;
+
+	case 'x':
+		action =	ACT_PLACE_POSSIBLE;
 		break;
 
 	case KEY_BACKSPACE:

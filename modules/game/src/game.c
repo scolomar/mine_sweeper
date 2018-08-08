@@ -11,6 +11,7 @@
 static	void	game_discover		(int pos_row, int pos_col);
 static	void	game_discover_recursive	(int pos_row, int pos_col);
 static	void	game_flag		(int pos_row, int pos_col);
+static	void	game_possible		(int pos_row, int pos_col);
 static	void	game_rmflag		(int pos_row, int pos_col);
 
 
@@ -57,12 +58,16 @@ void	game_action		(int action, int *pos_row, int *pos_col)
 		game_flag(*pos_row, *pos_col);
 		break;
 
+	case ACT_PLACE_POSSIBLE:
+		game_possible(*pos_row, *pos_col);
+		break;
+
 	case ACT_RM_FLAG:
 		game_rmflag(*pos_row, *pos_col);
 		break;
 
 	case ACT_QUIT:
-		board.cleared =	KBOOM;
+		board.state =	GAME_OVER;
 		break;
 	}
 }
@@ -111,11 +116,20 @@ static	void	game_flag		(int pos_row, int pos_col)
 	}
 }
 
+static	void	game_possible		(int pos_row, int pos_col)
+{
+	if (board.usr[pos_row][pos_col] == USR_HIDDEN) {
+		board.usr[pos_row][pos_col] =	USR_POSSIBLE;
+	}
+}
+
 static	void	game_rmflag		(int pos_row, int pos_col)
 {
 	if (board.usr[pos_row][pos_col] == USR_FLAG) {
 		board.usr[pos_row][pos_col] =	USR_HIDDEN;
 		board.flags--;
+	} else if (board.usr[pos_row][pos_col] == USR_POSSIBLE) {
+		board.usr[pos_row][pos_col] =	USR_HIDDEN;
 	}
 }
 

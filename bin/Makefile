@@ -11,9 +11,6 @@ LIBALX_OBJ_DIR = $(LIBALX_DIR)/obj/
 
 MODULES_DIR = $(MSW_DIR)/modules/
 
-CHK_DIR = $(MODULES_DIR)/chk/
-CHK_OBJ_DIR = $(CHK_DIR)/obj/
-
 CTRL_DIR = $(MODULES_DIR)/ctrl/
 CTRL_OBJ_DIR = $(CTRL_DIR)/obj/
 
@@ -39,7 +36,6 @@ OBJ_DIR = $(MSW_DIR)/obj/
 ALL = exe
 
 MSW_OBJ_LIBALX =	alx_file.o alx_getnum.o alx_ncur.o alx_seed.o
-MSW_OBJ_CHK =		check.o
 MSW_OBJ_CTRL =		start.o
 MSW_OBJ_DATA =		data.o
 MSW_OBJ_GAME =		game.o
@@ -49,7 +45,6 @@ MSW_OBJ_UI =		clui.o game_ui.o tui.o
 
 MSW_OBJS = $(OBJ_DIR)/main.o \
 			$(patsubst %,$(LIBALX_OBJ_DIR)/%,$(MSW_OBJ_LIBALX)) \
-			$(patsubst %,$(CHK_OBJ_DIR)/%,$(MSW_OBJ_CHK)) \
 			$(patsubst %,$(CTRL_OBJ_DIR)/%,$(MSW_OBJ_CTRL)) \
 			$(patsubst %,$(DATA_OBJ_DIR)/%,$(MSW_OBJ_DATA)) \
 			$(patsubst %,$(GAME_OBJ_DIR)/%,$(MSW_OBJ_GAME)) \
