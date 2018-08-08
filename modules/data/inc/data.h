@@ -25,7 +25,7 @@
 
 	# define		PROG_NAME	"mine-sweeper"
 	# define		PROG_YEAR	"2015"
-	# define		PROG_VERSION	"v2.a.4"
+	# define		PROG_VERSION	"v2.b.1"
 
 	# define		OPT_LIST	"a:b:f:hi:j:k:lo:p:r:s:V:vx"
 
@@ -48,7 +48,8 @@
 		KBOOM = -1,
 		USR_HIDDEN,
 		USR_CLEAR,
-		USR_FLAG
+		USR_FLAG,
+		USR_POSSIBLE
 	};
 
 	enum	Actions {
@@ -58,6 +59,7 @@
 		ACT_MOVE_LEFT,
 		ACT_DISCOVER,
 		ACT_PLACE_FLAG,
+		ACT_PLACE_POSSIBLE,
 		ACT_RM_FLAG,
 		ACT_QUIT
 	};
