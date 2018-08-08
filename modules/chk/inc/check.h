@@ -2,10 +2,10 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-# ifndef		PNP_CHECK_H
-	# define	PNP_CHECK_H
+# ifndef		MSW_CHECK_H
+	# define	MSW_CHECK_H
 
 
-void	game_over	(void);
+void	game_end	(void);
 
 # endif			/* check.h */

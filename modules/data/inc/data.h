@@ -2,8 +2,8 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-# ifndef			DATA_H
-	# define		DATA_H
+# ifndef			MSW_DATA_H
+	# define		MSW_DATA_H
 
 		/* bool */
 	#include <stdbool.h>
@@ -65,7 +65,7 @@
 	enum	Game_State {
 		GAME_PLAYING,
 		GAME_WIN,
-		GAME_LOST
+		GAME_OVER
 	};
 
 
@@ -81,6 +81,7 @@
 		int	flags;
 		int	cleared;
 		double	p;
+		int	state;
 	};
 
 

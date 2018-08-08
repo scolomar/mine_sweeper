@@ -2,8 +2,8 @@
  *	Copyright (C) 2012	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-# ifndef			ABOUT_H
-	# define		ABOUT_H
+# ifndef			MSW_ABOUT_H
+	# define		MSW_ABOUT_H
 
 void	print_help		(void);
 void	print_version		(void);

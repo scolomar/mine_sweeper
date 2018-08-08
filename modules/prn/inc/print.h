@@ -2,14 +2,14 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-# ifndef			PRINT_H
-	# define		PRINT_H
+# ifndef			MSW_PRINT_H
+	# define		MSW_PRINT_H
 
 	#include <ncurses.h>
 
 void	show_board	(WINDOW *win, int pos_row, int pos_col);
-void	print_fail	(void);
-void	print_victory	(void);
+void	show_board_win	(void);
+void	show_board_lost	(void);
 void	print_time	(void);
 void	print_verbose	(int verbose, void *print_func, int arg);
 

@@ -75,6 +75,7 @@ static	void	init_clr	(void)
 	board.mines = 0;
 	board.flags = 0;
 	board.cleared = 0;
+	board.state = GAME_PLAYING;
 }
 
 static	void	init_usr	(void)
