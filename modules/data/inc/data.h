@@ -2,8 +2,8 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-# ifndef			DATA_H
-	# define		DATA_H
+# ifndef			MSW_DATA_H
+	# define		MSW_DATA_H
 
 		/* bool */
 	#include <stdbool.h>
@@ -25,7 +25,7 @@
 
 	# define		PROG_NAME	"mine-sweeper"
 	# define		PROG_YEAR	"2015"
-	# define		PROG_VERSION	"v2.a.3"
+	# define		PROG_VERSION	"v2.a.4"
 
 	# define		OPT_LIST	"a:b:f:hi:j:k:lo:p:r:s:V:vx"
 
@@ -65,7 +65,7 @@
 	enum	Game_State {
 		GAME_PLAYING,
 		GAME_WIN,
-		GAME_LOST
+		GAME_OVER
 	};
 
 
@@ -81,6 +81,7 @@
 		int	flags;
 		int	cleared;
 		double	p;
+		int	state;
 	};
 
 

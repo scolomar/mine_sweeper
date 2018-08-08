@@ -7,7 +7,7 @@
 		/* time() & CLOCKS_PER_SEC */
 	#include <time.h>
 
-		/* game_over() */
+		/* game_end() */
 	#include "check.h"
 		/* global variables */
 	#include "data.h"
@@ -71,7 +71,7 @@ static	void	start		(void)
 	tim_i =		((double) tim_1 - tim_0) / CLOCKS_PER_SEC;
 	tim_tot +=	tim_i;
 
-	game_over();
+	game_end();
 }
 
 /*----------------------------------------------------------------------------*/

@@ -28,7 +28,6 @@
 	# define	ERR_FPTR_MSG	"¡ FILE error !"
 
 
-static	void	alx_ncur_prn_title	(WINDOW *win, const char *title);
 static	void	alx_ncur_prn_menu	(WINDOW *win,
 					int N, struct alx_optn mnu[N]);
 static	int	alx_ncur_usr_sel	(WINDOW *win,
@@ -401,12 +400,7 @@ void	alx_w_getfpath		(char *fpath,
 }
 
 
-/******************************************************************************/
-/******* static functions *****************************************************/
-/******************************************************************************/
-
-
-static	void	alx_ncur_prn_title	(WINDOW *win, const char *title)
+void	alx_ncur_prn_title	(WINDOW *win, const char *title)
 {
 	/* Print window borders */
 	box(win, 0, 0);
@@ -427,6 +421,11 @@ static	void	alx_ncur_prn_title	(WINDOW *win, const char *title)
 
 	wrefresh(win);
 }
+
+
+/******************************************************************************/
+/******* static functions *****************************************************/
+/******************************************************************************/
 
 
 static	void	alx_ncur_prn_menu	(WINDOW *win,

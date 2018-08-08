@@ -67,36 +67,23 @@ void	game_action		(int action, int *pos_row, int *pos_col)
 	}
 }
 
-int	game_state		(void)
-{
-	int	state;
-
-	const int	total_safe_fields = board.rows * board.cols -
-								board.mines;
-
-	if (board.cleared == KBOOM) {
-		state =	GAME_LOST;
-	} else if (board.cleared == total_safe_fields) {
-		state =	GAME_WIN;
-	} else {
-		state =	GAME_PLAYING;
-	}
-
-	return	state;
-}
-
 
 static	void	game_discover		(int pos_row, int pos_col)
 {
+	const int	total_safe_fields = board.rows * board.cols -
+								board.mines;
+
 	if (board.gnd[pos_row][pos_col] >= MINE_YES) {
 		board.usr[pos_row][pos_col] =	KBOOM;
-		board.cleared =	KBOOM;
+		board.state =	GAME_OVER;
 
 	} else if (board.usr[pos_row][pos_col] != USR_CLEAR) {
 		board.usr[pos_row][pos_col] =	USR_CLEAR;
 		board.cleared++;
 
-		if (board.gnd[pos_row][pos_col] == MINE_NO) {
+		if (board.cleared == total_safe_fields) {
+			board.state =	GAME_WIN;
+		} else if (board.gnd[pos_row][pos_col] == MINE_NO) {
 			game_discover_recursive(pos_row, pos_col);
 		}
 	}

@@ -2,7 +2,7 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-		/* USR_CLEARED & KBOOM*/
+		/* board & GAME_OVER*/
 	#include "data.h"
 		/* print_t...() */
 	#include "print.h"
@@ -10,11 +10,11 @@
 	#include "check.h"
 
 
-void	game_over		(void)
+void	game_end		(void)
 {
-	if (board.cleared == KBOOM) {
-		print_fail();
+	if (board.state == GAME_OVER) {
+		show_board_lost();
 	} else {
-		print_victory();
+		show_board_win();
 	}
 }

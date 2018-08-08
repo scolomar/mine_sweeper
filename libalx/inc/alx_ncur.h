@@ -66,6 +66,9 @@
 					const char	*format,
 							...);
 
+	void	alx_ncur_prn_title	(WINDOW		*win,
+					const char	*title);
+
 
 /*
 

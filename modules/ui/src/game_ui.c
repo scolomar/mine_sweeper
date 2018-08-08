@@ -57,9 +57,8 @@ void	game_ui			(void)
 		show_board(win, pos_row, pos_col);
 		action = usr_input(win);
 		game_action(action, &pos_row, &pos_col);
-		state = game_state();
 
-	} while (state == GAME_PLAYING);
+	} while (board.state == GAME_PLAYING);
 }
 
 
