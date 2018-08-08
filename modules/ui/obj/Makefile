@@ -17,6 +17,9 @@ CTRL_INC_DIR = $(CTRL_DIR)/inc/
 DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
 
+GAME_DIR = $(MODULES_DIR)/game/
+GAME_INC_DIR = $(GAME_DIR)/inc/
+
 PRN_DIR = $(MODULES_DIR)/prn/
 PRN_INC_DIR = $(PRN_DIR)/inc/
 
@@ -27,7 +30,7 @@ TST_DIR = $(UI_DIR)/tst/
 
 # dependencies
 
-ALL = clui.o tui.o
+ALL = clui.o game_ui.o tui.o
 
 CLUI_INC_LIBALX =	alx_seed.h
 CLUI_INC_CTRL =		start.h
@@ -45,6 +48,20 @@ CLUI_INC_DIRS = -I $(INC_DIR) \
 			-I $(DATA_INC_DIR) \
 			-I $(PRN_INC_DIR) \
 			-I $(LIBALX_INC_DIR)
+
+GAMEUI_INC_DATA =	data.h
+GAMEUI_INC_GAME =	game.h
+GAMEUI_INC_PRN =	about.h
+GAMEUI_INC =	game_ui.h
+GAMEUI_DEPS = $(SRC_DIR)/game_ui.c \
+			$(patsubst %,$(INC_DIR)/%,$(GAMEUI_INC)) \
+			$(patsubst %,$(DATA_INC_DIR)/%,$(GAMEUI_INC_DATA)) \
+			$(patsubst %,$(GAME_INC_DIR)/%,$(GAMEUI_INC_GAME)) \
+			$(patsubst %,$(PRN_INC_DIR)/%,$(GAMEUI_INC_PRN))
+GAMEUI_INC_DIRS = -I $(INC_DIR) \
+			-I $(DATA_INC_DIR) \
+			-I $(GAME_INC_DIR) \
+			-I $(PRN_INC_DIR)
 
 TUI_INC_LIBALX =	alx_ncur.h
 TUI_INC_CTRL =		start.h
@@ -71,6 +88,9 @@ all: $(ALL)
 
 clui.o: $(CLUI_DEPS)
 	$(CC) $(CFLAGS) $(CLUI_INC_DIRS) -c $< -o $@ $(LIBS)
+
+game_ui.o: $(GAMEUI_DEPS)
+	$(CC) $(CFLAGS) $(GAMEUI_INC_DIRS) -c $< -o $@ $(LIBS)
 
 tui.o: $(TUI_DEPS)
 	$(CC) $(CFLAGS) $(TUI_INC_DIRS) -c $< -o $@ $(LIBS)

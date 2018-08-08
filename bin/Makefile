@@ -45,7 +45,7 @@ MSW_OBJ_DATA =		data.o
 MSW_OBJ_GAME =		game.o
 MSW_OBJ_GEN =		init.o
 MSW_OBJ_PRN =		about.o print.o
-MSW_OBJ_UI =		clui.o tui.o
+MSW_OBJ_UI =		clui.o game_ui.o tui.o
 
 MSW_OBJS = $(OBJ_DIR)/main.o \
 			$(patsubst %,$(LIBALX_OBJ_DIR)/%,$(MSW_OBJ_LIBALX)) \

@@ -36,8 +36,8 @@ void	init_rand	(void)
 	board.mines =	board.p * board.rows * board.cols;
 	i =	0;
 	while (i < board.mines) {
-		l =	(rand() % P_ROWS);
-		c =	(rand() % P_COLS);
+		l =	(rand() % board.rows);
+		c =	(rand() % board.cols);
 
 		if (board.gnd[l][c] == MINE_NO) {
 			board.gnd[l][c] = MINE_YES;
@@ -62,16 +62,19 @@ void	init_custom	(void)
 
 static	void	init_clr	(void)
 {
-	int	l;
-	int	c;
+	int	i;
+	int	j;
 
 	/* clear */
-	for (l = 0; l < P_ROWS; l++) {
-		for (c = 0; c < P_COLS; c++) {
-			board.gnd[l][c] = MINE_NO;
-			board.usr[l][c] = USR_HIDDEN;
+	for (i = 0; i < board.rows; i++) {
+		for (j = 0; j < board.cols; j++) {
+			board.gnd[i][j] = MINE_NO;
+			board.usr[i][j] = USR_HIDDEN;
 		}
 	}
+	board.mines = 0;
+	board.flags = 0;
+	board.cleared = 0;
 }
 
 static	void	init_usr	(void)
@@ -89,7 +92,7 @@ static	void	init_usr	(void)
 						if (i >= 0 && i < board.rows &&
 								j >= 0 &&
 								j < board.cols) {
-							P_MAT[i][j]++;
+							board.gnd[i][j]++;
 						}
 					}
 				}

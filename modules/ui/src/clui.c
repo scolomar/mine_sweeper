@@ -43,8 +43,8 @@ void	parser	(int argc, char *argv[])
 						&opt_index )) != -1) {
 		switch (opt) {
 		case 'a':
-			P_ROWS =	atoi(optarg);
-			if (P_ROWS < 1 || P_ROWS > DIM_MAX) {
+			board.rows =	atoi(optarg);
+			if (board.rows < 1 || board.rows > DIM_MAX) {
 				printf("--order-first argument not valid\n");
 				printf("It must be an integer [1 U %i]\n", DIM_MAX);
 				exit(EXIT_FAILURE);
@@ -52,8 +52,8 @@ void	parser	(int argc, char *argv[])
 			break;
 
 		case 'b':
-			P_COLS =	atoi(optarg);
-			if (P_COLS < 1 || P_COLS > DIM_MAX) {
+			board.cols =	atoi(optarg);
+			if (board.cols < 1 || board.cols > DIM_MAX) {
 				printf("--order-interval argument not valid\n");
 				printf("It must be an integer [1 U %i]\n", DIM_MAX);
 				exit(EXIT_FAILURE);

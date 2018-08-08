@@ -24,7 +24,8 @@
 	# endif
 
 	# define		PROG_NAME	"mine-sweeper"
-	# define		PROG_VERSION	"v2.a1"
+	# define		PROG_YEAR	"2015"
+	# define		PROG_VERSION	"v2.a.3"
 
 	# define		OPT_LIST	"a:b:f:hi:j:k:lo:p:r:s:V:vx"
 
@@ -33,14 +34,6 @@
 	# define		P_SOL		prb_sol
 	# define		P_LEN		prb_lvl[0]
 	# define		P_LVL		prb_lvl[1]
-	# define		P_MAT		board.gnd
-	# define		P_ROWS		board.rows
-	# define		P_COLS		board.cols
-	# define		P_MINES		board.mines
-
-	# define		USR_MAT		board.usr
-	# define		USR_FLAGS	board.flags
-	# define		USR_CLEARED	board.cleared
 
 
 /******************************************************************************
@@ -67,6 +60,12 @@
 		ACT_PLACE_FLAG,
 		ACT_RM_FLAG,
 		ACT_QUIT
+	};
+
+	enum	Game_State {
+		GAME_PLAYING,
+		GAME_WIN,
+		GAME_LOST
 	};
 
 
