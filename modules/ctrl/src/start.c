@@ -11,8 +11,8 @@
 	#include "check.h"
 		/* global variables */
 	#include "data.h"
-		/* game_main() */
-	#include "game.h"
+		/* game_ui() */
+	#include "game_ui.h"
 		/* init_...() */
 	#include "init.h"
 		/* print_...() */
@@ -65,7 +65,7 @@ static	void	start		(void)
 	double	tim_i;
 
 	tim_0 =		clock();
-	game_main();
+	game_ui();
 	tim_1 =		clock();
 
 	tim_i =		((double) tim_1 - tim_0) / CLOCKS_PER_SEC;

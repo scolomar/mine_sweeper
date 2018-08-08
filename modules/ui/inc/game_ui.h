@@ -2,19 +2,10 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-		/* USR_CLEARED & KBOOM*/
-	#include "data.h"
-		/* print_t...() */
-	#include "print.h"
-
-	#include "check.h"
+# ifndef		GAME_UI_H
+	# define	GAME_UI_H
 
 
-void	game_over		(void)
-{
-	if (board.cleared == KBOOM) {
-		print_fail();
-	} else {
-		print_victory();
-	}
-}
+void	game_ui	(void);
+
+# endif			/* game_ui.h */

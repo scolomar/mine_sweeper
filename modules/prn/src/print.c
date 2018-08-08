@@ -17,20 +17,20 @@ void	show_board	(WINDOW *win, int pos_row, int pos_col)
 
 	box(win, 0, 0);
 
-	for (i = 0; i < P_ROWS; i++) {
-		for (j = 0; j < P_COLS; j++) {
+	for (i = 0; i < board.rows; i++) {
+		for (j = 0; j < board.cols; j++) {
 			const int	k =	1 + i;
 			const int	l =	2 + 2 * j;
 
-			switch (USR_MAT[i][j]) {
+			switch (board.usr[i][j]) {
 			case USR_HIDDEN:
 				mvwaddstr(win, k, l, "+");
 				break;
 			case USR_CLEAR:
-				if (P_MAT[i][j] == MINE_NO) {
+				if (board.gnd[i][j] == MINE_NO) {
 					mvwaddstr(win, k, l, " ");
 				} else {
-					mvwprintw(win, k, l, "%i", P_MAT[i][j]);
+					mvwprintw(win, k, l, "%i", board.gnd[i][j]);
 				}
 				break;
 			case USR_FLAG:
