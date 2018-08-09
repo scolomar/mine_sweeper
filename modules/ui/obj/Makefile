@@ -49,7 +49,7 @@ CLUI_INC_DIRS = -I $(INC_DIR) \
 			-I $(PRN_INC_DIR) \
 			-I $(LIBALX_INC_DIR)
 
-GAMEUI_INC_LIBALX =
+GAMEUI_INC_LIBALX =	alx_ncur.h
 GAMEUI_INC_DATA =	data.h
 GAMEUI_INC_GAME =	game.h
 GAMEUI_INC_PRN =	about.h

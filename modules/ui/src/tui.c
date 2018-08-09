@@ -45,6 +45,7 @@
  ******| submenus |************************************************************
  ******************************************************************************/
 static	void	menu_continue	(void);
+static	void	menu_select	(void);
 static	void	menu_difficulty	(void);
 static	void	menu_verbose	(void);
 
@@ -106,22 +107,23 @@ static	void	menu_continue	(void)
 	int	sw;
 	bool	wh;
 	WINDOW		*win;
-	int	h =	17;
-	int64_t	w =	50;
-	int64_t	r =	1;
-	int64_t	c =	(80 - w) / 2;
+	int	h =	18;
+	int	w =	50;
+	int	r =	1;
+	int	c =	(80 - w) / 2;
 
-	int64_t	w2 =	w - 8;
-	int64_t	r2 =	r + h - 5;
+	int	w2 =	w - 8;
+	int	r2 =	r + h - 5;
 
-	int64_t		N = 6;
-	struct alx_optn	mnu[6] =	{
+	int		N = 7;
+	struct alx_optn	mnu[7] =	{
 		{11, 4, "[0]	Back"},
 		{2, 4, "[1]	Start"},
-		{4, 4, "[2]	Change difficulty"},
-		{5, 4, "[4]	Change file path"},
-		{6, 4, "[5]	Change seed (srand)"},
-		{7, 4, "[6]	Change verbose"}
+		{4, 4, "[2]	Select matrix"},
+		{5, 4, "[3]	Change difficulty"},
+		{6, 4, "[4]	Change file path"},
+		{7, 4, "[5]	Change seed (srand)"},
+		{8, 4, "[6]	Change verbose"}
 	};
 
 	char	*txt[] =	{"File path:",
@@ -130,7 +132,7 @@ static	void	menu_continue	(void)
 	wh = true;
 	while (wh) {
 		win =	newwin(h, w, r, c);
-		mvwprintw(win, mnu[5].r, mnu[5].c, "%s (V = %i)", mnu[5].t, flag_V);
+		mvwprintw(win, mnu[6].r, mnu[6].c, "%s (V = %i)", mnu[6].t, flag_V);
 		wrefresh(win);
 		sw =	alx_menu_2(win, N, mnu, "CONTINUE:");
 
@@ -149,43 +151,87 @@ static	void	menu_continue	(void)
 
 		case 2:
 			alx_win_del(win);
-			menu_difficulty();
+			menu_select();
 			break;
 
 		case 3:
-			alx_w_getfpath(file_path, w2, r2, txt[0],
-					"files/DATA.txt", NULL);
+			alx_win_del(win);
+			menu_difficulty();
 			break;
 
 		case 4:
+			alx_w_getfpath(file_path, w2, r2, txt[0],
+					DEFAULT_SAVE, NULL);
+			break;
+
+		case 5:
 			seed =	alx_w_getint(w2, r2, txt[1],
 					-INFINITY, 1, INFINITY, NULL);
 			srand(seed);
 			break;
 
-		case 5:
-			alx_win_del(win);
-			menu_verbose();
+		case 6:
+/* Not yet */
+//			alx_win_del(win);
+//			menu_verbose();
 			break;
 		}
 	}
 }
 
+static	void	menu_select	(void)
+{
+	int	sw;
+	WINDOW		*win;
+	int	h =	9;
+	int	w =	70;
+	int	r =	1;
+	int	c =	(80 - w) / 2;
+
+	int		N = 3;
+	struct alx_optn	mnu[3] =	{{6, 4, "[0]	Back"},
+					{2, 4, "[1]	New map"},
+					{4, 4, "[2]	Load map"}
+			};
+
+	win =	newwin(h, w, r, c);
+	mvwprintw(win, mnu[2].r, mnu[2].c, "%s (\"Path: %s\")", mnu[1].t, file_path);
+	wrefresh(win);
+	sw =	alx_menu_2(win, N, mnu, "SELECT MAP:");
+
+	alx_win_del(win);
+
+	switch (sw) {
+	case 0:
+		flag_s =	START_FOO;
+		break;
+
+	case 1:
+		flag_s =	START_NEW;
+		break;
+
+	case 2:
+		flag_s =	START_LOAD;
+		break;
+	}
+
+}
+
 static	void	menu_difficulty	(void)
 {
 
-	int64_t	sw;
+	int	sw;
 	bool	wh;
 	WINDOW		*win;
-	int64_t	h =	16;
-	int64_t	w =	76;
-	int64_t	r =	1;
-	int64_t	c =	(80 - w) / 2;
+	int	h =	16;
+	int	w =	76;
+	int	r =	1;
+	int	c =	(80 - w) / 2;
 
-	int64_t	w2 =	w - 8;
-	int64_t	r2 =	r + h - 5;
+	int	w2 =	w - 8;
+	int	r2 =	r + h - 5;
 
-	int64_t		N = 4;
+	int		N = 4;
 	struct alx_optn	mnu[4] =	{
 		{8, 4, "[0]	Back"},
 		{2, 4, "[1]	Change rows:"},
@@ -235,10 +281,10 @@ static	void	menu_difficulty	(void)
 
 static	void	menu_verbose	(void)
 {
-	int64_t	h =	10;
-	int64_t	w =	51;
+	int	h =	10;
+	int	w =	51;
 
-	int64_t		N = 5;
+	int		N = 5;
 	struct alx_optn	mnu[5] =	{{7, 4, "[0]	Show NOTHING"},
 						{2, 4, "[1]	Show only time"},
 						{3, 4, "[2]	Show WORST time, matrix and solution"},
