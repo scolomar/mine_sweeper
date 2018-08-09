@@ -27,11 +27,11 @@ static	void	start_rand	(void);
 void	start_switch	(void)
 {
 	switch (flag_s) {
-	case 1:
-		start_custom();
-		break;
-	case 2:
+	case START_NEW:
 		start_rand();
+		break;
+	case START_LOAD:
+		start_custom();
 		break;
 	}
 
@@ -68,8 +68,6 @@ static	void	start		(void)
 
 	tim_i =		((double) tim_1 - tim_0) / CLOCKS_PER_SEC;
 	tim_tot +=	tim_i;
-
-	show_board_end();
 }
 
 /*----------------------------------------------------------------------------*/

@@ -63,7 +63,7 @@ void	alx_pause_curses	(void)
 void	alx_resume_curses	(void)
 {
 	fflush(stdout);
-	getchar();
+//	getchar();
 	reset_prog_mode();
 }
 
@@ -642,4 +642,6 @@ static	void	manage_w_error		(WINDOW *win, int err)
 	wrefresh(win);
 	/* Wait for any key */
 	wgetch(win);
+	wclear(win);
+	wrefresh(win);
 }

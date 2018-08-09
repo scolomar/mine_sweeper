@@ -31,9 +31,7 @@
 
 	# define		DIM_MAX		64
 
-	# define		P_SOL		prb_sol
-	# define		P_LEN		prb_lvl[0]
-	# define		P_LVL		prb_lvl[1]
+	# define		DEFAULT_SAVE	"..//files/saved/saved_0.mine"
 
 
 /******************************************************************************
@@ -70,6 +68,20 @@
 		GAME_OVER
 	};
 
+	enum	Flag_s {
+		START_FOO,
+		START_NEW,
+		START_LOAD
+	};
+
+	enum	Flag_V {
+		VERBOSE_FOO
+	};
+
+	enum	Flag_x {
+		X_FOO
+	};
+
 
 /******************************************************************************
  ******* structs **************************************************************
@@ -77,12 +89,12 @@
 	struct	Board {
 		int	rows;
 		int	cols;
+		double	p;
+		int	mines;
 		int	gnd [DIM_MAX] [DIM_MAX];
 		int	usr [DIM_MAX] [DIM_MAX];
-		int	mines;
 		int	flags;
 		int	cleared;
-		double	p;
 		int	state;
 	};
 
@@ -90,18 +102,15 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	int		prb_lvl [2];
-	extern	int		prb_sol [3] [DIM_MAX] [DIM_MAX];
-
 	extern	struct Board	board;
 
 	extern	clock_t		tim_0;
 	extern	clock_t		tim_1;
 	extern	double		tim_tot;
 
-	extern	int		flag_s;
-	extern	int		flag_V;
-	extern	bool		flag_x;
+	extern	enum Flag_s	flag_s;
+	extern	enum Flag_V	flag_V;
+	extern	enum Flag_x	flag_x;
 
 	extern	char		file_path [FILENAME_MAX];
 	extern	int		seed;

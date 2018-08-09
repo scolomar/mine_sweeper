@@ -42,20 +42,15 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-
-
-int		prb_lvl [2];
-int		prb_sol [3] [DIM_MAX] [DIM_MAX];
-
 struct Board	board;
 
 clock_t		tim_0;
 clock_t		tim_1;
 double		tim_tot;
 
-int		flag_s;
-int		flag_V;
-bool		flag_x;
+enum Flag_s	flag_s;
+enum Flag_V	flag_V;
+enum Flag_x	flag_x;
 
 char		file_path [FILENAME_MAX];
 int		seed;
@@ -71,7 +66,7 @@ void	init_values	(void)
 	board.rows =	10;
 	board.cols =	10;
 
-	strcpy(file_path, "files/DATA.txt");
+	strcpy(file_path, DEFAULT_SAVE);
 
 	flag_s =	0;
 	flag_V =	1;

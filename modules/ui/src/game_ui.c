@@ -7,6 +7,9 @@
 		/* wchar_t */
 	#include <wchar.h>
 
+		/* alx_..._curses() */
+	#include "alx_ncur.h"
+
 		/* ACT_... & GAME_PLAYING*/
 	#include "data.h"
 		/* game_action() & game_state() */
@@ -28,6 +31,8 @@ static	int	usr_input	(WINDOW *win);
  ******************************************************************************/
 void	game_ui			(void)
 {
+	alx_resume_curses();
+
 	/* Dimensions */
 	WINDOW		*win;
 	const int	h =	board.rows + 2;
@@ -59,6 +64,11 @@ void	game_ui			(void)
 		game_action(action, &pos_row, &pos_col);
 
 	} while (board.state == GAME_PLAYING);
+
+	/* Game end */
+	show_board_end();
+
+	alx_pause_curses();
 }
 
 
@@ -104,7 +114,16 @@ static	int	usr_input		(WINDOW *win)
 	case KEY_BACKSPACE:
 		action =	ACT_RM_FLAG;
 		break;
-
+/*
+	case KEY_BREAK:
+	case 'p':
+		action =	ACT_PAUSE;
+		break;
+*//*
+	case 's':
+		action =	ACT_SAVE;
+		break;
+*/
 	case 'q':
 		action =	ACT_QUIT;
 		break;
