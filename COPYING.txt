@@ -6,6 +6,9 @@
  version of the license (ie v2, not v2.2 or v3.x or whatever), unless
  explicitly otherwise stated.
 
+ Also note that the code is copyrighted by me, but the original game,
+ Mine, was written in 1990 by Robert Donner & Curt Johnson at Duff Software.
+
 			Alejandro Colomar
 
 ----------------------------------------
