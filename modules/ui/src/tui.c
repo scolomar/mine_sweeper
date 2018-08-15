@@ -86,12 +86,14 @@ void	menu_main		(void)
 		case 2:
 			alx_pause_curses();
 			print_disclaim();
+			getchar();
 			alx_resume_curses();
 			break;
 
 		case 3:
 			alx_pause_curses();
 			print_license();
+			getchar();
 			alx_resume_curses();
 			break;
 		}
