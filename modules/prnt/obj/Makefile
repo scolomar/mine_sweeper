@@ -14,10 +14,10 @@ MODULES_DIR = $(PNP_DIR)/modules/
 DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
 
-PRN_DIR = $(MODULES_DIR)/prn/
-INC_DIR = $(PRN_DIR)/inc/
-SRC_DIR = $(PRN_DIR)/src/
-TST_DIR = $(PRN_DIR)/tst/
+PRNT_DIR = $(MODULES_DIR)/prnt/
+INC_DIR = $(PRNT_DIR)/inc/
+SRC_DIR = $(PRNT_DIR)/src/
+TST_DIR = $(PRNT_DIR)/tst/
 
 # dependencies
 

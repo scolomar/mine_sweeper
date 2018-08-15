@@ -23,8 +23,8 @@ GAME_OBJ_DIR = $(GAME_DIR)/obj/
 GEN_DIR = $(MODULES_DIR)/gen/
 GEN_OBJ_DIR = $(GEN_DIR)/obj/
 
-PRN_DIR = $(MODULES_DIR)/prn/
-PRN_OBJ_DIR = $(PRN_DIR)/obj/
+PRNT_DIR = $(MODULES_DIR)/prnt/
+PRNT_OBJ_DIR = $(PRNT_DIR)/obj/
 
 SAVE_DIR = $(MODULES_DIR)/save/
 SAVE_OBJ_DIR = $(SAVE_DIR)/obj/
@@ -42,7 +42,7 @@ MSW_OBJ_LIBALX =	alx_file.o alx_getnum.o alx_ncur.o alx_seed.o
 MSW_OBJ_CTRL =		start.o
 MSW_OBJ_DATA =		data.o
 MSW_OBJ_GEN =		init.o
-MSW_OBJ_PRN =		about.o print.o
+MSW_OBJ_PRNT =		about.o print.o
 MSW_OBJ_SAVE =		save.o
 MSW_OBJ_UI =		clui.o game_ui.o tui.o
 
@@ -52,7 +52,7 @@ MSW_OBJS = $(OBJ_DIR)/main.o \
 			$(patsubst %,$(DATA_OBJ_DIR)/%,$(MSW_OBJ_DATA)) \
 			$(patsubst %,$(GAME_OBJ_DIR)/%,$(MSW_OBJ_GAME)) \
 			$(patsubst %,$(GEN_OBJ_DIR)/%,$(MSW_OBJ_GEN)) \
-			$(patsubst %,$(PRN_OBJ_DIR)/%,$(MSW_OBJ_PRN)) \
+			$(patsubst %,$(PRNT_OBJ_DIR)/%,$(MSW_OBJ_PRNT)) \
 			$(patsubst %,$(SAVE_OBJ_DIR)/%,$(MSW_OBJ_SAVE)) \
 			$(patsubst %,$(UI_OBJ_DIR)/%,$(MSW_OBJ_UI))
 
