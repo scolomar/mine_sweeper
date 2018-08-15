@@ -2,13 +2,13 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-	#include <stdint.h>
 	#include <stdio.h>
 	#include <stdlib.h>
 
 	#include "alx_seed.h"
 
 	#include "data.h"
+	#include "save.h"
 
 	#include "init.h"
 
@@ -53,41 +53,10 @@ void	init_rand	(void)
 	 */
 void	init_custom	(void)
 {
-	int64_t	i;
-	int64_t	j;
-	char	ch;
-	FILE	*fp;
-
 	/* clear */
 	init_clr();
 
-	fp =	fopen(file_path, "r");
-	if (fp) {
-		fscanf(fp, "mine_sweeper saved game");
-		fscanf(fp, " rows %i", &board.rows);
-		fscanf(fp, " cols %i", &board.cols);
-		fscanf(fp, " mines %i", &board.mines);
-		fscanf(fp, " gnd");
-		for (i = 0; i < board.rows; i++) {
-			fscanf(fp, " %i", &board.gnd[i][0]);
-			for (j = 1; j < board.cols; j++) {
-				fscanf(fp, ",%i", &board.gnd[i][j]);
-			}
-		}
-		fscanf(fp, " usr");
-		for (i = 0; i < board.rows; i++) {
-			fscanf(fp, " %i", &board.usr[i][0]);
-			for (j = 1; j < board.cols; j++) {
-				fscanf(fp, ",%i", &board.usr[i][j]);
-			}
-		}
-		fscanf(fp, " flags %i", &board.flags);
-		fscanf(fp, " cleared %i", &board.cleared);
-
-		fclose(fp);
-	} else {
-		printf("Fail");
-	}
+	load_game_file();
 }
 
 

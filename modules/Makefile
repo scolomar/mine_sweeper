@@ -13,6 +13,7 @@ DATA_DIR = $(MODULES_DIR)/data/
 GAME_DIR = $(MODULES_DIR)/game/
 GEN_DIR = $(MODULES_DIR)/gen/
 PRN_DIR = $(MODULES_DIR)/prn/
+SAVE_DIR = $(MODULES_DIR)/save/
 UI_DIR = $(MODULES_DIR)/ui/
 
 # dependencies
@@ -27,6 +28,7 @@ all:
 	cd $(GAME_DIR) && $(MAKE) && cd ..
 	cd $(GEN_DIR) && $(MAKE) && cd ..
 	cd $(PRN_DIR) && $(MAKE) && cd ..
+	cd $(SAVE_DIR) && $(MAKE) && cd ..
 	cd $(UI_DIR) && $(MAKE) && cd ..
 
 
@@ -36,6 +38,7 @@ clean:
 	cd $(GAME_DIR) && $(MAKE) clean && cd ..
 	cd $(GEN_DIR) && $(MAKE) clean && cd ..
 	cd $(PRN_DIR) && $(MAKE) clean && cd ..
+	cd $(SAVE_DIR) && $(MAKE) clean && cd ..
 	cd $(UI_DIR) && $(MAKE) clean && cd ..
 
 ################################################################################

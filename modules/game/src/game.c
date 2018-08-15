@@ -4,6 +4,8 @@
 
 		/* macros */
 	#include "data.h"
+		/* save_game_file() */
+	#include "save.h"
 
 	#include "game.h"
 
@@ -64,6 +66,10 @@ void	game_action		(int action, int *pos_row, int *pos_col)
 
 	case ACT_RM_FLAG:
 		game_rmflag(*pos_row, *pos_col);
+		break;
+
+	case ACT_SAVE:
+		save_game_file();
 		break;
 
 	case ACT_QUIT:
