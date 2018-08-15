@@ -162,8 +162,8 @@ static	void	menu_continue	(void)
 			break;
 
 		case 4:
-			alx_w_getfpath(file_path, w2, r2, txt[0],
-					file_path, NULL);
+			alx_w_getfname(SAVE_DIR, file_name, w2, r2, txt[0],
+					file_name, NULL);
 			break;
 
 		case 5:
@@ -197,7 +197,7 @@ static	void	menu_select	(void)
 			};
 
 	win =	newwin(h, w, r, c);
-	mvwprintw(win, mnu[2].r, mnu[2].c, "%s (\"Path: %s\")", mnu[1].t, file_path);
+	mvwprintw(win, mnu[2].r, mnu[2].c, "%s (\"Path: %s\")", mnu[1].t, file_name);
 	wrefresh(win);
 	sw =	alx_menu_2(win, N, mnu, "SELECT MAP:");
 

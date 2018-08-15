@@ -38,8 +38,8 @@ static	int64_t	loop_w_getint		(WINDOW *win,
 					double m, int64_t def, double M);
 static	void	loop_w_getstr		(char *str, WINDOW *win,
 					const char *def);
-static	void	loop_w_getfpath		(char *fpath, WINDOW *win,
-					const char *def);
+static	void	loop_w_getfname		(const char *fpath, char *fname,
+					WINDOW *win, const char *def);
 static	void	manage_w_error		(WINDOW *win, int err);
 
 
@@ -331,7 +331,7 @@ void	alx_w_getstr		(char *str,
 }
 
 
-void	alx_w_getfpath		(char *fpath,
+void	alx_w_getfname		(const char *fpath, char *fname,
 				const int w, const int r, const char *title,
 				const char *def,
 				const char *format, ...)
@@ -378,7 +378,7 @@ void	alx_w_getfpath		(char *fpath,
 	/* Help */
 	win2 =	newwin(h2, w2, r2, c2);
 	if (format == NULL) {
-		waddstr(win2, "Introduce a file path");
+		waddstr(win2, "Introduce a file name");
 	} else {
 		vw_printw(win2, format, args);
 	}
@@ -388,7 +388,7 @@ void	alx_w_getfpath		(char *fpath,
 	win3 =	newwin(h3, w3, r3, c3);
 	wbkgd(win3, A_REVERSE);
 	wrefresh(win3);
-	loop_w_getfpath(fpath, win3, def);
+	loop_w_getfname(fpath, fname, win3, def);
 
 	/* Delete window */
 	alx_win_del(win3);
@@ -587,11 +587,12 @@ static	void	loop_w_getstr		(char *str, WINDOW *win,
 	strcpy(str, buff);
 }
 
-static	void	loop_w_getfpath		(char *fpath, WINDOW *win,
-					const char *def)
+static	void	loop_w_getfname		(const char *fpath, char *fname,
+					WINDOW *win, const char *def)
 {
 	int	i;
-	char	buff [BUFF_SIZE];
+	char	buff [FILENAME_MAX];
+	char	file_path [FILENAME_MAX];
 	int	x;
 	int	err;
 	FILE	*fp;
@@ -606,7 +607,9 @@ static	void	loop_w_getfpath		(char *fpath, WINDOW *win,
 		if (x == ERR) {
 			err =	ERR_GETSTR;
 		} else {
-			fp =	fopen(buff, "r");
+			strcpy(file_path, fpath);
+			strcat(file_path, buff);
+			fp =	fopen(file_path, "r");
 
 			if (fp == NULL) {
 				err =	ERR_FPTR;
@@ -620,7 +623,7 @@ static	void	loop_w_getfpath		(char *fpath, WINDOW *win,
 		strcpy(buff, def);
 	}
 
-	strcpy(fpath, buff);
+	strcpy(fname, buff);
 }
 
 static	void	manage_w_error		(WINDOW *win, int err)

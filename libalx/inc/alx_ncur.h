@@ -58,7 +58,8 @@
 					const char	*format,
 							...);
 
-	void	alx_w_getfpath		(char		*fpath,
+	void	alx_w_getfname		(const char	*fpath,
+					char		*fname,
 					int		w,
 					int		r,
 					const char	*title,

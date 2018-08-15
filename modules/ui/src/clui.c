@@ -61,12 +61,14 @@ void	parser	(int argc, char *argv[])
 			break;
 
 		case 'f':
-			strcpy(file_path, optarg);
+			strcpy(file_name, optarg);
+			strcpy(file_path, SAVE_DIR);
+			strcat(file_path, file_name);
 			FILE	*fp;
-			fp =	fopen(file_path, "r");
+			fp =	fopen(file_name, "r");
 			if (!fp) {
 				printf("--file argument not valid\n");
-				printf("It must be a valid file path\n");
+				printf("It must be a valid file name\n");
 				exit(EXIT_FAILURE);
 			} else {
 				fclose(fp);

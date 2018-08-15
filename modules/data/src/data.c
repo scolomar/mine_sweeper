@@ -52,6 +52,7 @@ enum Flag_s	flag_s;
 enum Flag_V	flag_V;
 enum Flag_x	flag_x;
 
+char		file_name [FILENAME_MAX];
 char		file_path [FILENAME_MAX];
 int		seed;
 
@@ -66,7 +67,7 @@ void	init_values	(void)
 	board.rows =	10;
 	board.cols =	10;
 
-	strcpy(file_path, DEFAULT_SAVE);
+	strcpy(file_name, DEFAULT_SAVE);
 
 	flag_s =	START_FOO;
 	flag_V =	1;
