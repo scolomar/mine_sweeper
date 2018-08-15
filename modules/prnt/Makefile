@@ -7,9 +7,9 @@
 PNP_DIR = ../../
 
 MODULES_DIR = $(PNP_DIR)/modules/
-PRN_DIR = $(MODULES_DIR)/prn/
-OBJ_DIR = $(PRN_DIR)/obj/
-TST_DIR = $(PRN_DIR)/tst/
+PRNT_DIR = $(MODULES_DIR)/prnt/
+OBJ_DIR = $(PRNT_DIR)/obj/
+TST_DIR = $(PRNT_DIR)/tst/
 
 # target: dependencies
 #	action
