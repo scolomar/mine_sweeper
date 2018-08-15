@@ -21,6 +21,7 @@ int	main	(int argc, char *argv[])
 
 	alx_pause_curses();
 								print_verbose(1, print_cpright, -1);
+	getchar();
 	alx_resume_curses();
 
 	start_switch();

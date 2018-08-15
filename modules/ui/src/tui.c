@@ -68,7 +68,7 @@ void	menu_main		(void)
 		{5, 4, "[3]	Terms and conditions"}
 	};
 
-	flag_s =	2;
+	flag_s =	START_NEW;
 
 	wh = true;
 	while (wh) {
@@ -119,7 +119,7 @@ static	void	menu_continue	(void)
 	struct alx_optn	mnu[7] =	{
 		{11, 4, "[0]	Back"},
 		{2, 4, "[1]	Start"},
-		{4, 4, "[2]	Select matrix"},
+		{4, 4, "[2]	Select map"},
 		{5, 4, "[3]	Change difficulty"},
 		{6, 4, "[4]	Change file path"},
 		{7, 4, "[5]	Change seed (srand)"},
@@ -161,7 +161,7 @@ static	void	menu_continue	(void)
 
 		case 4:
 			alx_w_getfpath(file_path, w2, r2, txt[0],
-					DEFAULT_SAVE, NULL);
+					file_path, NULL);
 			break;
 
 		case 5:
@@ -266,7 +266,7 @@ static	void	menu_difficulty	(void)
 
 		case 2:
 			board.cols =	alx_w_getint(w2, r2, txt[sw - 1],
-						2, board.cols, DIM_MAX, NULL);
+						2, board.cols, 39, NULL);
 			break;
 
 		case 3:

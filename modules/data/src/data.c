@@ -68,7 +68,7 @@ void	init_values	(void)
 
 	strcpy(file_path, DEFAULT_SAVE);
 
-	flag_s =	0;
+	flag_s =	START_FOO;
 	flag_V =	1;
 	flag_x =	false;
 

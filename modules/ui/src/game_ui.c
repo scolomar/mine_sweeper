@@ -119,11 +119,11 @@ static	int	usr_input		(WINDOW *win)
 	case 'p':
 		action =	ACT_PAUSE;
 		break;
-*//*
+*/
 	case 's':
 		action =	ACT_SAVE;
 		break;
-*/
+
 	case 'q':
 		action =	ACT_QUIT;
 		break;
