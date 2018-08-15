@@ -2,13 +2,17 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
+		/* fscanf() & fprintf() & FILE & FILENAME_MAX */
 	#include <stdio.h>
-//	#include <stdlib.h>
+		/* strcpy() & strcat() */
+	#include <string.h>
 
 	#include "data.h"
 
 	#include "save.h"
 
+
+static	FILE	*fp;
 
 /*----------------------------------------------------------------------------*/
 
@@ -17,10 +21,12 @@
 	 */
 int	load_game_file	(void)
 {
-	FILE	*fp;
 	int	i;
 	int	j;
 	int	err;
+
+	strcpy(file_path, SAVE_DIR);
+	strcat(file_path, file_name);
 
 	fp =	fopen(file_path, "r");
 	if (fp) {
@@ -48,7 +54,7 @@ int	load_game_file	(void)
 		fclose(fp);
 		err =	ERR_OK;
 	} else {
-		err =	ERR_FILEPATH;
+		err =	ERR_FILENAME;
 	}
 
 	return	err;
@@ -60,18 +66,20 @@ int	load_game_file	(void)
 int	save_game_file	(void)
 {
 	/* Look for an unused name of the type 'saved_XXX.mine'. */
-	FILE	*fp;
-	char	filename[30] = "../files/saved/saved_000.mine";
 	int	i;
 	bool	x;
 	x =	true;
+	strcpy(file_name, DEFAULT_SAVE);
 	for (i = 0; x; i++) {
-		fp =	fopen(filename, "r");
+		strcpy(file_path, SAVE_DIR);
+		strcat(file_path, file_name);
+
+		fp =	fopen(file_path, "r");
 		if (fp) {
 			fclose(fp);
-			filename[21] =	'0' + ((i / 100) % 10);
-			filename[22] =	'0' + ((i / 10) % 10);
-			filename[23] =	'0' + (i % 10);
+			file_name[6] =	'0' + ((i / 100) % 10);
+			file_name[7] =	'0' + ((i / 10) % 10);
+			file_name[8] =	'0' + (i % 10);
 		} else {
 			x = false;
 		}
@@ -80,7 +88,7 @@ int	save_game_file	(void)
 	/* Write to a new file */
 	int	err;
 	int	j;
-	fp = fopen(filename, "w");
+	fp = fopen(file_path, "w");
 	if (fp) {
 		fprintf(fp, "mine_sweeper saved game\n");
 		fprintf(fp, "rows %i\n", board.rows);
@@ -108,7 +116,7 @@ int	save_game_file	(void)
 		fclose(fp);
 		err =	ERR_OK;
 	} else {
-		err =	ERR_FILEPATH;
+		err =	ERR_FILENAME;
 	}
 
 	return	err;

@@ -31,7 +31,8 @@
 
 	# define		DIM_MAX		64
 
-	# define		DEFAULT_SAVE	"..//files/saved/saved_0.mine"
+	# define		SAVE_DIR	"..//files/saved/"
+	# define		DEFAULT_SAVE	"saved_000.mine"
 
 
 /******************************************************************************
@@ -113,6 +114,7 @@
 	extern	enum Flag_V	flag_V;
 	extern	enum Flag_x	flag_x;
 
+	extern	char		file_name [FILENAME_MAX];
 	extern	char		file_path [FILENAME_MAX];
 	extern	int		seed;
 

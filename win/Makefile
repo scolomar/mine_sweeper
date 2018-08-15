@@ -41,6 +41,7 @@ ALL = mine_sweeper.exe
 MSW_OBJ_LIBALX =	alx_file.o alx_getnum.o alx_ncur.o alx_seed.o
 MSW_OBJ_CTRL =		start.o
 MSW_OBJ_DATA =		data.o
+MSW_OBJ_GAME =		game.o
 MSW_OBJ_GEN =		init.o
 MSW_OBJ_PRNT =		about.o print.o
 MSW_OBJ_SAVE =		save.o
