@@ -1,4 +1,9 @@
 /******************************************************************************
+ * Based on the game 'Mine', written in 1990 by				      *
+ * Robert Donner & Curt Johnson at Duff Software.			      *
+ *									      *
+ * Check this: https://tcrf.net/Proto:Minesweeper_(Windows,_1990)	      *
+ ******************************************************************************
  * mine_sweeper	Copyright (C) 2015	Alejandro Colomar Andrés	      *
  *									      *
  * This program is free software; you can redistribute it and/or modify	      *
