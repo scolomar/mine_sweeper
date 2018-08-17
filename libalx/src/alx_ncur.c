@@ -108,7 +108,8 @@ int	alx_menu_2		(WINDOW *win,
 	keypad(win, true);
 	noecho();
 
-	/* Print title and menu items */
+	/* Print box, title and menu items */
+	box(win, 0, 0);
 	alx_ncur_prn_title(win, title);
 	alx_ncur_prn_menu(win, N, mnu);
 
@@ -160,6 +161,7 @@ double	alx_w_getdbl		(int w, int r, const char *title,
 	/* Box & title */
 	win1 =	newwin(h1, w1, r1, c1);
 	wbkgd(win1, A_REVERSE);
+	box(win1, 0, 0);
 	alx_ncur_prn_title(win1, title);
 	wrefresh(win1);
 
@@ -231,6 +233,7 @@ int64_t	alx_w_getint		(int w, int r, const char *title,
 	/* Box & title */
 	win1 =	newwin(h1, w1, r1, c1);
 	wbkgd(win1, A_REVERSE);
+	box(win1, 0, 0);
 	alx_ncur_prn_title(win1, title);
 	wrefresh(win1);
 
@@ -303,6 +306,7 @@ void	alx_w_getstr		(char *str,
 	/* Box & title */
 	win1 =	newwin(h1, w1, r1, c1);
 	wbkgd(win1, A_REVERSE);
+	box(win1, 0, 0);
 	alx_ncur_prn_title(win1, title);
 	wrefresh(win1);
 
@@ -372,6 +376,7 @@ void	alx_w_getfname		(const char *fpath, char *fname,
 	/* Box & title */
 	win1 =	newwin(h1, w1, r1, c1);
 	wbkgd(win1, A_REVERSE);
+	box(win1, 0, 0);
 	alx_ncur_prn_title(win1, title);
 	wrefresh(win1);
 
@@ -402,9 +407,6 @@ void	alx_w_getfname		(const char *fpath, char *fname,
 
 void	alx_ncur_prn_title	(WINDOW *win, const char *title)
 {
-	/* Print window borders */
-	box(win, 0, 0);
-
 	/* Find size of window */
 	int	h;
 	int	w;
@@ -417,6 +419,26 @@ void	alx_ncur_prn_title	(WINDOW *win, const char *title)
 	/* Print title centered */
 	mvwaddch(win, 0, (w - len)/2 - 1, ACS_RTEE);
 	wprintw(win, " %s ", title);
+	waddch(win, ACS_LTEE);
+
+	wrefresh(win);
+}
+
+
+void	alx_ncur_prn_subtitle	(WINDOW *win, const char *subtitle)
+{
+	/* Find size of window */
+	int	h;
+	int	w;
+	getmaxyx(win, h, w);
+
+	/* Find length of title */
+	int	len;
+	len =	strlen(subtitle);
+
+	/* Print subtitle centered */
+	mvwaddch(win, h - 1, (w - len)/2 - 1, ACS_RTEE);
+	wprintw(win, " %s ", subtitle);
 	waddch(win, ACS_LTEE);
 
 	wrefresh(win);

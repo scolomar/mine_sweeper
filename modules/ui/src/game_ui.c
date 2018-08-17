@@ -4,6 +4,8 @@
 
 		/* WINDOW & wgetch() & KEY_... & ... */
 	#include <ncurses.h>
+		/* clock_t & clock() & CLOCKS_PER_SEC */
+	#include <time.h>
 		/* wchar_t */
 	#include <wchar.h>
 
@@ -52,18 +54,23 @@ void	game_ui			(void)
 	pos_col =	0;
 									DBG_PRINT(4, show_board_cheat, 0);
 
-
-	/* Action */
+	/* First move */
 	int	action;
+	show_board_start(win, pos_row, pos_col);
+	action = usr_input(win);
+	game_action(action, &pos_row, &pos_col);
+
+	/* Start timer */
+	tim_ini =	time(NULL);
+	game_update_time();
 
 	/* Game loop */
-	int	state;
-	do {
+	while (board.state == GAME_PLAYING) {
 		show_board_play(win, pos_row, pos_col);
 		action = usr_input(win);
 		game_action(action, &pos_row, &pos_col);
-
-	} while (board.state == GAME_PLAYING);
+		game_update_time();
+	}
 
 	/* Game end */
 	show_board_end(win);

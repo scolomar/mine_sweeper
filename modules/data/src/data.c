@@ -10,7 +10,7 @@
 	#include <stdlib.h>
 		/* strcpy() */
 	#include <string.h>
-		/* clock_t & clock() & time() */
+		/* time_t & clock() & time() */
 	#include <time.h>
 		/* getpid() */
 	#include <unistd.h>
@@ -50,10 +50,7 @@ struct Board	board;
 
 bool		color;
 
-
-clock_t		tim_0;
-clock_t		tim_1;
-double		tim_tot;
+time_t		tim_ini;
 
 enum Flag_s	flag_s;
 enum Flag_V	flag_V;

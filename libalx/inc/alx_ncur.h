@@ -70,6 +70,9 @@
 	void	alx_ncur_prn_title	(WINDOW		*win,
 					const char	*title);
 
+	void	alx_ncur_prn_subtitle	(WINDOW		*win,
+					const char	*subtitle);
+
 
 /*
 
