@@ -4,6 +4,8 @@
 
 		/* macros */
 	#include "data.h"
+		/* init_board_rand() */
+	#include "init.h"
 		/* save_game_file() */
 	#include "save.h"
 
@@ -63,7 +65,18 @@ void	game_action		(int action, int *pos_row, int *pos_col)
 		break;
 
 	case ACT_STEP:
-		game_step(*pos_row, *pos_col);
+		switch (board.state) {
+		case GAME_READY:
+			/* First step */
+			init_board_rand(*pos_row, *pos_col);
+			board.state = GAME_PLAYING;
+			game_step(*pos_row, *pos_col);
+			break;
+
+		case GAME_PLAYING:
+			game_step(*pos_row, *pos_col);
+			break;
+		}
 		board.clicks++;
 		break;
 

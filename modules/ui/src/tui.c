@@ -47,6 +47,7 @@
 static	void	menu_continue	(void);
 static	void	menu_select	(void);
 static	void	menu_difficulty	(void);
+static	void	menu_devel	(void);
 static	void	menu_verbose	(void);
 
 
@@ -109,7 +110,7 @@ static	void	menu_continue	(void)
 	int	sw;
 	bool	wh;
 	WINDOW		*win;
-	int	h =	18;
+	int	h =	17;
 	int	w =	50;
 	int	r =	1;
 	int	c =	(80 - w) / 2;
@@ -117,19 +118,17 @@ static	void	menu_continue	(void)
 	int	w2 =	w - 8;
 	int	r2 =	r + h - 5;
 
-	int		N = 7;
-	struct alx_optn	mnu[7] =	{
-		{11, 4, "[0]	Back"},
+	int		N = 6;
+	struct alx_optn	mnu[6] =	{
+		{10, 4, "[0]	Back"},
 		{2, 4, "[1]	Start"},
 		{4, 4, "[2]	Select map"},
 		{5, 4, "[3]	Change difficulty"},
 		{6, 4, "[4]	Change file path"},
-		{7, 4, "[5]	Change seed (srand)"},
-		{8, 4, "[6]	Change verbose"}
+		{8, 4, "[5]	DEVEL"}
 	};
 
-	char	*txt[] =	{"File path:",
-				"Seed:"};
+	char	*txt[] =	{"File path:"};
 
 	wh = true;
 	while (wh) {
@@ -164,18 +163,12 @@ static	void	menu_continue	(void)
 		case 4:
 			alx_w_getfname(SAVE_DIR, file_name, w2, r2, txt[0],
 					file_name, NULL);
+			alx_win_del(win);
 			break;
 
 		case 5:
-			seed =	alx_w_getint(w2, r2, txt[1],
-					-INFINITY, 1, INFINITY, NULL);
-			srand(seed);
-			break;
-
-		case 6:
-/* Not yet */
-//			alx_win_del(win);
-//			menu_verbose();
+			alx_win_del(win);
+			menu_devel();
 			break;
 		}
 	}
@@ -191,10 +184,11 @@ static	void	menu_select	(void)
 	int	c =	(80 - w) / 2;
 
 	int		N = 3;
-	struct alx_optn	mnu[3] =	{{6, 4, "[0]	Back"},
-					{2, 4, "[1]	New map"},
-					{4, 4, "[2]	Load map"}
-			};
+	struct alx_optn	mnu[3] =	{
+		{6, 4, "[0]	Back"},
+		{2, 4, "[1]	New map"},
+		{4, 4, "[2]	Load map"}
+	};
 
 	win =	newwin(h, w, r, c);
 	mvwprintw(win, mnu[2].r, mnu[2].c, "%s (\"Path: %s\")", mnu[1].t, file_name);
@@ -281,22 +275,74 @@ static	void	menu_difficulty	(void)
 	}
 }
 
+static	void	menu_devel	(void)
+{
+	int	sw;
+	bool	wh;
+	WINDOW		*win;
+	int	h =	12;
+	int	w =	50;
+	int	r =	1;
+	int	c =	(80 - w) / 2;
+
+	int	w2 =	w - 8;
+	int	r2 =	r + h - 5;
+
+	int		N = 3;
+	struct alx_optn	mnu[3] =	{
+		{5, 4, "[0]	Back"},
+		{2, 4, "[1]	Change seed (srand)"},
+		{3, 4, "[-]	Change verbose"}
+	};
+
+	char	*txt[] =	{"Seed:"};
+
+	wh = true;
+	while (wh) {
+		win =	newwin(h, w, r, c);
+		mvwprintw(win, mnu[2].r, mnu[2].c, "%s (V = %i)", mnu[2].t, flag_V);
+		wrefresh(win);
+		sw =	alx_menu_2(win, N, mnu, "DEVELOPER OPTIONS:");
+
+		switch (sw) {
+		case 0:
+			alx_win_del(win);
+			wh = false;
+			break;
+
+		case 1:
+			seed =	alx_w_getint(w2, r2, txt[0],
+					-INFINITY, 1, INFINITY, NULL);
+			srand(seed);
+			alx_win_del(win);
+			break;
+
+		case 2:
+/* Not yet */
+			alx_win_del(win);
+//			menu_verbose();
+			break;
+		}
+	}
+}
+
 static	void	menu_verbose	(void)
 {
 	int	h =	10;
 	int	w =	51;
 
 	int		N = 5;
-	struct alx_optn	mnu[5] =	{{7, 4, "[0]	Show NOTHING"},
-						{2, 4, "[1]	Show only time"},
-						{3, 4, "[2]	Show WORST time, matrix and solution"},
-						{4, 4, "[3]	Show time, matrix and solution"},
+	struct alx_optn	mnu[5] =	{
+		{7, 4, "[0]	Show NOTHING"},
+		{2, 4, "[1]	Show only time"},
+		{3, 4, "[2]	Show WORST time, matrix and solution"},
+		{4, 4, "[3]	Show time, matrix and solution"},
 # if (DBG)
-						{5, 4, "[4]	Show everything  (DBG)"}
+		{5, 4, "[4]	Show everything  (DBG)"}
 # else
-						{5, 4, "[4]	DBG (Not active)"}
+		{5, 4, "[4]	DBG (Not active)"}
 # endif
-				};
+	};
 
 	flag_V =	alx_menu(h, w, N, mnu, "VERBOSE: //Not yet//");
 }

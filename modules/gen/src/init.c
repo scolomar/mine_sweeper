@@ -18,49 +18,50 @@
 	 */
 /*----------------------------------------------------------------------------*/
 
-static	void	init_clr	(void);
-static	void	init_usr	(void);
+static	void	init_board_adjacent	(void);
 
 
-void	init_rand	(void)
+void	init_board_rand		(int pos_row, int pos_col)
 {
-	int	l;
-	int	c;
-	int	i;
-
-	/* clear */
-	init_clr();
+	/* calc number of mines & ensure at least one safe field */
+	board.mines =	board.p * board.rows * board.cols;
+	if (board.mines == board.rows * board.cols) {
+		board.mines--;
+	}
 
 	/* put mines */
-	board.mines =	board.p * board.rows * board.cols;
+	int	i;
+	int	r;
+	int	c;
 	i =	0;
 	while (i < board.mines) {
-		l =	(rand() % board.rows);
+		r =	(rand() % board.rows);
 		c =	(rand() % board.cols);
 
-		if (board.gnd[l][c] == MINE_NO) {
-			board.gnd[l][c] = MINE_YES;
+		if ((board.gnd[r][c] == MINE_NO) &&
+					/* first step is safe */
+					!((r == pos_row) && (c == pos_col))) {
+			board.gnd[r][c] = MINE_YES;
 			i++;
 		}
 	}
 
-	/* init user screen */
-	init_usr();
+	/* calc adjacency numbers */
+	init_board_adjacent();
 }
 
 	/*
 	 * Read from a file.
 	 */
-void	init_custom	(void)
+void	init_board_custom	(void)
 {
 	/* clear */
-	init_clr();
+	init_board_clr();
 
 	load_game_file();
 }
 
-
-static	void	init_clr	(void)
+void	init_board_clr		(void)
 {
 	int	i;
 	int	j;
@@ -75,12 +76,17 @@ static	void	init_clr	(void)
 	board.mines = 0;
 	board.flags = 0;
 	board.cleared = 0;
-	board.state = GAME_PLAYING;
+	if (flag_s == START_NEW) {
+		board.state = GAME_READY;
+	} else {
+		board.state = GAME_PLAYING;
+	}
 	board.time = 0;
 	board.clicks = 0;
 }
 
-static	void	init_usr	(void)
+
+static	void	init_board_adjacent	(void)
 {
 	int	l;
 	int	i;

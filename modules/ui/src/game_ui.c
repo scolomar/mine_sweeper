@@ -53,12 +53,22 @@ void	game_ui			(void)
 	pos_row =	0;
 	pos_col =	0;
 									DBG_PRINT(4, show_board_cheat, 0);
-
-	/* First move */
+	/* User action */
 	int	action;
-	show_board_start(win, pos_row, pos_col);
-	action = usr_input(win);
-	game_action(action, &pos_row, &pos_col);
+
+	/*
+	 * If new map:
+	 * First step
+	 * game_action() detects first step and generates the map.
+	 * This ensures first step is always safe.
+	 */
+	if (flag_s == START_NEW) {
+		while (board.state == GAME_READY) {
+			show_board_start(win, pos_row, pos_col);
+			action = usr_input(win);
+			game_action(action, &pos_row, &pos_col);
+		}
+	}
 
 	/* Start timer */
 	tim_ini =	time(NULL);
@@ -73,7 +83,7 @@ void	game_ui			(void)
 	}
 
 	/* Game end */
-	show_board_end(win);
+	show_board_end(win, pos_row, pos_col);
 
 	/* Wait for any key & del win */
 	wgetch(win);

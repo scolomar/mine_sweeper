@@ -9,7 +9,7 @@
 	#include "data.h"
 		/* game_ui() */
 	#include "game_ui.h"
-		/* init_...() */
+		/* init_board_...() */
 	#include "init.h"
 		/* print_...() & show_board_...() */
 	#include "print.h"
@@ -39,7 +39,7 @@ void	start_switch	(void)
 
 static	void	start_custom	(void)
 {
-	init_custom();
+	init_board_custom();
 									print_verbose(3, show_board_cheat, -1);
 	start();
 									print_verbose(1, show_board_cheat, false);
@@ -48,7 +48,8 @@ static	void	start_custom	(void)
 
 static	void	start_rand	(void)
 {
-	init_rand();
+	/* clear */
+	init_board_clr();
 									print_verbose(2, show_board_cheat, -1);
 	start();
 									print_verbose(1, show_board_cheat, false);

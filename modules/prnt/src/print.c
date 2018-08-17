@@ -30,7 +30,30 @@ void	show_board_cheat	(void)
 
 void	show_board_start	(WINDOW *win, int pos_row, int pos_col)
 {
-	show_board_play(win, pos_row, pos_col);
+	/* Clear & box */
+	wclear(win);
+	box(win, 0, 0);
+
+	/* Title */
+	char	tit[TITLE_SIZE];
+	sprintf(tit, "Mines: %i/%i", board.flags, board.mines);
+	alx_ncur_prn_title(win, tit);
+
+	/* Subtitle */
+	char	subtit[TITLE_SIZE];
+	int	mins;
+	int	secs;
+	if (flag_s != START_LOAD) {
+		mins =	(int)(board.time / 60);
+		secs =	((int)board.time % 60);
+		sprintf(subtit, "%i:%02i | %i", mins, secs, board.clicks);
+		alx_ncur_prn_subtitle(win, subtit);
+	}
+
+	/* Board */
+	show_board(win);
+	wmove(win, 1 + pos_row, 2 + 2 * pos_col);
+	wrefresh(win);
 }
 
 void	show_board_play		(WINDOW *win, int pos_row, int pos_col)
@@ -61,17 +84,21 @@ void	show_board_play		(WINDOW *win, int pos_row, int pos_col)
 	wrefresh(win);
 }
 
-void	show_board_end		(WINDOW *win)
+void	show_board_end		(WINDOW *win, int pos_row, int pos_col)
 {
 	/* Clear & box */
 	wclear(win);
 	box(win, 0, 0);
 
 	/* Title */
-	if (board.state == GAME_OVER) {
+	switch (board.state) {
+	case GAME_OVER:
 		alx_ncur_prn_title(win, "GAME OVER");
-	} else {
+		break;
+
+	case GAME_WIN:
 		alx_ncur_prn_title(win, "You win!");
+		break;
 	}
 
 	/* Subtitle */
@@ -87,7 +114,8 @@ void	show_board_end		(WINDOW *win)
 
 	/* Board */
 	show_board(win);
-	wmove(win, 0, 0);
+	wmove(win, 1 + pos_row, 2 + 2 * pos_col);
+//	wmove(win, 0, 0);
 	wrefresh(win);
 }
 
@@ -157,6 +185,22 @@ static	wchar_t	board_char	(int row, int col)
 	wchar_t	ch;
 
 	switch (board.state) {
+	case GAME_READY:
+		switch (board.usr[row][col]) {
+		case USR_HIDDEN:
+			ch =	'+';
+			break;
+
+		case USR_FLAG:
+			ch =	'!';
+			break;
+
+		case USR_POSSIBLE:
+			ch =	'?';
+			break;
+		}
+		break;
+
 	case GAME_PLAYING:
 		switch (board.usr[row][col]) {
 		case USR_HIDDEN:
@@ -177,11 +221,13 @@ static	wchar_t	board_char	(int row, int col)
 			break;
 		}
 		break;
+
 	case GAME_WIN:
 		switch (board.usr[row][col]) {
 		case USR_HIDDEN:
 			ch =	'v';
 			break;
+
 		case USR_CLEAR:
 			if (board.gnd[row][col] == MINE_NO) {
 				ch =	' ';
@@ -189,19 +235,27 @@ static	wchar_t	board_char	(int row, int col)
 				ch =	'0' + board.gnd[row][col];
 			}
 			break;
+
 		case USR_FLAG:
 			ch =	'!';
 			break;
+
 		case USR_POSSIBLE:
 			ch =	'?';
 			break;
+
+		default:
+			ch =	'0';
+			break;
 		}
 		break;
+
 	case GAME_OVER:
 		switch (board.usr[row][col]) {
 		case KBOOM:
 			ch =	'#';
 			break;
+
 		case USR_HIDDEN:
 			if (board.gnd[row][col] >= MINE_YES) {
 				ch =	'*';
@@ -209,6 +263,7 @@ static	wchar_t	board_char	(int row, int col)
 				ch =	'-';
 			}
 			break;
+
 		case USR_CLEAR:
 			if (board.gnd[row][col] == MINE_NO) {
 				ch =	' ';
@@ -216,6 +271,7 @@ static	wchar_t	board_char	(int row, int col)
 				ch =	'0' + board.gnd[row][col];
 			}
 			break;
+
 		case USR_FLAG:
 			if (board.gnd[row][col] >= MINE_YES) {
 				ch =	'!';
@@ -223,6 +279,7 @@ static	wchar_t	board_char	(int row, int col)
 				ch =	'F';
 			}
 			break;
+
 		case USR_POSSIBLE:
 			if (board.gnd[row][col] >= MINE_YES) {
 				ch =	'*';
@@ -231,6 +288,10 @@ static	wchar_t	board_char	(int row, int col)
 			}
 			break;
 		}
+		break;
+
+	default:
+		ch =	'0';
 		break;
 	}
 
@@ -304,6 +365,10 @@ static	void	show_char	(WINDOW *win, int row, int col, wchar_t ch)
 		break;
 
 	case '#':
+		pair =	PAIR_KBOOM;
+		break;
+
+	default:
 		pair =	PAIR_KBOOM;
 		break;
 	}
