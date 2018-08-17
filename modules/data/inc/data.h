@@ -67,6 +67,7 @@
 	};
 
 	enum	Game_State {
+		GAME_READY,
 		GAME_PLAYING,
 		GAME_WIN,
 		GAME_OVER
