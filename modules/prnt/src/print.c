@@ -15,6 +15,7 @@
 	#include "print.h"
 
 
+static	void	show_char	(WINDOW *win, int row, int col, wchar_t ch);
 static	wchar_t	board_char	(int row, int col);
 static	void	show_board	(WINDOW *win);
 
@@ -34,15 +35,8 @@ void	show_board_play		(WINDOW *win, int pos_row, int pos_col)
 	wrefresh(win);
 }
 
-void	show_board_end		(void)
+void	show_board_end		(WINDOW *win)
 {
-	/* Dimensions */
-	WINDOW		*win;
-	const int	h =	board.rows + 2;
-	const int	w =	2 * board.cols + 3;
-	const int	r =	1;
-	const int	c =	(80 - w) / 2;
-	win =	newwin(h, w, r, c);
 
 	/* Activate keypad, and don't echo input */
 	keypad(win, true);
@@ -60,10 +54,6 @@ void	show_board_end		(void)
 	show_board(win);
 	wmove(win, 0, 0);
 	wrefresh(win);
-
-	/* Wait for any key & exit */
-	wgetch(win);
-	alx_win_del(win);
 }
 
 void	print_time		(void)
@@ -90,14 +80,38 @@ static	void	show_board	(WINDOW *win)
 {
 	int	i;
 	int	j;
+	int	k;
+	int	l;
 
 	for (i = 0; i < board.rows; i++) {
+		k =	1 + i;
+
+		/* clear */
 		for (j = 0; j < board.cols; j++) {
-			const int	k =	1 + i;
-			const int	l =	2 + 2 * j;
+			l =	2 + 2 * j;
 			wchar_t		ch;
-			ch =	board_char(i, j);
-			mvwaddch(win, k, l, ch);
+			if (board.usr[i][j] == USR_CLEAR) {
+				ch =	board_char(i, j);
+				show_char(win, k, l, ch);
+			}
+		}
+		/* hidden */
+		for (j = 0; j < board.cols; j++) {
+			l =	2 + 2 * j;
+			wchar_t		ch;
+			if (board.usr[i][j] != USR_CLEAR) {
+				ch =	board_char(i, j);
+				show_char(win, k, l, ch);
+			}
+		}
+		/* kboom */
+		for (j = 0; j < board.cols; j++) {
+			l =	2 + 2 * j;
+			wchar_t		ch;
+			if (board.usr[i][j] == KBOOM) {
+				ch =	board_char(i, j);
+				show_char(win, k, l, ch);
+			}
 		}
 	}
 	wrefresh(win);
@@ -186,6 +200,91 @@ static	wchar_t	board_char	(int row, int col)
 	}
 
 	return	ch;
+}
+
+static	void	show_char	(WINDOW *win, int row, int col, wchar_t ch)
+{
+	int	pair;
+	switch (ch) {
+	case '1':
+		pair =	PAIR_1;
+		break;
+
+	case '2':
+		pair =	PAIR_2;
+		break;
+
+	case '3':
+		pair =	PAIR_3;
+		break;
+
+	case '4':
+		pair =	PAIR_4;
+		break;
+
+	case '5':
+		pair =	PAIR_5;
+		break;
+
+	case '6':
+		pair =	PAIR_6;
+		break;
+
+	case '7':
+		pair =	PAIR_7;
+		break;
+
+	case '8':
+		pair =	PAIR_8;
+		break;
+
+	case ' ':
+		pair =	PAIR_BLANK;
+		break;
+
+	case '*':
+	case 'v':
+		pair =	PAIR_MINE;
+		break;
+
+	case '+':
+	case '-':
+		pair =	PAIR_HIDDEN;
+		break;
+
+	case 'f':
+		pair =	PAIR_fail;
+		break;
+
+	case '?':
+		pair =	PAIR_POSSIBLE;
+		break;
+
+	case 'F':
+		pair =	PAIR_FAIL;
+		break;
+
+	case '!':
+		pair =	PAIR_FLAG;
+		break;
+
+	case '#':
+		pair =	PAIR_KBOOM;
+		break;
+	}
+
+
+
+	if (color) {
+		wattron(win, A_BOLD | COLOR_PAIR(pair));
+	}
+	mvwaddch(win, row, col - 1, ' ');
+	mvwaddch(win, row, col, ch);
+	mvwaddch(win, row, col + 1, ' ');
+	if (color) {
+		wattroff(win, A_BOLD | COLOR_PAIR(pair));
+	}
+	wrefresh(win);
 }
 
 /*----------------------------------------------------------------------------*/

@@ -29,7 +29,8 @@
 
 	# define		OPT_LIST	"a:b:f:hi:j:k:lo:p:r:s:V:vx"
 
-	# define		DIM_MAX		64
+	# define		ROWS_MAX	22
+	# define		COLS_MAX	39
 
 	# define		SAVE_DIR	"..//files/saved/"
 	# define		DEFAULT_SAVE	"saved_000.mine"
@@ -56,9 +57,9 @@
 		ACT_MOVE_DOWN,
 		ACT_MOVE_RIGHT,
 		ACT_MOVE_LEFT,
-		ACT_DISCOVER,
-		ACT_PLACE_FLAG,
-		ACT_PLACE_POSSIBLE,
+		ACT_STEP,
+		ACT_FLAG,
+		ACT_FLAG_POSSIBLE,
 		ACT_RM_FLAG,
 		ACT_SAVE,
 		ACT_QUIT
@@ -84,6 +85,30 @@
 		X_FOO
 	};
 
+	enum	Color_Pairs {
+		/* clear */
+		PAIR_1 = 1,
+		PAIR_2,
+		PAIR_3,
+		PAIR_4,
+		PAIR_5,
+		PAIR_6,
+		PAIR_7,
+		PAIR_8,
+		PAIR_BLANK,
+		/* hidden */
+		PAIR_MINE,
+		PAIR_HIDDEN,
+		/* possible */
+		PAIR_fail,
+		PAIR_POSSIBLE,
+		/* flag */
+		PAIR_FAIL,
+		PAIR_FLAG,
+		/* kboom */
+		PAIR_KBOOM
+	};
+
 
 /******************************************************************************
  ******* structs **************************************************************
@@ -93,8 +118,8 @@
 		int	cols;
 		double	p;
 		int	mines;
-		int	gnd [DIM_MAX] [DIM_MAX];
-		int	usr [DIM_MAX] [DIM_MAX];
+		int	gnd [ROWS_MAX] [COLS_MAX];
+		int	usr [ROWS_MAX] [COLS_MAX];
 		int	flags;
 		int	cleared;
 		int	state;
@@ -104,7 +129,11 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
+	extern	char		prog_name [FILENAME_MAX];
+
 	extern	struct Board	board;
+
+	extern	bool		color;
 
 	extern	clock_t		tim_0;
 	extern	clock_t		tim_1;

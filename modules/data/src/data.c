@@ -2,6 +2,8 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
+		/* has_colors() & start_color() & init_pair() */
+	#include <ncurses.h>
 		/* bool */
 	#include <stdbool.h>
 		/* srand() */
@@ -42,7 +44,12 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
+char		prog_name[FILENAME_MAX];
+
 struct Board	board;
+
+bool		color;
+
 
 clock_t		tim_0;
 clock_t		tim_1;
@@ -63,7 +70,6 @@ int		seed;
 void	init_values	(void)
 {
 	board.p =	0.05;
-
 	board.rows =	10;
 	board.cols =	10;
 
@@ -71,10 +77,38 @@ void	init_values	(void)
 
 	flag_s =	START_FOO;
 	flag_V =	1;
-	flag_x =	false;
+	flag_x =	0;
 
 	seed =		seedf(clock(), time(NULL), getpid());
 	srand(seed);
+
+	color =		false;
+	if (has_colors()) {
+		color =	true;
+		start_color();
+
+		/* clear */
+		init_pair(PAIR_1, COLOR_BLUE, COLOR_WHITE);
+		init_pair(PAIR_2, COLOR_GREEN, COLOR_WHITE);
+		init_pair(PAIR_3, COLOR_RED, COLOR_WHITE);
+		init_pair(PAIR_4, COLOR_BLUE, COLOR_WHITE);
+		init_pair(PAIR_5, COLOR_RED, COLOR_WHITE);
+		init_pair(PAIR_6, COLOR_CYAN, COLOR_WHITE);
+		init_pair(PAIR_7, COLOR_BLACK, COLOR_WHITE);
+		init_pair(PAIR_8, COLOR_BLACK, COLOR_WHITE);
+		init_pair(PAIR_BLANK, COLOR_BLACK, COLOR_WHITE);
+		/* hidden */
+		init_pair(PAIR_MINE, COLOR_WHITE, COLOR_BLACK);
+		init_pair(PAIR_HIDDEN, COLOR_WHITE, COLOR_BLACK);
+		/* possible */
+		init_pair(PAIR_fail, COLOR_RED, COLOR_BLACK);
+		init_pair(PAIR_POSSIBLE, COLOR_BLUE, COLOR_BLACK);
+		/* flag */
+		init_pair(PAIR_FAIL, COLOR_RED, COLOR_BLACK);
+		init_pair(PAIR_FLAG, COLOR_RED, COLOR_BLACK);
+		/* kboom */
+		init_pair(PAIR_KBOOM, COLOR_BLACK, COLOR_RED);
+	}
 }
 
 /******************************************************************************

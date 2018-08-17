@@ -17,6 +17,8 @@
 
 void	parser	(int argc, char *argv[])
 {
+	strcpy(prog_name, argv[0]);
+
 	int	opt =		0;
 	int	opt_index =	0;
 
@@ -44,18 +46,18 @@ void	parser	(int argc, char *argv[])
 		switch (opt) {
 		case 'a':
 			board.rows =	atoi(optarg);
-			if (board.rows < 1 || board.rows > DIM_MAX) {
+			if (board.rows < 1 || board.rows > ROWS_MAX) {
 				printf("--order-first argument not valid\n");
-				printf("It must be an integer [1 U %i]\n", DIM_MAX);
+				printf("It must be an integer [1 U %i]\n", ROWS_MAX);
 				exit(EXIT_FAILURE);
 			}
 			break;
 
 		case 'b':
 			board.cols =	atoi(optarg);
-			if (board.cols < 1 || board.cols > DIM_MAX) {
+			if (board.cols < 1 || board.cols > COLS_MAX) {
 				printf("--order-interval argument not valid\n");
-				printf("It must be an integer [1 U %i]\n", DIM_MAX);
+				printf("It must be an integer [1 U %i]\n", COLS_MAX);
 				exit(EXIT_FAILURE);
 			}
 			break;

@@ -23,7 +23,7 @@
 /******************************************************************************
  ******| static |**************************************************************
  ******************************************************************************/
-static	int	usr_input	(WINDOW *win);
+static	int	usr_input		(WINDOW *win);
 
 
 /******************************************************************************
@@ -37,8 +37,8 @@ void	game_ui			(void)
 	WINDOW		*win;
 	const int	h =	board.rows + 2;
 	const int	w =	2 * board.cols + 3;
-	const int	r =	1;
-	const int	c =	(80 - w) / 2;
+	const int	r =	0;
+	const int	c =	10;
 	win =	newwin(h, w, r, c);
 
 	/* Activate keypad, and don't echo input */
@@ -66,7 +66,11 @@ void	game_ui			(void)
 	} while (board.state == GAME_PLAYING);
 
 	/* Game end */
-	show_board_end();
+	show_board_end(win);
+
+	/* Wait for any key & del win */
+	wgetch(win);
+	alx_win_del(win);
 
 	alx_pause_curses();
 }
@@ -100,18 +104,20 @@ static	int	usr_input		(WINDOW *win)
 		break;
 
 	case '\r':
-		action =	ACT_DISCOVER;
+		action =	ACT_STEP;
 		break;
 
 	case ' ':
-		action =	ACT_PLACE_FLAG;
+		action =	ACT_FLAG;
 		break;
 
 	case 'x':
-		action =	ACT_PLACE_POSSIBLE;
+		action =	ACT_FLAG_POSSIBLE;
 		break;
 
+		/* ASCII 0x08 is BS */
 	case KEY_BACKSPACE:
+	case 0x08:
 		action =	ACT_RM_FLAG;
 		break;
 /*
