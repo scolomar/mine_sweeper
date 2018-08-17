@@ -38,7 +38,7 @@
  * SERVICING, REPAIR OR CORRECTION.					      *
  ******************************************************************************/
 
-	If you make a version or fork it, please tell me.
+	If you make a version, please tell me.
 	I would like to see it. Thank you.
 
 COMPILE:
@@ -46,6 +46,13 @@ COMPILE:
 		$ make
 	windows (MSYS):
 		$ make OS=win
+
+RUN:
+	linux: 
+		$ cd bin
+		$ ./mine_sweeper
+	windows:
+		double click on win/mine_sweeper.exe
 
 
 THE PROGRAM DOES:

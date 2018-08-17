@@ -263,12 +263,12 @@ static	void	menu_difficulty	(void)
 
 		case 1:
 			board.rows =	alx_w_getint(w2, r2, txt[sw - 1],
-						2, board.rows, DIM_MAX, NULL);
+						2, board.rows, ROWS_MAX, NULL);
 			break;
 
 		case 2:
 			board.cols =	alx_w_getint(w2, r2, txt[sw - 1],
-						2, board.cols, 39, NULL);
+						2, board.cols, COLS_MAX, NULL);
 			break;
 
 		case 3:
