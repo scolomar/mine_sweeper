@@ -9,7 +9,7 @@
 	#include <stdbool.h>
 		/* FILENAME_MAX */
 	#include <stdio.h>
-		/* clock_t */
+		/* time_t */
 	#include <time.h>
 
 
@@ -53,6 +53,7 @@
 	};
 
 	enum	Actions {
+		ACT_FOO,
 		ACT_MOVE_UP,
 		ACT_MOVE_DOWN,
 		ACT_MOVE_RIGHT,
@@ -123,6 +124,8 @@
 		int	flags;
 		int	cleared;
 		int	state;
+		int	time;
+		int	clicks;
 	};
 
 
@@ -135,9 +138,7 @@
 
 	extern	bool		color;
 
-	extern	clock_t		tim_0;
-	extern	clock_t		tim_1;
-	extern	double		tim_tot;
+	extern	time_t		tim_ini;
 
 	extern	enum Flag_s	flag_s;
 	extern	enum Flag_V	flag_V;

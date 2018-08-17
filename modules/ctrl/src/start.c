@@ -4,8 +4,6 @@
 
 		/* fflush(stdout) */
 	#include <stdio.h>
-		/* time() & CLOCKS_PER_SEC */
-	#include <time.h>
 
 		/* global variables */
 	#include "data.h"
@@ -60,14 +58,7 @@ static	void	start_rand	(void)
 
 static	void	start		(void)
 {
-	double	tim_i;
-
-	tim_0 =		clock();
 	game_ui();
-	tim_1 =		clock();
-
-	tim_i =		((double) tim_1 - tim_0) / CLOCKS_PER_SEC;
-	tim_tot +=	tim_i;
 }
 
 /*----------------------------------------------------------------------------*/

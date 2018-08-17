@@ -14,6 +14,8 @@
 
 	#include "print.h"
 
+	# define	TITLE_SIZE	(20)
+
 
 static	void	show_char	(WINDOW *win, int row, int col, wchar_t ch);
 static	wchar_t	board_char	(int row, int col);
@@ -26,10 +28,34 @@ void	show_board_cheat	(void)
 */
 }
 
+void	show_board_start	(WINDOW *win, int pos_row, int pos_col)
+{
+	show_board_play(win, pos_row, pos_col);
+}
+
 void	show_board_play		(WINDOW *win, int pos_row, int pos_col)
 {
+	/* Clear & box */
+	wclear(win);
 	box(win, 0, 0);
 
+	/* Title */
+	char	tit[TITLE_SIZE];
+	sprintf(tit, "Mines: %i/%i", board.flags, board.mines);
+	alx_ncur_prn_title(win, tit);
+
+	/* Subtitle */
+	char	subtit[TITLE_SIZE];
+	int	mins;
+	int	secs;
+	if (flag_s != START_LOAD) {
+		mins =	(int)(board.time / 60);
+		secs =	((int)board.time % 60);
+		sprintf(subtit, "%i:%02i | %i", mins, secs, board.clicks);
+		alx_ncur_prn_subtitle(win, subtit);
+	}
+
+	/* Board */
 	show_board(win);
 	wmove(win, 1 + pos_row, 2 + 2 * pos_col);
 	wrefresh(win);
@@ -37,17 +63,26 @@ void	show_board_play		(WINDOW *win, int pos_row, int pos_col)
 
 void	show_board_end		(WINDOW *win)
 {
-
-	/* Activate keypad, and don't echo input */
-	keypad(win, true);
-	noecho();
-
-	/* Box & title */
+	/* Clear & box */
+	wclear(win);
 	box(win, 0, 0);
+
+	/* Title */
 	if (board.state == GAME_OVER) {
 		alx_ncur_prn_title(win, "GAME OVER");
 	} else {
 		alx_ncur_prn_title(win, "You win!");
+	}
+
+	/* Subtitle */
+	char	subtit[TITLE_SIZE];
+	int	mins;
+	int	secs;
+	if (flag_s != START_LOAD) {
+		mins =	(int)(board.time / 60);
+		secs =	((int)board.time % 60);
+		sprintf(subtit, "%i:%02i | %i", mins, secs, board.clicks);
+		alx_ncur_prn_subtitle(win, subtit);
 	}
 
 	/* Board */
@@ -58,7 +93,7 @@ void	show_board_end		(WINDOW *win)
 
 void	print_time		(void)
 {
-	printf("Total time: %.3f;   ", tim_tot);
+	printf("Total time: %.3f;   ", board.time);
 }
 
 void	print_verbose		(int verbose, void *print_func, int arg)
