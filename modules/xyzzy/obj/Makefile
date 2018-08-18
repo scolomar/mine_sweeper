@@ -4,12 +4,12 @@
 
 # directories
 
-PNP_DIR = ../../../
+MSW_DIR = ../../../
 
-LIBALX_DIR = $(PNP_DIR)/libalx/
+LIBALX_DIR = $(MSW_DIR)/libalx/
 LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
 
-MODULES_DIR = $(PNP_DIR)/modules/
+MODULES_DIR = $(MSW_DIR)/modules/
 
 DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
@@ -20,27 +20,27 @@ GEN_INC_DIR = $(GEN_DIR)/inc/
 SAVE_DIR = $(MODULES_DIR)/save/
 SAVE_INC_DIR = $(SAVE_DIR)/inc/
 
-GAME_DIR = $(MODULES_DIR)/game/
-INC_DIR = $(GAME_DIR)/inc/
-SRC_DIR = $(GAME_DIR)/src/
-TST_DIR = $(GAME_DIR)/tst/
+XYZZY_DIR = $(MODULES_DIR)/xyzzy/
+INC_DIR = $(XYZZY_DIR)/inc/
+SRC_DIR = $(XYZZY_DIR)/src/
+TST_DIR = $(XYZZY_DIR)/tst/
 
 # dependencies
 
-ALL = game.o
+ALL = xyzzy.o
 
-GAME_INC_LIBALX =
-GAME_INC_DATA =		data.h
-GAME_INC_GEN =		init.h
-GAME_INC_SAVE =		save.h
-GAME_INC =	game.h
-GAME_DEPS = $(SRC_DIR)/game.c \
-			$(patsubst %,$(INC_DIR)/%,$(GAME_INC)) \
-			$(patsubst %,$(LIBALX_INC_DIR)/%,$(GAME_INC_LIBALX)) \
-			$(patsubst %,$(DATA_INC_DIR)/%,$(GAME_INC_DATA)) \
-			$(patsubst %,$(GEN_INC_DIR)/%,$(GAME_INC_GEN)) \
-			$(patsubst %,$(SAVE_INC_DIR)/%,$(GAME_INC_SAVE))
-GAME_INC_DIRS = -I $(INC_DIR) \
+XYZZY_INC_LIBALX =
+XYZZY_INC_DATA =	data.h
+XYZZY_INC_GEN =		init.h
+XYZZY_INC_SAVE =	save.h
+XYZZY_INC =	xyzzy.h
+XYZZY_DEPS = $(SRC_DIR)/game.c \
+			$(patsubst %,$(INC_DIR)/%,$(XYZZY_INC)) \
+			$(patsubst %,$(LIBALX_INC_DIR)/%,$(XYZZY_INC_LIBALX)) \
+			$(patsubst %,$(DATA_INC_DIR)/%,$(XYZZY_INC_DATA)) \
+			$(patsubst %,$(GEN_INC_DIR)/%,$(XYZZY_INC_GEN)) \
+			$(patsubst %,$(SAVE_INC_DIR)/%,$(XYZZY_INC_SAVE))
+XYZZY_INC_DIRS = -I $(INC_DIR) \
 			-I $(DATA_INC_DIR) \
 			-I $(GEN_INC_DIR) \
 			-I $(SAVE_INC_DIR) \
@@ -52,8 +52,8 @@ GAME_INC_DIRS = -I $(INC_DIR) \
 all: $(ALL)
 	
 
-game.o: $(GAME_DEPS)
-	$(CC) $(CFLAGS) $(GAME_INC_DIRS) -c $< -o $@ $(LIBS)
+xyzzy.o: $(GAME_DEPS)
+	$(CC) $(CFLAGS) $(XYZZY_INC_DIRS) -c $< -o $@ $(LIBS)
 
 
 clean:

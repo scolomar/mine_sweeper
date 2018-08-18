@@ -4,12 +4,12 @@
 
 # directories
 
-PNP_DIR = ../../
+MSW_DIR = ../../
 
-MODULES_DIR = $(PNP_DIR)/modules/
-GAME_DIR = $(MODULES_DIR)/game/
-OBJ_DIR = $(GAME_DIR)/obj/
-TST_DIR = $(GAME_DIR)/tst/
+MODULES_DIR = $(MSW_DIR)/modules/
+XYZZY_DIR = $(MODULES_DIR)/xyzzy/
+OBJ_DIR = $(XYZZY_DIR)/obj/
+TST_DIR = $(XYZZY_DIR)/tst/
 
 # target: dependencies
 #	action

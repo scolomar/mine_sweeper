@@ -10,7 +10,7 @@ export	DBG = false
 
  ifeq ($(OS), linux)
 export	CC = gcc
-export	CFLAGS = -std=c11 -mcmodel=medium -O3 -march=native
+export	CFLAGS = -std=c11
 export	LIBS = -l ncursesw -l m
  else ifeq ($(OS), win)
 CFLAGS_NCURSESW6 = -D _XOPEN_SOURCE=500 -I /mingw/include/ncursesw -I /mingw/include
