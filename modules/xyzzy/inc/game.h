@@ -2,9 +2,11 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-# ifndef			MSW_PRINT_H
-	# define		MSW_PRINT_H
+# ifndef		MSW_GAME_H
+	# define	MSW_GAME_H
 
-void	print_verbose		(int verbose, void *print_func, int arg);
 
-# endif				/* print.h */
+void	game_action		(int action, int *pos_row, int *pos_col);
+void	game_update_time	(void);
+
+# endif			/* game.h */

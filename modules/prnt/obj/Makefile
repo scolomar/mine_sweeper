@@ -34,7 +34,7 @@ ABOU_INC_DIRS = -I $(INC_DIR) \
 			-I $(LIBALX_INC_DIR) \
 			-I $(DATA_INC_DIR)
 
-PRNT_INC_LIBALX =	alx_ncur.h
+PRNT_INC_LIBALX =
 PRNT_INC_DATA =		data.h
 PRNT_INC =	print.h
 PRNT_DEPS = $(SRC_DIR)/print.c \
