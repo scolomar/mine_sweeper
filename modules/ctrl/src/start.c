@@ -40,20 +40,16 @@ void	start_switch	(void)
 static	void	start_custom	(void)
 {
 	init_board_custom();
-									print_verbose(3, show_board_cheat, -1);
+
 	start();
-									print_verbose(1, show_board_cheat, false);
-									print_verbose(3, show_board_cheat, 0);
 }
 
 static	void	start_rand	(void)
 {
 	/* clear */
 	init_board_clr();
-									print_verbose(2, show_board_cheat, -1);
+
 	start();
-									print_verbose(1, show_board_cheat, false);
-									print_verbose(2, show_board_cheat, 0);
 }
 
 

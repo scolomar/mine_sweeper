@@ -50,7 +50,11 @@ void	alx_start_curses	(void)
 	cbreak();
 	noecho();
 	keypad(stdscr, true);
-//	start_color();
+
+	if (has_colors()) {
+		start_color();
+		use_default_colors();
+	}
 //	mousemask(BUTTON4_PRESSED | BUTTON2_PRESSED, NULL);
 }
 

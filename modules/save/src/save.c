@@ -53,6 +53,10 @@ int	load_game_file	(void)
 
 		fclose(fp);
 		err =	ERR_OK;
+
+		board.time =	CHEATED;
+		board.clicks =	CHEATED;
+		board.state =	GAME_CHEATED;
 	} else {
 		err =	ERR_FILENAME;
 	}

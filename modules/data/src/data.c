@@ -48,13 +48,12 @@ char		prog_name[FILENAME_MAX];
 
 struct Board	board;
 
-bool		color;
-
 time_t		tim_ini;
 
 enum Flag_s	flag_s;
 enum Flag_V	flag_V;
 enum Flag_x	flag_x;
+bool		flag_color;
 
 char		file_name [FILENAME_MAX];
 char		file_path [FILENAME_MAX];
@@ -66,7 +65,7 @@ int		seed;
  ******************************************************************************/
 void	init_values	(void)
 {
-	board.p =	0.05;
+	board.p =	0.1;
 	board.rows =	10;
 	board.cols =	10;
 
@@ -79,11 +78,9 @@ void	init_values	(void)
 	seed =		seedf(clock(), time(NULL), getpid());
 	srand(seed);
 
-	color =		false;
+	flag_color = false;
 	if (has_colors()) {
-		color =	true;
-		start_color();
-
+		flag_color = true;
 		/* clear */
 		init_pair(PAIR_1, COLOR_BLUE, COLOR_WHITE);
 		init_pair(PAIR_2, COLOR_GREEN, COLOR_WHITE);
@@ -105,6 +102,8 @@ void	init_values	(void)
 		init_pair(PAIR_FLAG, COLOR_RED, COLOR_BLACK);
 		/* kboom */
 		init_pair(PAIR_KBOOM, COLOR_BLACK, COLOR_RED);
+
+		init_pair(PAIR_TERM, -1, -1);
 	}
 }
 

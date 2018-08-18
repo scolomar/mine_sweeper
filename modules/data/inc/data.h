@@ -30,10 +30,12 @@
 	# define		OPT_LIST	"a:b:f:hi:j:k:lo:p:r:s:V:vx"
 
 	# define		ROWS_MAX	22
-	# define		COLS_MAX	39
+	# define		COLS_MAX	33
 
 	# define		SAVE_DIR	"..//files/saved/"
 	# define		DEFAULT_SAVE	"saved_000.mine"
+
+	# define		CHEATED		(-1)
 
 
 /******************************************************************************
@@ -62,15 +64,24 @@
 		ACT_FLAG,
 		ACT_FLAG_POSSIBLE,
 		ACT_RM_FLAG,
+		ACT_PAUSE,
 		ACT_SAVE,
+		ACT_XYZZY_ON,
+		ACT_XYZZY_OFF,
+		ACT_XYZZY_LIN,
+		ACT_XYZZY_SQ,
 		ACT_QUIT
 	};
 
 	enum	Game_State {
 		GAME_READY,
 		GAME_PLAYING,
+		GAME_PAUSE,
+		GAME_CHEATED,
+		GAME_XYZZY,
 		GAME_WIN,
-		GAME_OVER
+		GAME_OVER,
+		GAME_QUIT
 	};
 
 	enum	Flag_s {
@@ -108,7 +119,29 @@
 		PAIR_FAIL,
 		PAIR_FLAG,
 		/* kboom */
-		PAIR_KBOOM
+		PAIR_KBOOM,
+
+		/* Terminal colors */
+		PAIR_TERM
+	};
+
+	enum	Eggs {
+		/* Stop blowing holes in my ship! */
+		EGG_KBOOM,
+		/*
+		 * Sticks and stones, love. I saved your life, you saved mine.
+		 * We’re square.
+		 */
+		EGG_WIN,
+		/*
+		 * Do us a favor. I know it’s difficult for you, but please,
+		 * stay here, and try not to do anything stupid.
+		 */
+		EGG_PAUSE,
+		/* Nothing happens. */
+		EGG_XYZZY,
+		/* If you were waiting for the opportune moment, that was it. */
+		EGG_QUIT
 	};
 
 
@@ -137,13 +170,12 @@
 
 	extern	struct Board	board;
 
-	extern	bool		color;
-
 	extern	time_t		tim_ini;
 
 	extern	enum Flag_s	flag_s;
 	extern	enum Flag_V	flag_V;
 	extern	enum Flag_x	flag_x;
+	extern	bool		flag_color;
 
 	extern	char		file_name [FILENAME_MAX];
 	extern	char		file_path [FILENAME_MAX];
