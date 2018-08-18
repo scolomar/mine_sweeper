@@ -64,6 +64,7 @@
 		ACT_FLAG,
 		ACT_FLAG_POSSIBLE,
 		ACT_RM_FLAG,
+		ACT_HIGHLIGHT,
 		ACT_PAUSE,
 		ACT_SAVE,
 		ACT_XYZZY_ON,
@@ -99,7 +100,7 @@
 	};
 
 	enum	Color_Pairs {
-		/* clear */
+		/* Clear */
 		PAIR_1 = 1,
 		PAIR_2,
 		PAIR_3,
@@ -109,17 +110,19 @@
 		PAIR_7,
 		PAIR_8,
 		PAIR_BLANK,
-		/* hidden */
+		/* Hidden */
 		PAIR_MINE,
 		PAIR_HIDDEN,
-		/* possible */
+		/* Possible */
 		PAIR_fail,
 		PAIR_POSSIBLE,
-		/* flag */
+		/* Flag */
 		PAIR_FAIL,
 		PAIR_FLAG,
 		/* kboom */
 		PAIR_KBOOM,
+		/* Highlight */
+		PAIR_HILITE,
 
 		/* Terminal colors */
 		PAIR_TERM
@@ -157,6 +160,7 @@
 		int	usr [ROWS_MAX] [COLS_MAX];
 		int	flags;
 		int	cleared;
+		bool	set;
 		int	state;
 		int	time;
 		int	clicks;
@@ -170,8 +174,6 @@
 
 	extern	struct Board	board;
 
-	extern	time_t		tim_ini;
-
 	extern	enum Flag_s	flag_s;
 	extern	enum Flag_V	flag_V;
 	extern	enum Flag_x	flag_x;
@@ -180,6 +182,10 @@
 	extern	char		file_name [FILENAME_MAX];
 	extern	char		file_path [FILENAME_MAX];
 	extern	int		seed;
+
+	extern	time_t		tim_ini;
+
+	extern	bool		highlight;
 
 
 /******************************************************************************

@@ -27,6 +27,7 @@ static	void	game_move_right		(int *pos_col);
 static	void	game_move_left		(int *pos_col);
 
 static	void	game_step		(int pos_row, int pos_col);
+static	void	game_first_step		(int pos_row, int pos_col);
 static	void	game_discover		(int pos_row, int pos_col);
 static	void	game_discover_recursive	(int pos_row, int pos_col);
 static	void	game_big_step		(int pos_row, int pos_col);
@@ -100,9 +101,6 @@ void	game_update_time	(void)
 static	void	game_action_ready	(int action, int *pos_row, int *pos_col)
 {
 	switch (action) {
-	case ACT_FOO:
-		break;
-
 	case ACT_MOVE_UP:
 		game_move_up(pos_row);
 		break;
@@ -120,20 +118,15 @@ static	void	game_action_ready	(int action, int *pos_row, int *pos_col)
 		break;
 
 	case ACT_STEP:
-		/* Generate map */
-		init_board_rand(*pos_row, *pos_col);
-		board.state = GAME_PLAYING;
-
-		/* Start timer */
-		tim_ini =	time(NULL);
-		game_update_time();
-
-		/* First step */
 		game_step(*pos_row, *pos_col);
 		break;
 
 	case ACT_SAVE:
 		save_game_file();
+		break;
+
+	case ACT_XYZZY_ON:
+		game_xyzzy_on();
 		break;
 
 	case ACT_QUIT:
@@ -145,9 +138,6 @@ static	void	game_action_ready	(int action, int *pos_row, int *pos_col)
 static	void	game_action_playing	(int action, int *pos_row, int *pos_col)
 {
 	switch (action) {
-	case ACT_FOO:
-		break;
-
 	case ACT_MOVE_UP:
 		game_move_up(pos_row);
 		break;
@@ -201,9 +191,6 @@ static	void	game_action_playing	(int action, int *pos_row, int *pos_col)
 static	void	game_action_xyzzy	(int action, int *pos_row, int *pos_col)
 {
 	switch (action) {
-	case ACT_FOO:
-		break;
-
 	case ACT_MOVE_UP:
 		game_move_up(pos_row);
 		break;
@@ -315,6 +302,12 @@ static	void	game_move_left		(int *pos_col)
 
 static	void	game_step		(int pos_row, int pos_col)
 {
+	/* First step: gen map & set timer */
+	if (!board.set) {
+		game_first_step(pos_row, pos_col);
+	}
+
+	/* Step */
 	switch (board.usr[pos_row][pos_col]) {
 	case USR_HIDDEN:
 	case USR_POSSIBLE:
@@ -326,6 +319,22 @@ static	void	game_step		(int pos_row, int pos_col)
 		break;
 	}
 	board.clicks++;
+}
+
+static	void	game_first_step		(int pos_row, int pos_col)
+{
+	/* Generate map */
+	init_board_rand(pos_row, pos_col);
+	board.set = true;
+
+	/* Play */
+	if (board.state == GAME_READY) {
+		board.state = GAME_PLAYING;
+	}
+
+	/* Start timer */
+	tim_ini =	time(NULL);
+	game_update_time();
 }
 
 static	void	game_discover		(int pos_row, int pos_col)

@@ -77,12 +77,15 @@ void	init_board_clr		(void)
 	board.flags = 0;
 	board.cleared = 0;
 	if (flag_s == START_NEW) {
+		board.set = false;
 		board.state = GAME_READY;
 	} else {
+		board.set = true;
 		board.state = GAME_PLAYING;
 	}
 	board.time = 0;
 	board.clicks = 0;
+	highlight = false;
 }
 
 

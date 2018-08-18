@@ -48,8 +48,6 @@ char		prog_name[FILENAME_MAX];
 
 struct Board	board;
 
-time_t		tim_ini;
-
 enum Flag_s	flag_s;
 enum Flag_V	flag_V;
 enum Flag_x	flag_x;
@@ -59,15 +57,19 @@ char		file_name [FILENAME_MAX];
 char		file_path [FILENAME_MAX];
 int		seed;
 
+time_t		tim_ini;
+
+bool		highlight;
+
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
 void	init_values	(void)
 {
-	board.p =	0.1;
-	board.rows =	10;
-	board.cols =	10;
+	board.p =	0.16;
+	board.rows =	8;
+	board.cols =	8;
 
 	strcpy(file_name, DEFAULT_SAVE);
 
@@ -81,7 +83,7 @@ void	init_values	(void)
 	flag_color = false;
 	if (has_colors()) {
 		flag_color = true;
-		/* clear */
+		/* Clear */
 		init_pair(PAIR_1, COLOR_BLUE, COLOR_WHITE);
 		init_pair(PAIR_2, COLOR_GREEN, COLOR_WHITE);
 		init_pair(PAIR_3, COLOR_RED, COLOR_WHITE);
@@ -91,17 +93,19 @@ void	init_values	(void)
 		init_pair(PAIR_7, COLOR_BLACK, COLOR_WHITE);
 		init_pair(PAIR_8, COLOR_BLACK, COLOR_WHITE);
 		init_pair(PAIR_BLANK, COLOR_BLACK, COLOR_WHITE);
-		/* hidden */
+		/* Hidden */
 		init_pair(PAIR_MINE, COLOR_WHITE, COLOR_BLACK);
 		init_pair(PAIR_HIDDEN, COLOR_WHITE, COLOR_BLACK);
-		/* possible */
+		/* Possible */
 		init_pair(PAIR_fail, COLOR_RED, COLOR_BLACK);
 		init_pair(PAIR_POSSIBLE, COLOR_BLUE, COLOR_BLACK);
-		/* flag */
+		/* Flag */
 		init_pair(PAIR_FAIL, COLOR_RED, COLOR_BLACK);
 		init_pair(PAIR_FLAG, COLOR_RED, COLOR_BLACK);
-		/* kboom */
+		/* Kboom */
 		init_pair(PAIR_KBOOM, COLOR_BLACK, COLOR_RED);
+		/* Highlight */
+		init_pair(PAIR_HILITE, COLOR_YELLOW, COLOR_RED);
 
 		init_pair(PAIR_TERM, -1, -1);
 	}
