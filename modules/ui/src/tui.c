@@ -20,23 +20,23 @@
 	 * + Menu:
 	 *	+ Continue:
 	 *		- Start
-	 *		+ Change size:
-	 *			- Change rows:
-	 *			- Change cloumns:
+	 *		+ Select map:
+	 *			- New map
+	 *			- Load map("path
 	 *			- ..
-	 *		+ Change proportion of mines:
-	 *			- Change proportion of mines:
+	 *		+ Change difficulty:
+	 *			- Change rows: rows		(XX)
+	 *			- Change columns: cols		(XX)
+	 *			- Change proportion of mines: p	(XX.XXXXXX)
 	 *			- ..
-	 *		- Change seed (srand)
-	 *		+ Change verbose:
-	 *			- Show only time
-	 *			- Show WORST time, matrix and solution
-	 *			- Show time, matrix and solution
-	 *			- Show everything
-	 *			- Show NOTHING
+	 *		- Change file name (File: "<file_name>")
+	 *		+ DEVEL:
+	 *			- Change seed (srand)
+	 *			x Change verbose
+	 *			- ..
 	 *		- ..
-	 *	- Disclaimer
-	 *	- License
+	 *	- Disclaimer of warranty
+	 *	- Terms and conditions
 	 *	- Exit program
 	 */
 
@@ -240,8 +240,8 @@ static	void	menu_difficulty	(void)
 	wh = true;
 	while (wh) {
 		win =	newwin(h, w, r, c);
-		mvwprintw(win, mnu[1].r, mnu[1].c, "%s rows\t(%i)", mnu[1].t, board.rows);
-		mvwprintw(win, mnu[2].r, mnu[2].c, "%s cols\t(%i)", mnu[2].t, board.cols);
+		mvwprintw(win, mnu[1].r, mnu[1].c, "%s rows\t\t(%i)", mnu[1].t, board.rows);
+		mvwprintw(win, mnu[2].r, mnu[2].c, "%s cols\t\t(%i)", mnu[2].t, board.cols);
 		mvwprintw(win, mnu[3].r, mnu[3].c, "%s p\t(%lf)", mnu[3].t, board.p);
 		wrefresh(win);
 		sw =	alx_menu_2(win, N, mnu, "Difficulty:");

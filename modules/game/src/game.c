@@ -257,7 +257,6 @@ static	void	game_action_pause	(int action, int *pos_row, int *pos_col)
 static	void	game_action_end		(int action, int *pos_row, int *pos_col)
 {
 	switch (action) {
-	case ACT_STEP:
 	case ACT_QUIT:
 		board.state =	GAME_QUIT;
 		break;

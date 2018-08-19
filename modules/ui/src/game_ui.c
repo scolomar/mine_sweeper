@@ -93,8 +93,7 @@ void	game_ui			(void)
 		game_update_time();
 	}
 
-	/* Wait for any key & del win */
-	wgetch(win_board);
+	/* Del win */
 	alx_win_del(win_board);
 	alx_win_del(win_help);
 
@@ -789,7 +788,7 @@ static	void	show_help_end		(WINDOW *win)
 	r =	0;
 	c =	0;
 	mvwaddstr(win, r++, c++, "Quit:");
-	mvwprintw(win, r++, c--, "Enter / %c", 'q');
+	mvwprintw(win, r++, c--, "%c", 'q');
 
 	wrefresh(win);
 }
