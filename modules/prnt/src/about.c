@@ -43,5 +43,5 @@ void	print_usage		(void)
 
 void	print_version		(void)
 {
-	printf("" PROG_NAME "\t" PROG_VERSION "\n\n");
+	printf("" PROG_NAME " " PROG_VERSION "\n\n");
 }
