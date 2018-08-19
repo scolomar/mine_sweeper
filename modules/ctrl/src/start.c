@@ -18,7 +18,6 @@
 
 
 static	void	start		(void);
-static	void	start_foo	(void);
 static	void	start_custom	(void);
 static	void	start_rand	(void);
 
@@ -26,14 +25,9 @@ static	void	start_rand	(void);
 void	start_switch	(void)
 {
 	switch (flag_s) {
-	case START_FOO:
-		start_foo();
-		break;
-
 	case START_NEW:
 		start_rand();
 		break;
-
 	case START_LOAD:
 		start_custom();
 		break;
@@ -42,12 +36,6 @@ void	start_switch	(void)
 	fflush(stdout);
 }
 
-
-static	void	start_foo	(void)
-{
-	printf("FOO");
-	getchar();
-}
 
 static	void	start_custom	(void)
 {
