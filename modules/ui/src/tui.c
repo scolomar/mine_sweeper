@@ -198,10 +198,6 @@ static	void	menu_select	(void)
 	alx_win_del(win);
 
 	switch (sw) {
-	case 0:
-		flag_s =	START_FOO;
-		break;
-
 	case 1:
 		flag_s =	START_NEW;
 		break;

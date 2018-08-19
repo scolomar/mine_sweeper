@@ -15,20 +15,28 @@
 
 int	main	(int argc, char *argv[])
 {
+	/* Init values */
 	alx_start_curses();
 	init_values();
+	alx_pause_curses();
+
+	/* Parse command line options */
 	parser(argc, argv);
 
-	alx_pause_curses();
+	/* Print copyright () and wait for any key to continue */
 								print_verbose(1, print_cpright, -1);
-	getchar();
-	alx_resume_curses();
+								print_verbose(1, getchar, -1);
 
+	/* Start () */
 	start_switch();
+
+	/* Menu () */
 	if (!flag_x) {
+		alx_resume_curses();
 		menu_main();
 	}
 
+	/* End curses */
 	alx_end_curses();
 
 	return	0;

@@ -1,0 +1,13 @@
+Options:
+
+"rows"			required_argument,	0,	'a'
+"columns"		required_argument,	0,	'b'
+"file-name"		required_argument,	0,	'f'
+"help"			no_argument,		0,	'h'
+"license"		no_argument,		0,	'l'
+"proportion"		required_argument,	0,	'p'
+"rand-seed"		required_argument,	0,	'r'
+"start"			required_argument,	0,	's'
+"Verbose"		required_argument,	0,	'V'
+"version"		no_argument,		0,	'v'
+"exit"			no_argument,		0,	'x'

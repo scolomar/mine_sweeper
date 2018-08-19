@@ -27,7 +27,7 @@
 	# define		PROG_YEAR	"2015"
 	# define		PROG_VERSION	"v2.rc"
 
-	# define		OPT_LIST	"a:b:f:hi:j:k:lo:p:r:s:V:vx"
+	# define		OPT_LIST	"a:b:f:hlp:r:s:V:vx"
 
 	# define		ROWS_MAX	22
 	# define		COLS_MAX	33
@@ -129,21 +129,20 @@
 	};
 
 	enum	Eggs {
-		/* Stop blowing holes in my ship! */
+/* Stop blowing holes in my ship! */
 		EGG_KBOOM,
-		/*
-		 * Sticks and stones, love. I saved your life, you saved mine.
-		 * We’re square.
-		 */
+/* Sticks and stones, love. I saved your life, you saved mine.  We’re square. */
 		EGG_WIN,
-		/*
-		 * Do us a favor. I know it’s difficult for you, but please,
-		 * stay here, and try not to do anything stupid.
-		 */
+/*
+ * Do us a favor.  I know it’s difficult for you, but please,
+ * stay here, and try not to do anything stupid.
+ */
 		EGG_PAUSE,
-		/* Nothing happens. */
+/* If you were waiting for the opportune moment, that was it. */
+		EGG_UNPAUSE,
+/* Nothing happens. */
 		EGG_XYZZY,
-		/* If you were waiting for the opportune moment, that was it. */
+/* Not a game. */
 		EGG_QUIT
 	};
 
