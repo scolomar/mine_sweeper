@@ -487,12 +487,8 @@ static	int	alx_ncur_usr_sel	(WINDOW *win,
 		/* Input */
 		ch = wgetch(win);
 
-		if ((ch >= '0') && (ch < N + '0')) {
-			/* Input is a number, move to that item */
-			i = ch - '0';
-			wmove(win, mnu[i].r, mnu[i].c + 1);
-
-		} else if (ch == KEY_UP) {
+		switch (ch) {
+		case KEY_UP:
 			/* KEY_UP, move one item up */
 			if (i) {
 				i--;
@@ -500,8 +496,9 @@ static	int	alx_ncur_usr_sel	(WINDOW *win,
 				i = N - 1;
 			}
 			wmove(win, mnu[i].r, mnu[i].c + 1);
+			break;
 
-		} else if (ch == KEY_DOWN) {
+		case KEY_DOWN:
 			/* KEY_DOWN, move one item down */
 			if (i != N - 1) {
 				i++;
@@ -509,11 +506,24 @@ static	int	alx_ncur_usr_sel	(WINDOW *win,
 				i = 0;
 			}
 			wmove(win, mnu[i].r, mnu[i].c + 1);
+			break;
 
-		} else if (ch == '\r') {
+		case '\n':
 			/* ENTER, end menu */
 			wh = false;
+			break;
+
+		default:
+			if ((ch >= '0') && (ch < N + '0')) {
+				/* Input is a number, move to that item */
+				i = ch - '0';
+				wmove(win, mnu[i].r, mnu[i].c + 1);
+				wh = false;
+			}
+			break;
+
 		}
+
 	}
 
 	return	i;
