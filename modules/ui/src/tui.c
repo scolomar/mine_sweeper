@@ -324,6 +324,7 @@ static	void	menu_devel	(void)
 
 static	void	menu_verbose	(void)
 {
+/*
 	int	h =	10;
 	int	w =	51;
 
@@ -341,6 +342,7 @@ static	void	menu_verbose	(void)
 	};
 
 	flag_V =	alx_menu(h, w, N, mnu, "VERBOSE: //Not yet//");
+*/
 }
 
 

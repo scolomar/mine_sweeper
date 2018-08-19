@@ -50,7 +50,7 @@ struct Board	board;
 
 enum Flag_s	flag_s;
 enum Flag_V	flag_V;
-enum Flag_x	flag_x;
+bool		flag_exit;
 bool		flag_color;
 
 char		file_name [FILENAME_MAX];
@@ -75,7 +75,7 @@ void	init_values	(void)
 
 	flag_s =	START_FOO;
 	flag_V =	1;
-	flag_x =	0;
+	flag_exit =	false;
 
 	seed =		seedf(clock(), time(NULL), getpid());
 	srand(seed);

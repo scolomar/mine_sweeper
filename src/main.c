@@ -31,7 +31,7 @@ int	main	(int argc, char *argv[])
 	start_switch();
 
 	/* Menu () */
-	if (!flag_x) {
+	if (!flag_exit) {
 		alx_resume_curses();
 		menu_main();
 	}

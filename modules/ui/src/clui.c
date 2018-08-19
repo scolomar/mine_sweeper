@@ -20,7 +20,7 @@
  ******************************************************************************/
 static	void	parse_rows		(char* argument);
 static	void	parse_columns		(char* argument);
-static	void	parse_file_name		(char* argument);
+static	void	parse_file		(char* argument);
 static	void	parse_proportion	(char* argument);
 static	void	parse_rand_seed		(char* argument);
 static	void	parse_start		(char* argument);
@@ -39,7 +39,8 @@ void	parser	(int argc, char *argv[])
 	struct option long_options[] = {
 		{"rows",		required_argument,	0,	'a'},
 		{"columns",		required_argument,	0,	'b'},
-		{"file-name",		required_argument,	0,	'f'},
+		{"exit",		no_argument,		0,	'e'},
+		{"file",		required_argument,	0,	'f'},
 		{"help",		no_argument,		0,	'h'},
 		{"license",		no_argument,		0,	'l'},
 		{"proportion",		required_argument,	0,	'p'},
@@ -47,7 +48,6 @@ void	parser	(int argc, char *argv[])
 		{"start",		required_argument,	0,	's'},
 		{"Verbose",		required_argument,	0,	'V'},
 		{"version",		no_argument,		0,	'v'},
-		{"exit",		no_argument,		0,	'x'},
 		{0,			0,			0,	0}
 	};
 
@@ -62,8 +62,12 @@ void	parser	(int argc, char *argv[])
 			parse_columns(optarg);
 			break;
 
+		case 'e':
+			flag_exit =	true;
+			break;
+
 		case 'f':
-			parse_file_name(optarg);
+			parse_file(optarg);
 			break;
 
 		case 'h':
@@ -86,6 +90,10 @@ void	parser	(int argc, char *argv[])
 			parse_start(optarg);
 			break;
 
+		case 'u':
+			print_usage();
+			exit(EXIT_FAILURE);
+
 		case 'V':
 /*
 			flag_V =	atoi(optarg);
@@ -100,10 +108,6 @@ void	parser	(int argc, char *argv[])
 		case 'v':
 			print_version();
 			exit(EXIT_SUCCESS);
-
-		case 'x':
-			flag_x =	true;
-			break;
 
 		case '?':
 			/* getopt_long already printed an error message. */
@@ -139,19 +143,19 @@ static	void	parse_columns		(char* argument)
 	}
 }
 
-static	void	parse_file_name		(char* argument)
+static	void	parse_file		(char* argument)
 {
-	strcpy(file_name, argument);
-	strcpy(file_path, SAVE_DIR);
-	strcat(file_path, file_name);
 	FILE	*fp;
-	fp =	fopen(file_name, "r");
+	fp =	fopen(argument, "r");
 	if (!fp) {
 		printf("--file argument not valid\n");
 		printf("It must be a valid file name\n");
 		exit(EXIT_FAILURE);
 	} else {
 		fclose(fp);
+
+		strcpy(file_name, "../../bin/");
+		strcat(file_name, argument);
 	}
 }
 
