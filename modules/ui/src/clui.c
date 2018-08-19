@@ -15,6 +15,20 @@
 	#include "clui.h"
 
 
+/******************************************************************************
+ ******* static ***************************************************************
+ ******************************************************************************/
+static	void	parse_rows		(char* argument);
+static	void	parse_columns		(char* argument);
+static	void	parse_file_name		(char* argument);
+static	void	parse_proportion	(char* argument);
+static	void	parse_rand_seed		(char* argument);
+static	void	parse_start		(char* argument);
+
+
+/******************************************************************************
+ ******* main *****************************************************************
+ ******************************************************************************/
 void	parser	(int argc, char *argv[])
 {
 	strcpy(prog_name, argv[0]);
@@ -25,13 +39,9 @@ void	parser	(int argc, char *argv[])
 	struct option long_options[] = {
 		{"rows",		required_argument,	0,	'a'},
 		{"columns",		required_argument,	0,	'b'},
-		{"file",		required_argument,	0,	'f'},
+		{"file-name",		required_argument,	0,	'f'},
 		{"help",		no_argument,		0,	'h'},
-		{"proportion-first",	required_argument,	0,	'i'},
-		{"proportion-interval",	required_argument,	0,	'j'},
-		{"proportion-last",	required_argument,	0,	'k'},
 		{"license",		no_argument,		0,	'l'},
-		{"order",		required_argument,	0,	'o'},
 		{"proportion",		required_argument,	0,	'p'},
 		{"rand-seed",		required_argument,	0,	'r'},
 		{"start",		required_argument,	0,	's'},
@@ -45,36 +55,15 @@ void	parser	(int argc, char *argv[])
 						&opt_index )) != -1) {
 		switch (opt) {
 		case 'a':
-			board.rows =	atoi(optarg);
-			if (board.rows < 1 || board.rows > ROWS_MAX) {
-				printf("--order-first argument not valid\n");
-				printf("It must be an integer [1 U %i]\n", ROWS_MAX);
-				exit(EXIT_FAILURE);
-			}
+			parse_rows(optarg);
 			break;
 
 		case 'b':
-			board.cols =	atoi(optarg);
-			if (board.cols < 1 || board.cols > COLS_MAX) {
-				printf("--order-interval argument not valid\n");
-				printf("It must be an integer [1 U %i]\n", COLS_MAX);
-				exit(EXIT_FAILURE);
-			}
+			parse_columns(optarg);
 			break;
 
 		case 'f':
-			strcpy(file_name, optarg);
-			strcpy(file_path, SAVE_DIR);
-			strcat(file_path, file_name);
-			FILE	*fp;
-			fp =	fopen(file_name, "r");
-			if (!fp) {
-				printf("--file argument not valid\n");
-				printf("It must be a valid file name\n");
-				exit(EXIT_FAILURE);
-			} else {
-				fclose(fp);
-			}
+			parse_file_name(optarg);
 			break;
 
 		case 'h':
@@ -86,35 +75,26 @@ void	parser	(int argc, char *argv[])
 			exit(EXIT_SUCCESS);
 
 		case 'p':
-			board.p =		atof(optarg);
-			if (board.p < 0 || board.p > 1) {
-				printf("--proportion argument not valid\n");
-				printf("It must be a real [0 U 1]\n");
-				exit(EXIT_FAILURE);
-			}
+			parse_proportion(optarg);
 			break;
 
 		case 'r':
-			seed =	atof(optarg);
-			srand(seed);
+			parse_rand_seed(optarg);
 			break;
 
 		case 's':
-			flag_s =	atoi(optarg);
-			if (flag_s < 0 || flag_s > 10) {
-				printf("--start argument not valid\n");
-				printf("It must be an integer [1 U 10]\n");
-				exit(EXIT_FAILURE);
-			}
+			parse_start(optarg);
 			break;
 
 		case 'V':
+/*
 			flag_V =	atoi(optarg);
 			if (flag_V < 0 || flag_V > 4) {
 				printf("--Verbose argument not valid\n");
 				printf("It must be an integer [0 U 4]\n");
 				exit(EXIT_FAILURE);
 			}
+*/
 			break;
 
 		case 'v':
@@ -132,5 +112,71 @@ void	parser	(int argc, char *argv[])
 			print_usage();
 			exit(EXIT_FAILURE);
 		}
+	}
+}
+
+
+/******************************************************************************
+ ******* static ***************************************************************
+ ******************************************************************************/
+static	void	parse_rows		(char* argument)
+{
+	board.rows =	atoi(argument);
+	if (board.rows < 2 || board.rows > ROWS_MAX) {
+		printf("--rows argument not valid\n");
+		printf("It must be an integer [%i U %i]\n", 2, ROWS_MAX);
+		exit(EXIT_FAILURE);
+	}
+}
+
+static	void	parse_columns		(char* argument)
+{
+	board.cols =	atoi(argument);
+	if (board.cols < 2 || board.cols > COLS_MAX) {
+		printf("--columns argument not valid\n");
+		printf("It must be an integer [%i U %i]\n", 2, COLS_MAX);
+		exit(EXIT_FAILURE);
+	}
+}
+
+static	void	parse_file_name		(char* argument)
+{
+	strcpy(file_name, argument);
+	strcpy(file_path, SAVE_DIR);
+	strcat(file_path, file_name);
+	FILE	*fp;
+	fp =	fopen(file_name, "r");
+	if (!fp) {
+		printf("--file argument not valid\n");
+		printf("It must be a valid file name\n");
+		exit(EXIT_FAILURE);
+	} else {
+		fclose(fp);
+	}
+}
+
+static	void	parse_proportion	(char* argument)
+{
+	board.p =	atof(argument);
+	if (board.p < 0 || board.p > 1) {
+		printf("--proportion argument not valid\n");
+		printf("It must be a real [0 U 1]\n");
+		exit(EXIT_FAILURE);
+	}
+}
+
+static	void	parse_rand_seed		(char* argument)
+{
+	seed =	atof(argument);
+	srand(seed);
+}
+
+static	void	parse_start		(char* argument)
+{
+	flag_s =	atoi(argument);
+	if (flag_s < 0 || flag_s > 10) {
+		printf("--start argument not valid\n");
+		printf("It must be an integer [%i U %i]\n", START_FOO, START_LOAD);
+		exit(EXIT_FAILURE);
 	}
 }

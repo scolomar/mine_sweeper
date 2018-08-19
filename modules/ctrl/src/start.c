@@ -45,8 +45,7 @@ void	start_switch	(void)
 
 static	void	start_foo	(void)
 {
-	printf("FOO");
-	getchar();
+	/* foo */
 }
 
 static	void	start_custom	(void)
