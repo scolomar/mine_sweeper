@@ -114,18 +114,22 @@ static	int	usr_input		(WINDOW *win)
 
 	switch (ch) {
 	case KEY_UP:
+	case 'k':
 		action =	ACT_MOVE_UP;
 		break;
 
 	case KEY_DOWN:
+	case 'j':
 		action =	ACT_MOVE_DOWN;
 		break;
 
 	case KEY_RIGHT:
+	case 'l':
 		action =	ACT_MOVE_RIGHT;
 		break;
 
 	case KEY_LEFT:
+	case 'h':
 		action =	ACT_MOVE_LEFT;
 		break;
 
@@ -137,7 +141,7 @@ static	int	usr_input		(WINDOW *win)
 		action =	ACT_FLAG;
 		break;
 
-	case 'd':
+	case 'f':
 		action =	ACT_FLAG_POSSIBLE;
 		break;
 
@@ -545,13 +549,24 @@ static	void	show_help_ready		(WINDOW *win)
 	r =	0;
 	c =	0;
 	mvwaddstr(win, r++, c++, "Move:");
-	mvwaddch(win, r, c, ACS_UARROW);
+	/* hjkl */
+	mvwaddch(win, r, c, 'h');
+	c += 2;
+	mvwaddch(win, r, c, 'j');
+	c += 2;
+	mvwaddch(win, r, c, 'k');
+	c += 2;
+	mvwaddch(win, r, c, 'l');
+	/* Arrows */
+	r++;
+	c = 1;
+	mvwaddch(win, r, c, ACS_LARROW);
 	c += 2;
 	mvwaddch(win, r, c, ACS_DARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_RARROW);
+	mvwaddch(win, r, c, ACS_UARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_LARROW);
+	mvwaddch(win, r, c, ACS_RARROW);
 
 	r++;
 	c = 0;
@@ -578,13 +593,24 @@ static	void	show_help_playing	(WINDOW *win)
 	r =	0;
 	c =	0;
 	mvwaddstr(win, r++, c++, "Move:");
-	mvwaddch(win, r, c, ACS_UARROW);
+	/* hjkl */
+	mvwaddch(win, r, c, 'h');
+	c += 2;
+	mvwaddch(win, r, c, 'j');
+	c += 2;
+	mvwaddch(win, r, c, 'k');
+	c += 2;
+	mvwaddch(win, r, c, 'l');
+	/* Arrows */
+	r++;
+	c = 1;
+	mvwaddch(win, r, c, ACS_LARROW);
 	c += 2;
 	mvwaddch(win, r, c, ACS_DARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_RARROW);
+	mvwaddch(win, r, c, ACS_UARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_LARROW);
+	mvwaddch(win, r, c, ACS_RARROW);
 
 	r++;
 	c = 0;
@@ -598,7 +624,7 @@ static	void	show_help_playing	(WINDOW *win)
 	mvwprintw(win, r++, c--, "Space");
 
 	mvwaddstr(win, r++, c++, "Possible:");
-	mvwprintw(win, r++, c--, "%c", 'd');
+	mvwprintw(win, r++, c--, "%c", 'f');
 
 	mvwaddstr(win, r++, c++, "rm flag:");
 	mvwprintw(win, r++, c--, "Backspace");
@@ -657,13 +683,24 @@ static	void	show_help_xyzzy		(WINDOW *win)
 	mvwprintw(win, r++, c--, "%c", '0');
 
 	mvwaddstr(win, r++, c++, "Move:");
-	mvwaddch(win, r, c, ACS_UARROW);
+	/* hjkl */
+	mvwaddch(win, r, c, 'h');
+	c += 2;
+	mvwaddch(win, r, c, 'j');
+	c += 2;
+	mvwaddch(win, r, c, 'k');
+	c += 2;
+	mvwaddch(win, r, c, 'l');
+	/* Arrows */
+	r++;
+	c = 1;
+	mvwaddch(win, r, c, ACS_LARROW);
 	c += 2;
 	mvwaddch(win, r, c, ACS_DARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_RARROW);
+	mvwaddch(win, r, c, ACS_UARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_LARROW);
+	mvwaddch(win, r, c, ACS_RARROW);
 
 	r++;
 	c = 0;
@@ -677,7 +714,7 @@ static	void	show_help_xyzzy		(WINDOW *win)
 	mvwprintw(win, r++, c--, "Space");
 
 	mvwaddstr(win, r++, c++, "Possible:");
-	mvwprintw(win, r++, c--, "%c", 'd');
+	mvwprintw(win, r++, c--, "%c", 'f');
 
 	mvwaddstr(win, r++, c++, "rm flag:");
 	mvwprintw(win, r++, c--, "Backspace");
@@ -699,13 +736,24 @@ static	void	show_help_cheated	(WINDOW *win)
 	r =	0;
 	c =	0;
 	mvwaddstr(win, r++, c++, "Move:");
-	mvwaddch(win, r, c, ACS_UARROW);
+	/* hjkl */
+	mvwaddch(win, r, c, 'h');
+	c += 2;
+	mvwaddch(win, r, c, 'j');
+	c += 2;
+	mvwaddch(win, r, c, 'k');
+	c += 2;
+	mvwaddch(win, r, c, 'l');
+	/* Arrows */
+	r++;
+	c = 1;
+	mvwaddch(win, r, c, ACS_LARROW);
 	c += 2;
 	mvwaddch(win, r, c, ACS_DARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_RARROW);
+	mvwaddch(win, r, c, ACS_UARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_LARROW);
+	mvwaddch(win, r, c, ACS_RARROW);
 
 	r++;
 	c = 0;
@@ -719,7 +767,7 @@ static	void	show_help_cheated	(WINDOW *win)
 	mvwprintw(win, r++, c--, "Space");
 
 	mvwaddstr(win, r++, c++, "Possible:");
-	mvwprintw(win, r++, c--, "%c", 'd');
+	mvwprintw(win, r++, c--, "%c", 'f');
 
 	mvwaddstr(win, r++, c++, "rm flag:");
 	mvwprintw(win, r++, c--, "Backspace");
