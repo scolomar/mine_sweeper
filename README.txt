@@ -66,23 +66,23 @@ MENU:
 	 * + Menu:
 	 *	+ Continue:
 	 *		- Start
-	 *		+ Change size:
-	 *			- Change rows:
-	 *			- Change cloumns:
+	 *		+ Select map:
+	 *			- New map
+	 *			- Load map("path
 	 *			- ..
-	 *		+ Change proportion of mines:
-	 *			- Change proportion of mines:
+	 *		+ Change difficulty:
+	 *			- Change rows: rows		(XX)
+	 *			- Change columns: cols		(XX)
+	 *			- Change proportion of mines: p	(XX.XXXXXX)
 	 *			- ..
-	 *		- Change seed (srand)
-	 *		+ Change verbose:
-	 *			- Show only time
-	 *			- Show WORST time, matrix and solution
-	 *			- Show time, matrix and solution
-	 *			- Show everything
-	 *			- Show NOTHING
+	 *		- Change file name (File: "<file_name>")
+	 *		+ DEVEL:
+	 *			- Change seed (srand)
+	 *			x Change verbose
+	 *			- ..
 	 *		- ..
-	 *	- Disclaimer
-	 *	- License
+	 *	- Disclaimer of warranty
+	 *	- Terms and conditions
 	 *	- Exit program
 	 */
 
@@ -90,7 +90,7 @@ MENU:
 SYSTEM REQUIREMENTS:
 
 	/*
-	 * Not much
+	 * A terminal ¿?
 	 */
 
 To be continued...

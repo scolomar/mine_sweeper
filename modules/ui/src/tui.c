@@ -124,16 +124,16 @@ static	void	menu_continue	(void)
 		{2, 4, "[1]	Start"},
 		{4, 4, "[2]	Select map"},
 		{5, 4, "[3]	Change difficulty"},
-		{6, 4, "[4]	Change file path"},
+		{6, 4, "[4]	Change file name"},
 		{8, 4, "[5]	DEVEL"}
 	};
 
-	char	*txt[] =	{"File path:"};
+	char	*txt[] =	{"File name:"};
 
 	wh = true;
 	while (wh) {
 		win =	newwin(h, w, r, c);
-		mvwprintw(win, mnu[6].r, mnu[6].c, "%s (V = %i)", mnu[6].t, flag_V);
+		mvwprintw(win, mnu[4].r, mnu[4].c, "%s (File: \"%s\")", mnu[4].t, file_name);
 		wrefresh(win);
 		sw =	alx_menu_2(win, N, mnu, "CONTINUE:");
 
@@ -191,7 +191,7 @@ static	void	menu_select	(void)
 	};
 
 	win =	newwin(h, w, r, c);
-	mvwprintw(win, mnu[2].r, mnu[2].c, "%s (\"Path: %s\")", mnu[1].t, file_name);
+	mvwprintw(win, mnu[2].r, mnu[2].c, "%s (File: \"%s\")", mnu[1].t, file_name);
 	wrefresh(win);
 	sw =	alx_menu_2(win, N, mnu, "SELECT MAP:");
 
