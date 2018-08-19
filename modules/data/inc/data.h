@@ -27,7 +27,7 @@
 	# define		PROG_YEAR	"2015"
 	# define		PROG_VERSION	"v2.rc"
 
-	# define		OPT_LIST	"a:b:f:hlp:r:s:V:vx"
+	# define		OPT_LIST	"a:b:ef:hlp:r:s:uV:v"
 
 	# define		ROWS_MAX	22
 	# define		COLS_MAX	33
@@ -86,17 +86,13 @@
 	};
 
 	enum	Flag_s {
-		START_FOO,
+		START_FOO = 0,
 		START_NEW,
 		START_LOAD
 	};
 
 	enum	Flag_V {
 		VERBOSE_FOO
-	};
-
-	enum	Flag_x {
-		X_FOO
 	};
 
 	enum	Color_Pairs {
@@ -175,7 +171,7 @@
 
 	extern	enum Flag_s	flag_s;
 	extern	enum Flag_V	flag_V;
-	extern	enum Flag_x	flag_x;
+	extern	bool		flag_exit;
 	extern	bool		flag_color;
 
 	extern	char		file_name [FILENAME_MAX];
