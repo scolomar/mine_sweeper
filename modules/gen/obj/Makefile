@@ -4,23 +4,13 @@
 
 # directories
 
-PNP_DIR = ../../../
-
-LIBALX_DIR = $(PNP_DIR)/libalx/
 LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
 
-MODULES_DIR = $(PNP_DIR)/modules/
-
-DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
-
-SAVE_DIR = $(MODULES_DIR)/save/
 SAVE_INC_DIR = $(SAVE_DIR)/inc/
 
-GEN_DIR = $(MODULES_DIR)/gen/
 INC_DIR = $(GEN_DIR)/inc/
 SRC_DIR = $(GEN_DIR)/src/
-TST_DIR = $(GEN_DIR)/tst/
 
 # dependencies
 
@@ -47,8 +37,10 @@ all: $(ALL)
 	
 
 init.o: $(INIT_DEPS)
-	$(CC) $(CFLAGS) $(INIT_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(INIT_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o

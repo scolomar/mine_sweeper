@@ -25,7 +25,6 @@
 
 	# define		PROG_NAME	"mine-sweeper"
 	# define		PROG_YEAR	"2015"
-	# define		PROG_VERSION	"3.a"
 
 	# define		OPT_LIST	"xhLuV:v""a:b:f:p:r:s:"
 

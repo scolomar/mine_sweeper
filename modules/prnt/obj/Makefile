@@ -4,20 +4,12 @@
 
 # directories
 
-PNP_DIR = ../../../
-
-LIBALX_DIR = $(PNP_DIR)/libalx/
 LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
 
-MODULES_DIR = $(PNP_DIR)/modules/
-
-DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
 
-PRNT_DIR = $(MODULES_DIR)/prnt/
 INC_DIR = $(PRNT_DIR)/inc/
 SRC_DIR = $(PRNT_DIR)/src/
-TST_DIR = $(PRNT_DIR)/tst/
 
 # dependencies
 
@@ -52,11 +44,15 @@ all: $(ALL)
 	
 
 about.o: $(ABOU_DEPS)
-	$(CC) $(CFLAGS) $(ABOU_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(ABOU_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 print.o: $(PRNT_DEPS)
-	$(CC) $(CFLAGS) $(PRNT_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(PRNT_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o

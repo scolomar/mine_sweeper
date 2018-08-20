@@ -4,25 +4,16 @@
 
 # directories
 
-PNP_DIR = ../../
-
-MODULES_DIR = $(PNP_DIR)/modules/
-GEN_DIR = $(MODULES_DIR)/gen/
 OBJ_DIR = $(GEN_DIR)/obj/
-TST_DIR = $(GEN_DIR)/tst/
 
 # target: dependencies
 #	action
 
 all:
-	cd $(OBJ_DIR) && $(MAKE) && cd ..
- ifeq ($(TST), true)
-	cd $(TST_DIR) && $(MAKE) && cd ..
- endif
+	$(Q)cd $(OBJ_DIR) && $(MAKE) && cd ..
 
 clean:
-	cd $(OBJ_DIR) && $(MAKE) clean && cd ..
-#	cd $(TST_DIR) && $(MAKE) clean && cd ..
+	$(Q)cd $(OBJ_DIR) && $(MAKE) clean && cd ..
 
 ################################################################################
 ######## End of file ###########################################################

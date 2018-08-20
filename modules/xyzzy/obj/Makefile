@@ -4,23 +4,12 @@
 
 # directories
 
-MSW_DIR = ../../../
-
-LIBALX_DIR = $(MSW_DIR)/libalx/
 LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
 
-MODULES_DIR = $(MSW_DIR)/modules/
-
-DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
-
-GEN_DIR = $(MODULES_DIR)/gen/
 GEN_INC_DIR = $(GEN_DIR)/inc/
-
-SAVE_DIR = $(MODULES_DIR)/save/
 SAVE_INC_DIR = $(SAVE_DIR)/inc/
 
-XYZZY_DIR = $(MODULES_DIR)/xyzzy/
 INC_DIR = $(XYZZY_DIR)/inc/
 SRC_DIR = $(XYZZY_DIR)/src/
 TST_DIR = $(XYZZY_DIR)/tst/
@@ -53,8 +42,10 @@ all: $(ALL)
 	
 
 xyzzy.o: $(GAME_DEPS)
-	$(CC) $(CFLAGS) $(XYZZY_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(XYZZY_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o

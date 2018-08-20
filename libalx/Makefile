@@ -4,8 +4,6 @@
 
 # directories
 
-LIBALX_DIR = ./
-
 OBJ_DIR = $(LIBALX_DIR)/obj/
 
 
@@ -13,8 +11,9 @@ OBJ_DIR = $(LIBALX_DIR)/obj/
 #	action
 
 all:
-	cd $(OBJ_DIR) && $(MAKE) && cd ..
+	$(Q)cd $(OBJ_DIR) && $(MAKE) && cd ..
 
 
 clean:
-	cd $(OBJ_DIR) && $(MAKE) clean && cd ..
+	$(Q)cd $(OBJ_DIR) && $(MAKE) clean && cd ..
+	@echo  "Clean libalx"
