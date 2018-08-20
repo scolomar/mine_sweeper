@@ -154,6 +154,80 @@ PHONY += binary
 binary:
 	$(Q)cd $(BIN_DIR) && $(MAKE) && cd ..
 
+PHONY += install
+install: uninstall
+	$(Q)mkdir build/
+	$(Q)mkdir build/bin/
+	$(Q)mkdir build/files/
+	$(Q)mkdir build/files/saved/
+	@echo  "Create directories"
+	@echo  ""
+	$(Q)cp ./COPYING.txt			build/
+	@echo "Copy COPYING.txt"
+	$(Q)cp ./README.txt			build/
+	@echo "Copy README.txt"
+	$(Q)cp ./bin/mine_sweeper		build/bin/
+	@echo "Copy bin/mine_sweeper"
+	$(Q)cp ./files/COPYRIGHT.txt		build/files/
+	@echo "Copy files/COPYRIGHT.txt"
+	$(Q)cp ./files/DISCLAIMER.txt		build/files/
+	@echo "Copy files/DISCLAIMER.txt"
+	$(Q)cp ./files/HELP.txt			build/files/
+	@echo "Copy files/HELP.txt"
+	$(Q)cp ./files/LICENSE.txt		build/files/
+	@echo "Copy files/LICENSE.txt"
+	$(Q)cp ./files/USAGE.txt		build/files/
+	@echo "Copy files/USAGE.txt"
+	$(Q)cp ./files/saved/saved_000.mine	build/files/saved/
+	@echo "Copy files/saved/saved_000.mine"
+	@echo  ""
+	@echo  "Done"
+	@echo  ""
+
+PHONY += install-usr-local
+install-usr-local: uninstall
+	$(Q)mkdir /usr/local/games//mine_sweeper/
+	$(Q)mkdir /usr/local/games//mine_sweeper//bin/
+	$(Q)mkdir /usr/local/games//mine_sweeper//files/
+	$(Q)mkdir /usr/local/games//mine_sweeper//files/saved/
+	@echo  "Create /usr/local/games//mine_sweeper//"
+	@echo  ""
+	$(Q)cp ./COPYING.txt			/usr/local/games//mine_sweeper//
+	@echo "Copy COPYING.txt"
+	$(Q)cp ./README.txt			/usr/local/games//mine_sweeper//
+	@echo "Copy README.txt"
+	$(Q)cp ./bin/mine_sweeper		/usr/local/games//mine_sweeper//bin/
+	@echo "Copy bin/mine_sweeper"
+	$(Q)cp ./files/COPYRIGHT.txt		/usr/local/games//mine_sweeper//files/
+	@echo "Copy files/COPYRIGHT.txt"
+	$(Q)cp ./files/DISCLAIMER.txt		/usr/local/games//mine_sweeper//files/
+	@echo "Copy files/DISCLAIMER.txt"
+	$(Q)cp ./files/HELP.txt			/usr/local/games//mine_sweeper//files/
+	@echo "Copy files/HELP.txt"
+	$(Q)cp ./files/LICENSE.txt		/usr/local/games//mine_sweeper//files/
+	@echo "Copy files/LICENSE.txt"
+	$(Q)cp ./files/USAGE.txt		/usr/local/games//mine_sweeper//files/
+	@echo "Copy files/USAGE.txt"
+	$(Q)cp ./files/saved/saved_000.mine	/usr/local/games//mine_sweeper//files/saved/
+	@echo "Copy files/saved/saved_000.mine"
+	@echo  ""
+	@echo  "Done"
+	@echo  ""
+	
+
+PHONY += uninstall
+uninstall:
+	$(Q)rm -f -r $(CURDIR)/build/
+	@echo  "Clean old builds"
+	@echo  ""
+	
+
+PHONY += uninstall
+uninstall:
+	$(Q)rm -f -r /usr/local/games//mine_sweeper//
+	@echo  "Clean old builds"
+	@echo  ""
+
 PHONY += clean
 clean:
 	$(Q)cd $(LIBALX_DIR) && $(MAKE) clean && cd ..
