@@ -8,28 +8,30 @@ Usage: ./mine_sweeper [OPTION...]
 
  Main modes of operation:
 	-s, --start=START_MODE		set start mode
-	-e, --exit			exit after using command line options
+	-x, --exit			exit after using command line options
 						(don't start menu)
 
  Controlling formatted output:
-	-V, --Verbose=LEVEL		set verbose level
+	-V, --verbose=LEVEL		set verbose level
 
  Other:
-	-l, --license			display license
-	-?, -h, --help			give this help list
+	-L, --license			display license
+	-h, --help			give this help list
 	-u, --usage			give a short usage message
-	-V, --version			print program version
+	-v, --version			print program version
 
 MANDATORY or [OPTIONAL] arguments to long options are also mandatory or optional
 for any corresponding short options.
 
 
  Examples:
+	./mine_sweeper
 	./mine_sweeper --version
 	./mine_sweeper --license
 	./mine_sweeper -a 5 -b 15 -p 0.1
-	./mine_sweeper -a 15 -b 20 -p 0.3 -s 1 -e
-	./mine_sweeper -f ../files/saved/saved_000.mine -s 2 -e
+	./mine_sweeper -a 15 -b 20 -p 0.3 -s 1 -x
+	./mine_sweeper -f ../files/saved/saved_000.mine -s 2 -x
 
 
-Report bugs to 1903716@gmail.com
+Report bugs to: 1903716@gmail.com
+mine_sweeper home page: <https://github.com/AlejandroColomar/mine_sweeper/>

@@ -37,58 +37,39 @@ void	parser	(int argc, char *argv[])
 	int	opt_index =	0;
 
 	struct option long_options[] = {
+		/* Standard */
+		{"exit",		no_argument,		0,	'x'},
+		{"help",		no_argument,		0,	'h'},
+		{"license",		no_argument,		0,	'L'},
+		{"usage",		no_argument,		0,	'u'},
+		{"verbose",		required_argument,	0,	'V'},
+		{"version",		no_argument,		0,	'v'},
+		/* Non-standard */
 		{"rows",		required_argument,	0,	'a'},
 		{"columns",		required_argument,	0,	'b'},
-		{"exit",		no_argument,		0,	'e'},
 		{"file",		required_argument,	0,	'f'},
-		{"help",		no_argument,		0,	'h'},
-		{"license",		no_argument,		0,	'l'},
 		{"proportion",		required_argument,	0,	'p'},
 		{"rand-seed",		required_argument,	0,	'r'},
 		{"start",		required_argument,	0,	's'},
-		{"Verbose",		required_argument,	0,	'V'},
-		{"version",		no_argument,		0,	'v'},
+		/* Null */
 		{0,			0,			0,	0}
 	};
 
 	while ((opt = getopt_long(argc, argv, OPT_LIST, long_options,
 						&opt_index )) != -1) {
 		switch (opt) {
-		case 'a':
-			parse_rows(optarg);
-			break;
-
-		case 'b':
-			parse_columns(optarg);
-			break;
-
-		case 'e':
+		/* Standard */
+		case 'x':
 			flag_exit =	true;
-			break;
-
-		case 'f':
-			parse_file(optarg);
 			break;
 
 		case 'h':
 			print_help();
 			exit(EXIT_SUCCESS);
 
-		case 'l':
+		case 'L':
 			print_license();
 			exit(EXIT_SUCCESS);
-
-		case 'p':
-			parse_proportion(optarg);
-			break;
-
-		case 'r':
-			parse_rand_seed(optarg);
-			break;
-
-		case 's':
-			parse_start(optarg);
-			break;
 
 		case 'u':
 			print_usage();
@@ -108,6 +89,31 @@ void	parser	(int argc, char *argv[])
 		case 'v':
 			print_version();
 			exit(EXIT_SUCCESS);
+
+		/* Non-standard */
+		case 'a':
+			parse_rows(optarg);
+			break;
+
+		case 'b':
+			parse_columns(optarg);
+			break;
+
+		case 'f':
+			parse_file(optarg);
+			break;
+
+		case 'p':
+			parse_proportion(optarg);
+			break;
+
+		case 'r':
+			parse_rand_seed(optarg);
+			break;
+
+		case 's':
+			parse_start(optarg);
+			break;
 
 		case '?':
 			/* getopt_long already printed an error message. */

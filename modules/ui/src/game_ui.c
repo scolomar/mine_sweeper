@@ -133,6 +133,7 @@ static	int	usr_input		(WINDOW *win)
 		break;
 
 	case '\r':
+	case '\n':
 		action =	ACT_STEP;
 		break;
 
