@@ -4,29 +4,15 @@
 
 # directories
 
-MSW_DIR = ../../../
-
-LIBALX_DIR = $(MSW_DIR)/libalx/
 LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
 
-MODULES_DIR = $(MSW_DIR)/modules/
-
-CTRL_DIR = $(MODULES_DIR)/ctrl/
 CTRL_INC_DIR = $(CTRL_DIR)/inc/
-
-DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
-
-GAME_DIR = $(MODULES_DIR)/game/
 GAME_INC_DIR = $(GAME_DIR)/inc/
-
-PRNT_DIR = $(MODULES_DIR)/prnt/
 PRNT_INC_DIR = $(PRNT_DIR)/inc/
 
-UI_DIR = $(MODULES_DIR)/ui/
 INC_DIR = $(UI_DIR)/inc/
 SRC_DIR = $(UI_DIR)/src/
-TST_DIR = $(UI_DIR)/tst/
 
 # dependencies
 
@@ -90,14 +76,20 @@ all: $(ALL)
 	
 
 clui.o: $(CLUI_DEPS)
-	$(CC) $(CFLAGS) $(CLUI_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(CLUI_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 game_ui.o: $(GAMEUI_DEPS)
-	$(CC) $(CFLAGS) $(GAMEUI_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(GAMEUI_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 tui.o: $(TUI_DEPS)
-	$(CC) $(CFLAGS) $(TUI_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(TUI_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o

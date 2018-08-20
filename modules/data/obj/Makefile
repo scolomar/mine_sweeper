@@ -4,13 +4,8 @@
 
 # directories
 
-PNP_DIR = ../../../
-
-LIBALX_DIR = $(PNP_DIR)/libalx/
 LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
 
-MODULES_DIR = $(PNP_DIR)/modules/
-DATA_DIR = $(MODULES_DIR)/data/
 INC_DIR = $(DATA_DIR)/inc/
 SRC_DIR = $(DATA_DIR)/src/
 TST_DIR = $(DATA_DIR)/tst/
@@ -34,8 +29,10 @@ all: $(ALL)
 	
 
 data.o: $(DATA_DEPS)
-	$(CC) $(CFLAGS) $(DATA_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(DATA_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o

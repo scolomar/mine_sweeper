@@ -4,23 +4,11 @@
 
 # directories
 
-PNP_DIR = ../../../
-
-MODULES_DIR = $(PNP_DIR)/modules/
-
-DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
-
-GEN_DIR = $(MODULES_DIR)/gen/
 GEN_INC_DIR = $(GEN_DIR)/inc/
-
-PRNT_DIR = $(MODULES_DIR)/prnt/
 PRNT_INC_DIR = $(PRNT_DIR)/inc/
-
-UI_DIR = $(MODULES_DIR)/ui/
 UI_INC_DIR = $(UI_DIR)/inc/
 
-CTRL_DIR = $(MODULES_DIR)/ctrl/
 INC_DIR = $(CTRL_DIR)/inc/
 SRC_DIR = $(CTRL_DIR)/src/
 TST_DIR = $(CTRL_DIR)/tst/
@@ -53,8 +41,10 @@ all: $(ALL)
 	
 
 start.o: $(STRT_DEPS)
-	$(CC) $(CFLAGS) $(STRT_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(STRT_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o
