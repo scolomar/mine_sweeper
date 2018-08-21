@@ -4,12 +4,7 @@
 
 # directories
 
-PNP_DIR = ../
-
-LIBALX_DIR = $(PNP_DIR)/libalx/
 LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
-
-MODULES_DIR = $(PNP_DIR)/modules/
 
 CTRL_DIR = $(MODULES_DIR)/ctrl/
 CTRL_INC_DIR = $(CTRL_DIR)/inc/
@@ -26,7 +21,7 @@ PRNT_INC_DIR = $(PRNT_DIR)/inc/
 UI_DIR = $(MODULES_DIR)/ui/
 UI_INC_DIR = $(UI_DIR)/inc/
 
-SRC_DIR = $(PNP_DIR)/src/
+SRC_DIR = $(MAIN_DIR)/src/
 
 # dependencies
 
@@ -59,11 +54,13 @@ MAIN_INC_DIRS = -I $(LIBALX_INC_DIR) \
 all: $(ALL)
 
 main.o: $(MAIN_DEPS)
-	$(CC) $(CFLAGS) $(MAIN_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(MAIN_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o
 
 ################################################################################
 ######## End of file ###########################################################

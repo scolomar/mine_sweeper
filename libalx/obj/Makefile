@@ -4,8 +4,6 @@
 
 # directories
 
-LIBALX_DIR = ../
-
 INC_DIR = $(LIBALX_DIR)/inc/
 OBJ_DIR = $(LIBALX_DIR)/obj/
 SRC_DIR = $(LIBALX_DIR)/src/
@@ -49,26 +47,40 @@ all: $(ALL)
 
 
 alx_cmp.o: $(CMP_DEPS)
-	$(CC) $(CFLAGS) $(CMP_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(CMP_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 alx_file.o: $(FILE_DEPS)
-	$(CC) $(CFLAGS) $(FILE_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(FILE_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 alx_getnum.o: $(GETN_DEPS)
-	$(CC) $(CFLAGS) $(GETN_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(GETN_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 alx_mask.o: $(MASK_DEPS)
-	$(CC) $(CFLAGS) $(MASK_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(MASK_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 alx_math.o: $(MATH_DEPS)
-	$(CC) $(CFLAGS) $(MATH_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(MATH_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 alx_ncur.o: $(NCUR_DEPS)
-	$(CC) $(CFLAGS) $(NCUR_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(NCUR_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 alx_seed.o: $(SEED_DEPS)
-	$(CC) $(CFLAGS) $(SEED_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(SEED_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o

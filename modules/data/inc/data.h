@@ -25,9 +25,8 @@
 
 	# define		PROG_NAME	"mine-sweeper"
 	# define		PROG_YEAR	"2015"
-	# define		PROG_VERSION	"2.rc"
 
-	# define		OPT_LIST	"a:b:ef:hlp:r:s:uV:v"
+	# define		OPT_LIST	"xhLuV:v""a:b:f:p:r:s:"
 
 	# define		ROWS_MAX	22
 	# define		COLS_MAX	33

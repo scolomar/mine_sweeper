@@ -4,26 +4,14 @@
 
 # directories
 
-PNP_DIR = ../../../
-
-LIBALX_DIR = $(PNP_DIR)/libalx/
 LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
 
-MODULES_DIR = $(PNP_DIR)/modules/
-
-DATA_DIR = $(MODULES_DIR)/data/
 DATA_INC_DIR = $(DATA_DIR)/inc/
-
-GEN_DIR = $(MODULES_DIR)/gen/
 GEN_INC_DIR = $(GEN_DIR)/inc/
-
-SAVE_DIR = $(MODULES_DIR)/save/
 SAVE_INC_DIR = $(SAVE_DIR)/inc/
 
-GAME_DIR = $(MODULES_DIR)/game/
 INC_DIR = $(GAME_DIR)/inc/
 SRC_DIR = $(GAME_DIR)/src/
-TST_DIR = $(GAME_DIR)/tst/
 
 # dependencies
 
@@ -53,8 +41,10 @@ all: $(ALL)
 	
 
 game.o: $(GAME_DEPS)
-	$(CC) $(CFLAGS) $(GAME_INC_DIRS) -c $< -o $@ $(LIBS)
+	$(Q)$(CC) $(CFLAGS) $(GAME_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
 
 
 clean:
-	rm -f *.o
+	$(Q)rm -f *.o

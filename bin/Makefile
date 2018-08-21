@@ -1,15 +1,8 @@
 # -*- MakeFile -*-
 
-# MACRO = substitute with this
-
 # directories
 
-MSW_DIR = ../
-
-LIBALX_DIR = $(MSW_DIR)/libalx/
 LIBALX_OBJ_DIR = $(LIBALX_DIR)/obj/
-
-MODULES_DIR = $(MSW_DIR)/modules/
 
 CTRL_DIR = $(MODULES_DIR)/ctrl/
 CTRL_OBJ_DIR = $(CTRL_DIR)/obj/
@@ -32,30 +25,35 @@ SAVE_OBJ_DIR = $(SAVE_DIR)/obj/
 UI_DIR = $(MODULES_DIR)/ui/
 UI_OBJ_DIR = $(UI_DIR)/obj/
 
-OBJ_DIR = $(MSW_DIR)/obj/
+OBJ_DIR = $(MAIN_DIR)/obj/
 
 # dependencies
+_ALL = mine_sweeper mine_sweeper.exe
 
-ALL = mine_sweeper
+ifeq ($(OS), linux)
+  ALL = mine_sweeper
+else ifeq ($(OS), win)
+  ALL = mine_sweeper.exe
+endif
 
-MSW_OBJ_LIBALX =	alx_file.o alx_getnum.o alx_ncur.o alx_seed.o
-MSW_OBJ_CTRL =		start.o
-MSW_OBJ_DATA =		data.o
-MSW_OBJ_GAME =		game.o
-MSW_OBJ_GEN =		init.o
-MSW_OBJ_PRNT =		about.o print.o
-MSW_OBJ_SAVE =		save.o
-MSW_OBJ_UI =		clui.o game_ui.o tui.o
+MAIN_OBJ_LIBALX =	alx_file.o alx_getnum.o alx_ncur.o alx_seed.o
+MAIN_OBJ_CTRL =		start.o
+MAIN_OBJ_DATA =		data.o
+MAIN_OBJ_GAME =		game.o
+MAIN_OBJ_GEN =		init.o
+MAIN_OBJ_PRNT =		about.o print.o
+MAIN_OBJ_SAVE =		save.o
+MAIN_OBJ_UI =		clui.o game_ui.o tui.o
 
-MSW_OBJS = $(OBJ_DIR)/main.o \
-			$(patsubst %,$(LIBALX_OBJ_DIR)/%,$(MSW_OBJ_LIBALX)) \
-			$(patsubst %,$(CTRL_OBJ_DIR)/%,$(MSW_OBJ_CTRL)) \
-			$(patsubst %,$(DATA_OBJ_DIR)/%,$(MSW_OBJ_DATA)) \
-			$(patsubst %,$(GAME_OBJ_DIR)/%,$(MSW_OBJ_GAME)) \
-			$(patsubst %,$(GEN_OBJ_DIR)/%,$(MSW_OBJ_GEN)) \
-			$(patsubst %,$(PRNT_OBJ_DIR)/%,$(MSW_OBJ_PRNT)) \
-			$(patsubst %,$(SAVE_OBJ_DIR)/%,$(MSW_OBJ_SAVE)) \
-			$(patsubst %,$(UI_OBJ_DIR)/%,$(MSW_OBJ_UI))
+MAIN_OBJS = $(OBJ_DIR)/main.o \
+			$(patsubst %,$(LIBALX_OBJ_DIR)/%,$(MAIN_OBJ_LIBALX)) \
+			$(patsubst %,$(CTRL_OBJ_DIR)/%,$(MAIN_OBJ_CTRL)) \
+			$(patsubst %,$(DATA_OBJ_DIR)/%,$(MAIN_OBJ_DATA)) \
+			$(patsubst %,$(GAME_OBJ_DIR)/%,$(MAIN_OBJ_GAME)) \
+			$(patsubst %,$(GEN_OBJ_DIR)/%,$(MAIN_OBJ_GEN)) \
+			$(patsubst %,$(PRNT_OBJ_DIR)/%,$(MAIN_OBJ_PRNT)) \
+			$(patsubst %,$(SAVE_OBJ_DIR)/%,$(MAIN_OBJ_SAVE)) \
+			$(patsubst %,$(UI_OBJ_DIR)/%,$(MAIN_OBJ_UI))
 
 
 # target: dependencies
@@ -64,12 +62,20 @@ MSW_OBJS = $(OBJ_DIR)/main.o \
 all: $(ALL)
 
 
-mine_sweeper: $(MSW_OBJS)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+mine_sweeper: $(MAIN_OBJS)
+	$(Q)$(CC) $^ -o $@ $(LIBS)
+	@echo  "\tLD $<"
+	@echo  ""
+
+mine_sweeper.exe: $(MAIN_OBJS)
+	$(Q)$(CC) $^ -o $@ $(LIBS)
+	@echo  "\tLD $<"
+	@echo  ""
 
 
 clean:
-	rm -f $(ALL)
+	$(Q)rm -f $(ALL)
+	@echo  "Clean binaries"
 
 ################################################################################
 ######## End of file ###########################################################
