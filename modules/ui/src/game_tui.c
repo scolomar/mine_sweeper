@@ -31,7 +31,7 @@ static	WINDOW	*win_help;
 static	int	usr_input		(WINDOW *win);
 
 static	void	show_board		(WINDOW *win, int pos_row, int pos_col);
-static	void	board_loop		(WINDOW *win);
+static	void	board_loop		(WINDOW *win, int pos_row, int pos_col);
 static	void	show_char		(WINDOW *win, int row, int col,
 					wchar_t ch);
 
@@ -155,6 +155,9 @@ static	int	usr_input		(WINDOW *win)
 		break;
 
 	case 'x':
+		/* Wait for special sequence "xyzzy" */
+		wtimeout(win, 1000);
+
 		ch = wgetch(win);
 		if (ch == 'y') {
 			ch = wgetch(win);
@@ -168,6 +171,9 @@ static	int	usr_input		(WINDOW *win)
 				}
 			}
 		}
+
+		/* Resume normal mode */
+		wtimeout(win, 100);
 		break;
 
 	case '0':
@@ -179,7 +185,11 @@ static	int	usr_input		(WINDOW *win)
 		break;
 
 	case '2':
-		action =	ACT_XYZZY_SQ;
+		action =	ACT_XYZZY_P;
+		break;
+
+	case '3':
+		action =	ACT_XYZZY_NP;
 		break;
 
 	case 'q':
@@ -246,19 +256,16 @@ static	void	show_board		(WINDOW *win, int pos_row, int pos_col)
 	}
 
 	/* Board */
-	board_loop(win);
+	board_loop(win, pos_row, pos_col);
 
-	/* Highlight cursor */
-	if (highlight) {
-		show_char(win, 1 + pos_row, 2 + 2 * pos_col, 'c');
-	}
+	/* Cursor */
 	wmove(win, 1 + pos_row, 2 + 2 * pos_col);
 
 	/* Refresh */
 	wrefresh(win);
 }
 
-static	void	board_loop		(WINDOW *win)
+static	void	board_loop		(WINDOW *win, int pos_row, int pos_col)
 {
 	int	i;
 	int	j;
@@ -267,34 +274,54 @@ static	void	board_loop		(WINDOW *win)
 	wchar_t	ch;
 
 	for (i = 0; i < board.rows; i++) {
-		k =	1 + i;
+		k = 1 + i;
 
 		/* clear */
 		for (j = 0; j < board.cols; j++) {
-			l =	2 + 2 * j;
+			l = 2 + 2 * j;
 			if (board.usr[i][j] == USR_CLEAR) {
-				ch =	board.visible[i][j];
+				ch	= board.visible[i][j];
 				show_char(win, k, l, ch);
 			}
 		}
 		/* xyzzy */
 		/* hidden */
 		for (j = 0; j < board.cols; j++) {
-			l =	2 + 2 * j;
+			l = 2 + 2 * j;
 			if (board.usr[i][j] != USR_CLEAR) {
-				ch =	board.visible[i][j];
+				ch	= board.visible[i][j];
 				show_char(win, k, l, ch);
 			}
 		}
 		/* kboom */
 		for (j = 0; j < board.cols; j++) {
-			l =	2 + 2 * j;
+			l = 2 + 2 * j;
 			if (board.usr[i][j] == KBOOM) {
-				ch =	board.visible[i][j];
+				ch	= board.visible[i][j];
 				show_char(win, k, l, ch);
 			}
 		}
 	}
+
+	/* Highlight cursor */
+	int	pair;
+	if (highlight) {
+		k	= 1 + pos_row;
+		l	= 2 + 2 * pos_col;
+		ch	= board.visible[pos_row][pos_col];
+
+		pair	= PAIR_HILITE;
+		if (flag_color) {
+			wattron(win, A_BOLD | COLOR_PAIR(pair));
+		}
+		mvwaddch(win, k, l - 1, '<');
+		mvwaddch(win, k, l, ch);
+		mvwaddch(win, k, l + 1, '>');
+		if (flag_color) {
+			wattroff(win, A_BOLD | COLOR_PAIR(pair));
+		}
+	}
+
 	/* Refresh */
 	wrefresh(win);
 }
@@ -370,10 +397,6 @@ static	void	show_char		(WINDOW *win, int row, int col, wchar_t ch)
 		pair =	PAIR_KBOOM;
 		break;
 
-	case 'c':
-		pair =	PAIR_HILITE;
-		break;
-
 	default:
 		pair =	PAIR_KBOOM;
 		break;
@@ -383,9 +406,12 @@ static	void	show_char		(WINDOW *win, int row, int col, wchar_t ch)
 	if (flag_color) {
 		wattron(win, A_BOLD | COLOR_PAIR(pair));
 	}
-	mvwaddch(win, row, col - 1, ' ');
-	mvwaddch(win, row, col, ch);
-	mvwaddch(win, row, col + 1, ' ');
+	if (ch == 'c') {
+	} else {
+		mvwaddch(win, row, col - 1, ' ');
+		mvwaddch(win, row, col, ch);
+		mvwaddch(win, row, col + 1, ' ');
+	}
 	if (flag_color) {
 		wattroff(win, A_BOLD | COLOR_PAIR(pair));
 	}

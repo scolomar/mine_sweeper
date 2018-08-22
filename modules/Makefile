@@ -36,6 +36,7 @@ all:
 	$(Q)cd $(PRNT_DIR) && $(MAKE) && cd ..
 	$(Q)cd $(SAVE_DIR) && $(MAKE) && cd ..
 	$(Q)cd $(UI_DIR) && $(MAKE) && cd ..
+	$(Q)cd $(XYZZY_DIR) && $(MAKE) && cd ..
 
 
 clean:
@@ -46,6 +47,7 @@ clean:
 	$(Q)cd $(PRNT_DIR) && $(MAKE) clean && cd ..
 	$(Q)cd $(SAVE_DIR) && $(MAKE) clean && cd ..
 	$(Q)cd $(UI_DIR) && $(MAKE) clean && cd ..
+	$(Q)cd $(XYZZY_DIR) && $(MAKE) clean && cd ..
 	@echo  "Clean modules"
 
 ################################################################################

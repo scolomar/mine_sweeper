@@ -2,8 +2,8 @@
 # This Makefile has parts of the linux kernel Makefile code.
 VERSION	= 3
 PATCHLEVEL = a
-SUBLEVEL = 6
-EXTRAVERSION = 4
+SUBLEVEL = 7
+EXTRAVERSION =
 NAME = instalable
 
 export	VERSION
