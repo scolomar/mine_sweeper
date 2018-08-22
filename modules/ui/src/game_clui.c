@@ -133,6 +133,7 @@ static	int	usr_input		(void)
 		break;
 
 	case 'x':
+		/* Special sequence "xyzzy" */
 		ch = getchar();
 		if (ch == 'y') {
 			ch = getchar();
@@ -157,7 +158,11 @@ static	int	usr_input		(void)
 		break;
 
 	case '2':
-		action =	ACT_XYZZY_SQ;
+		action =	ACT_XYZZY_P;
+		break;
+
+	case '3':
+		action =	ACT_XYZZY_NP;
 		break;
 
 	case 'q':

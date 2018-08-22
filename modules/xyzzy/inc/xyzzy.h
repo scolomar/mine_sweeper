@@ -6,6 +6,7 @@
 	# define	MSW_XYZZY_H
 
 
-void	xyzzy		(void);
+void	xyzzy_lin	(void);
+void	xyzzy_p		(void);
 
 # endif			/* xyzzy.h */

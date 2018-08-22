@@ -25,6 +25,9 @@ SAVE_OBJ_DIR = $(SAVE_DIR)/obj/
 UI_DIR = $(MODULES_DIR)/ui/
 UI_OBJ_DIR = $(UI_DIR)/obj/
 
+XYZZY_DIR = $(MODULES_DIR)/xyzzy/
+XYZZY_OBJ_DIR = $(XYZZY_DIR)/obj/
+
 OBJ_DIR = $(MAIN_DIR)/obj/
 
 # dependencies
@@ -44,6 +47,7 @@ MAIN_OBJ_GEN =		init.o
 MAIN_OBJ_PRNT =		about.o print.o
 MAIN_OBJ_SAVE =		save.o
 MAIN_OBJ_UI =		parser.o game_iface.o game_clui.o game_tui.o tui.o
+MAIN_OBJ_XYZZY =	xyzzy.o
 
 MAIN_OBJS = $(OBJ_DIR)/main.o \
 			$(patsubst %,$(LIBALX_OBJ_DIR)/%,$(MAIN_OBJ_LIBALX)) \
@@ -53,7 +57,8 @@ MAIN_OBJS = $(OBJ_DIR)/main.o \
 			$(patsubst %,$(GEN_OBJ_DIR)/%,$(MAIN_OBJ_GEN)) \
 			$(patsubst %,$(PRNT_OBJ_DIR)/%,$(MAIN_OBJ_PRNT)) \
 			$(patsubst %,$(SAVE_OBJ_DIR)/%,$(MAIN_OBJ_SAVE)) \
-			$(patsubst %,$(UI_OBJ_DIR)/%,$(MAIN_OBJ_UI))
+			$(patsubst %,$(UI_OBJ_DIR)/%,$(MAIN_OBJ_UI)) \
+			$(patsubst %,$(XYZZY_OBJ_DIR)/%,$(MAIN_OBJ_XYZZY))
 
 
 # target: dependencies

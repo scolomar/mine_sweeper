@@ -9,7 +9,10 @@ LIBALX_INC_DIR = $(LIBALX_DIR)/inc/
 CTRL_INC_DIR = $(CTRL_DIR)/inc/
 DATA_INC_DIR = $(DATA_DIR)/inc/
 GAME_INC_DIR = $(GAME_DIR)/inc/
+GEN_INC_DIR = $(GEN_DIR)/inc/
 PRNT_INC_DIR = $(PRNT_DIR)/inc/
+SAVE_INC_DIR = $(SAVE_DIR)/inc/
+XYZZY_INC_DIR = $(XYZZY_DIR)/inc/
 
 INC_DIR = $(UI_DIR)/inc/
 SRC_DIR = $(UI_DIR)/src/
@@ -38,16 +41,25 @@ PARS_INC_DIRS = -I $(INC_DIR) \
 GAMEI_INC_LIBALX =
 GAMEI_INC_DATA =	data.h
 GAMEI_INC_GAME =	game.h
+GAMEI_INC_GEN =		init.h
+GAMEI_INC_SAVE =	save.h
+GAMEI_INC_XYZZY =	xyzzy.h
 GAMEI_INC =	game_iface.h game_clui.h game_tui.h
 GAMEI_DEPS = $(SRC_DIR)/game_iface.c \
 			$(patsubst %,$(INC_DIR)/%,$(GAMEI_INC)) \
 			$(patsubst %,$(LIBALX_INC_DIR)/%,$(GAMEI_INC_LIBALX)) \
 			$(patsubst %,$(DATA_INC_DIR)/%,$(GAMEI_INC_DATA)) \
-			$(patsubst %,$(GAME_INC_DIR)/%,$(GAMEI_INC_GAME))
+			$(patsubst %,$(GAME_INC_DIR)/%,$(GAMEI_INC_GAME)) \
+			$(patsubst %,$(GEN_INC_DIR)/%,$(GAMEI_INC_GEN)) \
+			$(patsubst %,$(SAVE_INC_DIR)/%,$(GAMEI_INC_SAVE)) \
+			$(patsubst %,$(XYZZY_INC_DIR)/%,$(GAMEI_INC_XYZZY))
 GAMEI_INC_DIRS = -I $(INC_DIR) \
 			-I $(LIBALX_INC_DIR) \
 			-I $(DATA_INC_DIR) \
-			-I $(GAME_INC_DIR)
+			-I $(GAME_INC_DIR) \
+			-I $(GEN_INC_DIR) \
+			-I $(SAVE_INC_DIR) \
+			-I $(XYZZY_INC_DIR)
 
 GAMECLUI_INC_LIBALX =
 GAMECLUI_INC_DATA =	data.h
