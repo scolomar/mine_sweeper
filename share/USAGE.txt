@@ -1,8 +1,8 @@
- Usage:  ./mine_sweeper	[--exit] [--help] [--license] [--usage]
+ Usage:  $ mine_sweeper	[--exit] [--help] [--license] [--usage]
 			[--verbose=LEVEL] [--version]
 			[--rows=ROWS] [--columns=COLS] [--file=FILE]
-			[--proportion=PROPORTION] [--rand-seed=SEED]
-			[--start=START_MODE]
+			[--iface=IFACE] [--proportion=PROPORTION]
+			[--rand-seed=SEED] [--start=START_MODE]
 
 
- Type ./mine_sweeper --help for a full description.
+ Type '$ mine_sweeper --help' for a full description.

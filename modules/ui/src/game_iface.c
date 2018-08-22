@@ -32,6 +32,17 @@ static	wchar_t	board_char			(int row, int col);
  ******************************************************************************/
 void	game_iface	(void)
 {
+	/* Init interface */
+	switch (flag_iface) {
+	case IFACE_CLUI:
+		/* Empty */
+		break;
+
+	case IFACE_TUI:
+		game_tui_init();
+		break;
+	}
+
 	/* Board position */
 	int	pos_row;
 	int	pos_col;
@@ -55,6 +66,17 @@ void	game_iface	(void)
 		}
 		game_action(action, &pos_row, &pos_col);
 		game_update_time();
+	}
+
+	/* Cleanup interface */
+	switch (flag_iface) {
+	case IFACE_CLUI:
+		/* Empty */
+		break;
+
+	case IFACE_TUI:
+		game_tui_cleanup();
+		break;
 	}
 }
 

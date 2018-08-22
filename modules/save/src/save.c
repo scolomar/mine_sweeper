@@ -2,6 +2,7 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
+	#include <errno.h>
 		/* fscanf() & fprintf() & FILE & FILENAME_MAX */
 	#include <stdio.h>
 		/* strcpy() & strcat() */
@@ -19,11 +20,10 @@ static	FILE	*fp;
 	/*
 	 * Load from a file.
 	 */
-int	load_game_file	(void)
+void	load_game_file	(void)
 {
 	int	i;
 	int	j;
-	int	err;
 	char	file_name [FILENAME_MAX];
 
 	strcpy(file_name, saved_path);
@@ -53,22 +53,17 @@ int	load_game_file	(void)
 		fscanf(fp, " cleared %i", &board.cleared);
 
 		fclose(fp);
-		err =	ERR_OK;
 
-		board.time =	CHEATED;
-		board.clicks =	CHEATED;
-		board.state =	GAME_CHEATED;
-	} else {
-		err =	ERR_FILENAME;
+		board.time	= CHEATED;
+		board.clicks	= CHEATED;
+		board.state	= GAME_CHEATED;
 	}
-
-	return	err;
 }
 
 	/*
 	 * Save into a file.
 	 */
-int	save_game_file	(void)
+void	save_game_file	(void)
 {
 	/* Look for an unused name of the type 'saved_XXX.mine'. */
 	char	file_name [FILENAME_MAX];
@@ -92,7 +87,6 @@ int	save_game_file	(void)
 	}
 
 	/* Write to a new file */
-	int	err;
 	int	j;
 	fp = fopen(file_name, "w");
 	if (fp) {
@@ -120,12 +114,7 @@ int	save_game_file	(void)
 		fprintf(fp, "cleared %i\n", board.cleared);
 
 		fclose(fp);
-		err =	ERR_OK;
-	} else {
-		err =	ERR_FILENAME;
 	}
-
-	return	err;
 }
 
 /******************************************************************************

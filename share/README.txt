@@ -42,7 +42,7 @@
 	I would like to see it. Thank you.
 
 COMPILE:
-	linux: 
+	linux:
 		$ make
 	windows (MSYS):
 		$ make OS=win
@@ -52,10 +52,12 @@ INSTALL:
 		# make install
 
 RUN:
-	linux: 
-		$ /usr/local/games/mine_sweeper/bin/mine_sweeper
+	linux:
+		$ mine_sweeper
+				if it doesn't work:
+		$ /usr/local/games/mine_sweeper
 	windows:
-		double click on win/mine_sweeper.exe
+		double click on bin/mine_sweeper.exe
 
 UNINSTALL:
 	linux:

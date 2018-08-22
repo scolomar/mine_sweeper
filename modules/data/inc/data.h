@@ -28,7 +28,7 @@
 	# define		PROG_NAME		"mine-sweeper"
 	# define		PROG_YEAR		"2015"
 
-	# define		OPT_LIST		"xhLuV:v""a:b:f:p:r:s:"
+	# define		OPT_LIST		"xhLuV:v""a:b:f:i:p:r:s:"
 
 	# if defined (OS_LINUX)
 	#	define		ENV_HOME		"HOME"

@@ -3,6 +3,7 @@ Usage: ./mine_sweeper [OPTION...]
 	-a, --rows=ROWS			set number of rows
 	-b, --columns=COLS		set number of columns
 	-f, --file=FILE			set game file
+	-i, --iface=IFACE		set game interface
 	-p, --proportion=PROPORTION	set proportion of mines
 	-r, --rand-seed=SEED		set seed for rand
 
@@ -25,12 +26,13 @@ for any corresponding short options.
 
 
  Examples:
-	./mine_sweeper
-	./mine_sweeper --version
-	./mine_sweeper --license
-	./mine_sweeper -a 5 -b 15 -p 0.1
-	./mine_sweeper -a 15 -b 20 -p 0.3 -s 1 -x
-	./mine_sweeper -f ../files/saved/saved_000.mine -s 2 -x
+	$ mine_sweeper
+	$ mine_sweeper --version
+	$ mine_sweeper --license
+	$ mine_sweeper -i 1
+	$ mine_sweeper -a 5 -b 15 -p 0.1
+	$ mine_sweeper -a 15 -b 20 -p 0.3 -s 1 -x
+	$ mine_sweeper -f ../files/saved/saved_000.mine -s 2 -x
 
 
 Report bugs to: 1903716@gmail.com
