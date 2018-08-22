@@ -32,7 +32,7 @@ MAIN_INC_CTRL =		start.h
 MAIN_INC_DATA =		data.h
 MAIN_INC_GEN =		init.h
 MAIN_INC_PRNT =		about.h print.h
-MAIN_INC_UI =		clui.h tui.h
+MAIN_INC_UI =		parser.h tui.h
 MAIN_DEPS = $(SRC_DIR)/main.c \
 			$(patsubst %,$(LIBALX_INC_DIR)/%,$(MAIN_INC_LIBALX)) \
 			$(patsubst %,$(CTRL_INC_DIR)/%,$(MAIN_INC_CTRL)) \

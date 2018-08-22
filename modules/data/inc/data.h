@@ -11,6 +11,8 @@
 	#include <stdio.h>
 		/* time_t */
 	#include <time.h>
+		/* wchar_t */
+	#include <wchar.h>
 
 
 /******************************************************************************
@@ -23,18 +25,28 @@
 	# 	define		DBG_PRINT(x, y, z)	do {} while (0)
 	# endif
 
-	# define		PROG_NAME	"mine-sweeper"
-	# define		PROG_YEAR	"2015"
+	# define		PROG_NAME		"mine-sweeper"
+	# define		PROG_YEAR		"2015"
 
-	# define		OPT_LIST	"xhLuV:v""a:b:f:p:r:s:"
+	# define		OPT_LIST		"xhLuV:v""a:b:f:p:r:s:"
 
-	# define		ROWS_MAX	22
-	# define		COLS_MAX	33
+	# if defined (OS_LINUX)
+	#	define		ENV_HOME		"HOME"
+	# elif defined (OS_WIN)
+	#	define		ENV_HOME		"USERPROFILE"
+	# endif
 
-	# define		SAVE_DIR	"..//files/saved/"
-	# define		DEFAULT_SAVE	"saved_000.mine"
+	# define		MAIN_DIR		"mine_sweeper/"
+	# define		FILES_DIR		"mine_sweeper/files/"
 
-	# define		CHEATED		(-1)
+	# define		ROWS_MAX		22
+	# define		COLS_MAX		33
+
+	# define		USER_GAME_DIR		".mine_sweeper/"
+	# define		USER_SAVED_DIR		".mine_sweeper/saved/"
+	# define		SAVED_NAME_DEFAULT	"saved_000.mine"
+
+	# define		CHEATED			(-1)
 
 
 /******************************************************************************
@@ -92,6 +104,13 @@
 
 	enum	Flag_V {
 		VERBOSE_FOO
+	};
+
+	enum	Flag_Iface {
+		IFACE_FOO = 0,
+		IFACE_CLUI,
+		IFACE_TUI,
+		IFACE_GUI
 	};
 
 	enum	Color_Pairs {
@@ -152,6 +171,7 @@
 		int	mines;
 		int	gnd [ROWS_MAX] [COLS_MAX];
 		int	usr [ROWS_MAX] [COLS_MAX];
+		wchar_t	visible [ROWS_MAX] [COLS_MAX];
 		int	flags;
 		int	cleared;
 		bool	set;
@@ -170,11 +190,19 @@
 
 	extern	enum Flag_s	flag_s;
 	extern	enum Flag_V	flag_V;
+	extern	enum Flag_Iface	flag_iface;
 	extern	bool		flag_exit;
 	extern	bool		flag_color;
 
-	extern	char		file_name [FILENAME_MAX];
-	extern	char		file_path [FILENAME_MAX];
+	extern	char		files_path [FILENAME_MAX];
+	extern	char		files_name [FILENAME_MAX];
+
+	extern	char		home_path [FILENAME_MAX];
+	extern	char		user_game_path [FILENAME_MAX];
+
+	extern	char		saved_path [FILENAME_MAX];
+	extern	char		saved_name [FILENAME_MAX];
+
 	extern	int		seed;
 
 	extern	time_t		tim_ini;

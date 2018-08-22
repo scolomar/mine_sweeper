@@ -20,7 +20,7 @@ ALL = start.o
 STRT_INC_DATA =		data.h
 STRT_INC_GEN =		init.h
 STRT_INC_PRNT =		print.h
-STRT_INC_UI =		game_ui.h
+STRT_INC_UI =		game_iface.h
 STRT_INC =	start.h
 STRT_DEPS = $(SRC_DIR)/start.c \
 			$(patsubst %,$(DATA_INC_DIR)/%,$(STRT_INC_DATA)) \

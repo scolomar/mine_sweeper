@@ -2,8 +2,12 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
+		/* errors */
+	#include <errno.h>
 		/* has_colors() & start_color() & init_pair() */
 	#include <ncurses.h>
+		/* mkdir */
+	#include <sys/stat.h>
 		/* bool */
 	#include <stdbool.h>
 		/* srand() */
@@ -21,26 +25,6 @@
 	#include "data.h"
 
 
-/*
- *	[][][0] = Valor real	< 0:	0 minas cercanas y todas las cercanas descubiertas
- *				0-8:	N.º de minas cercanas
- *				> 8:	Mina
- *
- *	[][][1] = Estado	0:	Oculta
- *				1:	Descubierta
- *				2:	Bandera V
- *				3:	Bandera F
- *
- *	Interfaz		+:	Celda oculta
- *				·:	0 minas cercanas
- *				1-8:	N.º de minas cercanas
- *				#:	Mina marcada
- *				M:	Mina no explotada
- *				N:	No había mina
- *				X:	Mina explotada
- */
-
-
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
@@ -50,11 +34,19 @@ struct Board	board;
 
 enum Flag_s	flag_s;
 enum Flag_V	flag_V;
+enum Flag_Iface	flag_iface;
 bool		flag_exit;
 bool		flag_color;
 
-char		file_name [FILENAME_MAX];
-char		file_path [FILENAME_MAX];
+char		files_path [FILENAME_MAX];
+char		files_name [FILENAME_MAX];
+
+char		home_path [FILENAME_MAX];
+char		user_game_path [FILENAME_MAX];
+
+char		saved_path [FILENAME_MAX];
+char		saved_name [FILENAME_MAX];
+
 int		seed;
 
 time_t		tim_ini;
@@ -63,23 +55,116 @@ bool		highlight;
 
 
 /******************************************************************************
+ ******* static ***************************************************************
+ ******************************************************************************/
+static	void	init_values_home	(void);
+static	void	init_values_color	(void);
+
+
+/******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
 void	init_values	(void)
 {
+	strcpy(files_path, INSTALL_DIR);
+	strcat(files_path, "/");
+	strcat(files_path, FILES_DIR);
+	strcat(files_path, "/");
+/*
+	strcpy(saved_path, getenv(ENV_HOME));
+	strcat(saved_path, "/");
+	strcat(saved_path, USER_SAVED_DIR);
+	strcat(saved_path, "/");
+*/
+	strcpy(saved_name, SAVED_NAME_DEFAULT);
+
 	board.p =	0.16;
 	board.rows =	8;
 	board.cols =	8;
 
-	strcpy(file_name, DEFAULT_SAVE);
-
 	flag_s =	START_FOO;
 	flag_V =	1;
+	flag_iface =	IFACE_CLUI;
 	flag_exit =	false;
 
 	seed =		seedf(clock(), time(NULL), getpid());
 	srand(seed);
 
+	init_values_home();
+	init_values_color();
+}
+
+
+/******************************************************************************
+ ******* static ***************************************************************
+ ******************************************************************************/
+static	void	init_values_home	(void)
+{
+	int	err;
+
+	strcpy(home_path, getenv(ENV_HOME));
+
+	strcpy(user_game_path, home_path);
+	strcat(user_game_path, "/");
+	strcat(user_game_path, USER_GAME_DIR);
+	strcat(user_game_path, "/");
+
+	strcpy(saved_path, home_path);
+	strcat(saved_path, "/");
+	strcat(saved_path, USER_SAVED_DIR);
+	strcat(saved_path, "/");
+
+	err	= mkdir(user_game_path, 0700);
+
+	if (!err) {
+		mkdir(saved_path, 0700);
+	} else {
+		switch (errno) {
+		case EACCES:
+			printf("err = EACCES");
+			break;
+
+		case EEXIST:
+			/* OK */
+			break;
+
+		case ELOOP:
+			printf("err = ELOOP");
+			break;
+
+		case EMLINK:
+			printf("err = EMLINK");
+			break;
+
+		case ENAMETOOLONG:
+			printf("err = ENAMETOOLONG");
+			break;
+
+		case ENOENT:
+			printf("err = ENOENT");
+			break;
+
+		case ENOSPC:
+			printf("err = ENOSPC");
+			break;
+
+		case ENOTDIR:
+			printf("err = ENOTDIR");
+			break;
+
+		case EROFS:
+			printf("err = EROFS");
+			break;
+
+		default:
+			printf("err = other");
+			break;
+		}
+	}
+}
+
+static	void	init_values_color	(void)
+{
 	flag_color = false;
 	if (has_colors()) {
 		flag_color = true;
@@ -110,6 +195,7 @@ void	init_values	(void)
 		init_pair(PAIR_TERM, -1, -1);
 	}
 }
+
 
 /******************************************************************************
  ******************************************************************************

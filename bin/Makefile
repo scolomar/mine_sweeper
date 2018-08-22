@@ -43,7 +43,7 @@ MAIN_OBJ_GAME =		game.o
 MAIN_OBJ_GEN =		init.o
 MAIN_OBJ_PRNT =		about.o print.o
 MAIN_OBJ_SAVE =		save.o
-MAIN_OBJ_UI =		clui.o game_ui.o tui.o
+MAIN_OBJ_UI =		parser.o game_iface.o game_clui.o game_tui.o tui.o
 
 MAIN_OBJS = $(OBJ_DIR)/main.o \
 			$(patsubst %,$(LIBALX_OBJ_DIR)/%,$(MAIN_OBJ_LIBALX)) \

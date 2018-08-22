@@ -5,10 +5,10 @@
 	#include "alx_ncur.h"
 
 	#include "about.h"
-	#include "clui.h"
 	#include "data.h"
 	#include "init.h"
 	#include "tui.h"
+	#include "parser.h"
 	#include "print.h"
 	#include "start.h"
 

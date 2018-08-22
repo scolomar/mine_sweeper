@@ -133,7 +133,7 @@ static	void	menu_continue	(void)
 	wh = true;
 	while (wh) {
 		win =	newwin(h, w, r, c);
-		mvwprintw(win, mnu[4].r, mnu[4].c, "%s (File: \"%s\")", mnu[4].t, file_name);
+		mvwprintw(win, mnu[4].r, mnu[4].c, "%s (File: \"%s\")", mnu[4].t, saved_name);
 		wrefresh(win);
 		sw =	alx_menu_2(win, N, mnu, "CONTINUE:");
 
@@ -161,8 +161,8 @@ static	void	menu_continue	(void)
 			break;
 
 		case 4:
-			alx_w_getfname(SAVE_DIR, file_name, w2, r2, txt[0],
-					file_name, NULL);
+			alx_w_getfname(USER_SAVED_DIR, saved_name, w2, r2, txt[0],
+					saved_name, NULL);
 			alx_win_del(win);
 			break;
 
@@ -191,7 +191,7 @@ static	void	menu_select	(void)
 	};
 
 	win =	newwin(h, w, r, c);
-	mvwprintw(win, mnu[2].r, mnu[2].c, "%s (File: \"%s\")", mnu[1].t, file_name);
+	mvwprintw(win, mnu[2].r, mnu[2].c, "%s (File: \"%s\")", mnu[1].t, saved_name);
 	wrefresh(win);
 	sw =	alx_menu_2(win, N, mnu, "SELECT MAP:");
 
