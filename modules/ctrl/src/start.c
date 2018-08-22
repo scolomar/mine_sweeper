@@ -2,6 +2,7 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
+	#include <errno.h>
 		/* fflush(stdout) */
 	#include <stdio.h>
 
@@ -50,9 +51,12 @@ static	void	start_foo	(void)
 
 static	void	start_custom	(void)
 {
+	/* sets errno */
 	init_board_custom();
 
-	start();
+	if (!errno) {
+		start();
+	}
 }
 
 static	void	start_rand	(void)

@@ -78,7 +78,7 @@ void	init_values	(void)
 
 	flag_s =	START_FOO;
 	flag_V =	1;
-	flag_iface =	IFACE_CLUI;
+	flag_iface =	IFACE_TUI;
 	flag_exit =	false;
 
 	seed =		seedf(clock(), time(NULL), getpid());

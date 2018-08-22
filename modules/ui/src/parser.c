@@ -21,6 +21,7 @@
 static	void	parse_rows		(char* argument);
 static	void	parse_columns		(char* argument);
 static	void	parse_file		(char* argument);
+static	void	parse_iface		(char* argument);
 static	void	parse_proportion	(char* argument);
 static	void	parse_rand_seed		(char* argument);
 static	void	parse_start		(char* argument);
@@ -48,6 +49,7 @@ void	parser	(int argc, char *argv[])
 		{"rows",		required_argument,	0,	'a'},
 		{"columns",		required_argument,	0,	'b'},
 		{"file",		required_argument,	0,	'f'},
+		{"iface",		required_argument,	0,	'i'},
 		{"proportion",		required_argument,	0,	'p'},
 		{"rand-seed",		required_argument,	0,	'r'},
 		{"start",		required_argument,	0,	's'},
@@ -101,6 +103,10 @@ void	parser	(int argc, char *argv[])
 
 		case 'f':
 			parse_file(optarg);
+			break;
+
+		case 'i':
+			parse_iface(optarg);
 			break;
 
 		case 'p':
@@ -161,6 +167,16 @@ static	void	parse_file		(char* argument)
 		fclose(fp);
 
 		strcat(saved_name, argument);
+	}
+}
+
+static	void	parse_iface		(char* argument)
+{
+	flag_iface =	atoi(argument);
+	if (flag_iface < IFACE_CLUI || flag_iface > IFACE_TUI) {
+		printf("--iface argument not valid\n");
+		printf("It must be an integer [%i U %i]\n", IFACE_CLUI, IFACE_TUI);
+		exit(EXIT_FAILURE);
 	}
 }
 

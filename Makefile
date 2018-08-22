@@ -2,8 +2,8 @@
 # This Makefile has parts of the linux kernel Makefile code.
 VERSION	= 3
 PATCHLEVEL = a
-SUBLEVEL = 5
-EXTRAVERSION =
+SUBLEVEL = 6
+EXTRAVERSION = 4
 NAME = instalable
 
 export	VERSION
@@ -186,7 +186,7 @@ endif
 
 PHONY += install-for-linux
 install-for-linux: uninstall-for-linux
-	$(Q)cp ./bin/mine_sweeper		$(INSTALL_BIN_DIR)/
+	$(Q)cp $(BIN_DIR)/mine_sweeper		$(INSTALL_BIN_DIR)/
 	@echo "Copy mine_sweeper"
 	@echo  ""
 	$(Q)mkdir $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/

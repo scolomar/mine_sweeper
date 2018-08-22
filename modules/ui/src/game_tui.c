@@ -24,6 +24,10 @@
 /******************************************************************************
  ******| static |**************************************************************
  ******************************************************************************/
+static	WINDOW	*win_board;
+static	WINDOW	*win_help;
+
+
 static	int	usr_input		(WINDOW *win);
 
 static	void	show_board		(WINDOW *win, int pos_row, int pos_col);
@@ -45,13 +49,12 @@ static	void	highlight_cursor	(void);
 /******************************************************************************
  ******| main |****************************************************************
  ******************************************************************************/
-int	game_tui			(int pos_row, int pos_col)
+void	game_tui_init			(void)
 {
 	/* Use curses mode */
 	alx_resume_curses();
 
 	/* Dimensions: board */
-	WINDOW		*win_board;
 	const int	h1 =	board.rows + 2;
 	const int	w1 =	2 * board.cols + 3;
 	const int	r1 =	0;
@@ -59,29 +62,35 @@ int	game_tui			(int pos_row, int pos_col)
 	win_board =	newwin(h1, w1, r1, c1);
 
 	/* Dimensions: help */
-	WINDOW		*win_help;
 	const int	h2 =	24;
 	const int	w2 =	10;
 	const int	r2 =	0;
 	const int	c2 =	0;
 	win_help =	newwin(h2, w2, r2, c2);
 
-	/* Activate keypad, and don't echo input */
+	/* Activate keypad, don't echo input, and set timeout=30ms */
 	keypad(win_board, true);
 	noecho();
+	wtimeout(win_board, 100);
+}
 
-	/* User action */
+int	game_tui			(int pos_row, int pos_col)
+{
 	int	action;
+
 	show_help(win_help);
 	show_board(win_board, pos_row, pos_col);
 	action = usr_input(win_board);
 
+	return	action;
+}
+
+void	game_tui_cleanup		(void)
+{
 	/* Del wins & return to terminal mode */
 	alx_win_del(win_board);
 	alx_win_del(win_help);
 	alx_pause_curses();
-
-	return	action;
 }
 
 
@@ -219,12 +228,20 @@ static	void	show_board		(WINDOW *win, int pos_row, int pos_col)
 
 	/* Subtitle */
 	char	subtit[TITLE_SIZE];
+	int	hours;
 	int	mins;
 	int	secs;
 	if (board.time != CHEATED) {
-		mins =	(int)(board.time / 60);
+		hours =	((int)board.time / 3600);
+		mins =	(((int)board.time % 3600) / 60);
 		secs =	((int)board.time % 60);
-		sprintf(subtit, "%i:%02i | %i", mins, secs, board.clicks);
+
+		if (board.time >= 3600) {
+			sprintf(subtit, "%02i:%02i:%02i | %i", hours, mins, secs, board.clicks);
+		} else {
+			sprintf(subtit, "%02i:%02i | %i", mins, secs, board.clicks);
+		}
+
 		alx_ncur_prn_subtitle(win, subtit);
 	}
 
