@@ -24,11 +24,12 @@ int	load_game_file	(void)
 	int	i;
 	int	j;
 	int	err;
+	char	file_name [FILENAME_MAX];
 
-	strcpy(file_path, SAVE_DIR);
-	strcat(file_path, file_name);
+	strcpy(file_name, saved_path);
+	strcat(file_name, saved_name);
 
-	fp =	fopen(file_path, "r");
+	fp =	fopen(file_name, "r");
 	if (fp) {
 		fscanf(fp, "mine_sweeper saved game");
 		fscanf(fp, " rows %i", &board.rows);
@@ -70,20 +71,21 @@ int	load_game_file	(void)
 int	save_game_file	(void)
 {
 	/* Look for an unused name of the type 'saved_XXX.mine'. */
+	char	file_name [FILENAME_MAX];
 	int	i;
 	bool	x;
 	x =	true;
-	strcpy(file_name, DEFAULT_SAVE);
+	strcpy(saved_name, SAVED_NAME_DEFAULT);
 	for (i = 0; x; i++) {
-		strcpy(file_path, SAVE_DIR);
-		strcat(file_path, file_name);
+		strcpy(file_name, saved_path);
+		strcat(file_name, saved_name);
 
-		fp =	fopen(file_path, "r");
+		fp =	fopen(file_name, "r");
 		if (fp) {
 			fclose(fp);
-			file_name[6] =	'0' + ((i / 100) % 10);
-			file_name[7] =	'0' + ((i / 10) % 10);
-			file_name[8] =	'0' + (i % 10);
+			saved_name[6] =	'0' + ((i / 100) % 10);
+			saved_name[7] =	'0' + ((i / 10) % 10);
+			saved_name[8] =	'0' + (i % 10);
 		} else {
 			x = false;
 		}
@@ -92,7 +94,7 @@ int	save_game_file	(void)
 	/* Write to a new file */
 	int	err;
 	int	j;
-	fp = fopen(file_path, "w");
+	fp = fopen(file_name, "w");
 	if (fp) {
 		fprintf(fp, "mine_sweeper saved game\n");
 		fprintf(fp, "rows %i\n", board.rows);

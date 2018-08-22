@@ -7,8 +7,8 @@
 
 		/* global variables */
 	#include "data.h"
-		/* game_ui() */
-	#include "game_ui.h"
+		/* game_iface() */
+	#include "game_iface.h"
 		/* init_board_...() */
 	#include "init.h"
 		/* print_...() & show_board_...() */
@@ -66,7 +66,7 @@ static	void	start_rand	(void)
 
 static	void	start		(void)
 {
-	game_ui();
+	game_iface();
 }
 
 /*----------------------------------------------------------------------------*/

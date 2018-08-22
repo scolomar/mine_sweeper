@@ -4,6 +4,8 @@
 
 		/* printf() */
 	#include <stdio.h>
+		/* strcpy() & strcat() */
+	#include <string.h>
 
 		/* alx_prn_file() */
 	#include "alx_file.h"
@@ -16,29 +18,67 @@
 
 void	print_cpright		(void)
 {
-	alx_prn_file("../files/COPYRIGHT.txt");
+	char	file_name [FILENAME_MAX];
+
+	strcpy(file_name, INSTALL_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, FILES_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, "COPYRIGHT.txt");
+
+	alx_prn_file(file_name);
 }
 
 void	print_disclaim		(void)
 {
-	alx_prn_file("../files/DISCLAIMER.txt");
+	char	file_name [FILENAME_MAX];
+
+	strcpy(file_name, INSTALL_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, FILES_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, "DISCLAIMER.txt");
+
+	alx_prn_file(file_name);
 }
 
 void	print_help		(void)
 {
-	alx_prn_file("../files/HELP.txt");
+	char	file_name [FILENAME_MAX];
+
+	strcpy(file_name, INSTALL_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, FILES_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, "HELP.txt");
+
+	alx_prn_file(file_name);
 }
 
 void	print_license		(void)
 {
-	alx_prn_file("../files/LICENSE.txt");
+	char	file_name [FILENAME_MAX];
 
+	strcpy(file_name, INSTALL_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, FILES_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, "LICENSE.txt");
+
+	alx_prn_file(file_name);
 }
 
 void	print_usage		(void)
 {
-	alx_prn_file("../files/USAGE.txt");
+	char	file_name [FILENAME_MAX];
 
+	strcpy(file_name, INSTALL_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, FILES_DIR);
+	strcat(file_name, "/");
+	strcat(file_name, "USAGE.txt");
+
+	alx_prn_file(file_name);
 }
 
 void	print_version		(void)

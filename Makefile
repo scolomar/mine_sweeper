@@ -2,9 +2,9 @@
 # This Makefile has parts of the linux kernel Makefile code.
 VERSION	= 3
 PATCHLEVEL = a
-SUBLEVEL = 1
+SUBLEVEL = 4
 EXTRAVERSION =
-NAME =
+NAME = instalable
 
 export	VERSION
 export	PATCHLEVEL
@@ -90,6 +90,29 @@ export	TST
 export	DBG
 
 ################################################################################
+# directories
+
+MAIN_DIR	= $(CURDIR)
+
+LIBALX_DIR	= $(CURDIR)/libalx/
+MODULES_DIR	= $(CURDIR)/modules/
+OBJ_DIR		= $(CURDIR)/obj/
+BIN_DIR		= $(CURDIR)/bin/
+
+export	MAIN_DIR
+export	LIBALX_DIR
+export	MODULES_DIR
+
+
+ifeq ($(OS), linux)
+  INSTALL_DIR	= /usr/local/games/
+else ifeq ($(OS), win)
+  INSTALL_DIR	= c:/Program\ files/
+endif
+
+export	INSTALL_DIR
+
+################################################################################
 # Make variables (CC, etc...)
 ifeq ($(OS), linux)
   CC		= gcc
@@ -100,34 +123,25 @@ endif
 export	CC
 
 ################################################################################
-CFLAGS	= -std=c11 -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CFLAGS		= -std=c11
+CFLAGS	       += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CFLAGS	       += -D INSTALL_DIR=\"$(INSTALL_DIR)\"
 
 ifeq ($(OS), linux)
+  CFLAGS       += -D OS_LINUX
+
   LIBS		= -l m -l ncursesw
 else ifeq ($(OS), win)
-  CURSES_CFLAGS	= -D _XOPEN_SOURCE=500 -I /mingw/include/ncursesw -I /mingw/include
-  CURSES_LIBS	= -L /mingw/lib -l ncursesw -l psapi
+  CFLAGS       += -D OS_WIN
+  # curses
+  CFLAGS       += -D _XOPEN_SOURCE=500 -I /mingw/include/ncursesw -I /mingw/include
 
-  CFLAGS += -O2 $(CURSES_CFLAGS)
-  LIBS = -static -l m $(CURSES_LIBS)
+  CURSES_LIBS	= -L /mingw/lib -l ncursesw -l psapi
+  LIBS		= -static -l m $(CURSES_LIBS)
 endif
 
 export	CFLAGS
 export	LIBS
-
-################################################################################
-# directories
-
-MAIN_DIR = $(CURDIR)
-
-LIBALX_DIR = $(CURDIR)/libalx/
-MODULES_DIR = $(CURDIR)/modules/
-OBJ_DIR = $(CURDIR)/obj/
-BIN_DIR = $(CURDIR)/bin/
-
-export	MAIN_DIR
-export	LIBALX_DIR
-export	MODULES_DIR
 
 ################################################################################
 # target: dependencies
@@ -156,60 +170,19 @@ binary:
 
 PHONY += install
 install: uninstall
-	$(Q)mkdir build/
-	$(Q)mkdir build/bin/
-	$(Q)mkdir build/files/
-	$(Q)mkdir build/files/saved/
-	@echo  "Create directories"
-	@echo  ""
-	$(Q)cp ./COPYING.txt			build/
-	@echo "Copy COPYING.txt"
-	$(Q)cp ./README.txt			build/
-	@echo "Copy README.txt"
-	$(Q)cp ./bin/mine_sweeper		build/bin/
-	@echo "Copy bin/mine_sweeper"
-	$(Q)cp ./files/COPYRIGHT.txt		build/files/
-	@echo "Copy files/COPYRIGHT.txt"
-	$(Q)cp ./files/DISCLAIMER.txt		build/files/
-	@echo "Copy files/DISCLAIMER.txt"
-	$(Q)cp ./files/HELP.txt			build/files/
-	@echo "Copy files/HELP.txt"
-	$(Q)cp ./files/LICENSE.txt		build/files/
-	@echo "Copy files/LICENSE.txt"
-	$(Q)cp ./files/USAGE.txt		build/files/
-	@echo "Copy files/USAGE.txt"
-	$(Q)cp ./files/saved/saved_000.mine	build/files/saved/
-	@echo "Copy files/saved/saved_000.mine"
-	@echo  ""
-	@echo  "Done"
-	@echo  ""
-
-PHONY += install-usr-local
-install-usr-local: uninstall
-	$(Q)mkdir /usr/local/games//mine_sweeper/
-	$(Q)mkdir /usr/local/games//mine_sweeper//bin/
-	$(Q)mkdir /usr/local/games//mine_sweeper//files/
-	$(Q)mkdir /usr/local/games//mine_sweeper//files/saved/
+	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper/
+	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper//bin/
+	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper//files/
 	@echo  "Create /usr/local/games//mine_sweeper//"
 	@echo  ""
-	$(Q)cp ./COPYING.txt			/usr/local/games//mine_sweeper//
+	$(Q)cp ./COPYING.txt			$(INSTALL_DIR)/mine_sweeper//
 	@echo "Copy COPYING.txt"
-	$(Q)cp ./README.txt			/usr/local/games//mine_sweeper//
+	$(Q)cp ./README.txt			$(INSTALL_DIR)/mine_sweeper//
 	@echo "Copy README.txt"
-	$(Q)cp ./bin/mine_sweeper		/usr/local/games//mine_sweeper//bin/
+	$(Q)cp ./bin/mine_sweeper		$(INSTALL_DIR)/mine_sweeper//bin/
 	@echo "Copy bin/mine_sweeper"
-	$(Q)cp ./files/COPYRIGHT.txt		/usr/local/games//mine_sweeper//files/
-	@echo "Copy files/COPYRIGHT.txt"
-	$(Q)cp ./files/DISCLAIMER.txt		/usr/local/games//mine_sweeper//files/
-	@echo "Copy files/DISCLAIMER.txt"
-	$(Q)cp ./files/HELP.txt			/usr/local/games//mine_sweeper//files/
-	@echo "Copy files/HELP.txt"
-	$(Q)cp ./files/LICENSE.txt		/usr/local/games//mine_sweeper//files/
-	@echo "Copy files/LICENSE.txt"
-	$(Q)cp ./files/USAGE.txt		/usr/local/games//mine_sweeper//files/
-	@echo "Copy files/USAGE.txt"
-	$(Q)cp ./files/saved/saved_000.mine	/usr/local/games//mine_sweeper//files/saved/
-	@echo "Copy files/saved/saved_000.mine"
+	$(Q)cp -r ./files/			$(INSTALL_DIR)/mine_sweeper//
+	@echo "Copy -r files/"
 	@echo  ""
 	@echo  "Done"
 	@echo  ""
@@ -217,14 +190,7 @@ install-usr-local: uninstall
 
 PHONY += uninstall
 uninstall:
-	$(Q)rm -f -r $(CURDIR)/build/
-	@echo  "Clean old builds"
-	@echo  ""
-	
-
-PHONY += uninstall
-uninstall:
-	$(Q)rm -f -r /usr/local/games//mine_sweeper//
+	$(Q)rm -f -r $(INSTALL_DIR)/mine_sweeper//
 	@echo  "Clean old builds"
 	@echo  ""
 
