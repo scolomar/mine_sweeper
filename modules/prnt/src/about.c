@@ -20,9 +20,7 @@ void	print_cpright		(void)
 {
 	char	file_name [FILENAME_MAX];
 
-	strcpy(file_name, INSTALL_DIR);
-	strcat(file_name, "/");
-	strcat(file_name, FILES_DIR);
+	strcpy(file_name, share_path);
 	strcat(file_name, "/");
 	strcat(file_name, "COPYRIGHT.txt");
 
@@ -33,9 +31,7 @@ void	print_disclaim		(void)
 {
 	char	file_name [FILENAME_MAX];
 
-	strcpy(file_name, INSTALL_DIR);
-	strcat(file_name, "/");
-	strcat(file_name, FILES_DIR);
+	strcpy(file_name, share_path);
 	strcat(file_name, "/");
 	strcat(file_name, "DISCLAIMER.txt");
 
@@ -46,9 +42,7 @@ void	print_help		(void)
 {
 	char	file_name [FILENAME_MAX];
 
-	strcpy(file_name, INSTALL_DIR);
-	strcat(file_name, "/");
-	strcat(file_name, FILES_DIR);
+	strcpy(file_name, share_path);
 	strcat(file_name, "/");
 	strcat(file_name, "HELP.txt");
 
@@ -59,9 +53,7 @@ void	print_license		(void)
 {
 	char	file_name [FILENAME_MAX];
 
-	strcpy(file_name, INSTALL_DIR);
-	strcat(file_name, "/");
-	strcat(file_name, FILES_DIR);
+	strcpy(file_name, share_path);
 	strcat(file_name, "/");
 	strcat(file_name, "LICENSE.txt");
 
@@ -72,9 +64,7 @@ void	print_usage		(void)
 {
 	char	file_name [FILENAME_MAX];
 
-	strcpy(file_name, INSTALL_DIR);
-	strcat(file_name, "/");
-	strcat(file_name, FILES_DIR);
+	strcpy(file_name, share_path);
 	strcat(file_name, "/");
 	strcat(file_name, "USAGE.txt");
 
