@@ -47,12 +47,19 @@ COMPILE:
 	windows (MSYS):
 		$ make OS=win
 
+INSTALL:
+	linux:
+		# make install
+
 RUN:
 	linux: 
-		$ cd bin
-		$ ./mine_sweeper
+		$ /usr/local/games/mine_sweeper/bin/mine_sweeper
 	windows:
 		double click on win/mine_sweeper.exe
+
+UNINSTALL:
+	linux:
+		# make uninstall
 
 
 THE PROGRAM DOES:
