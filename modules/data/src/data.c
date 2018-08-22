@@ -38,8 +38,7 @@ enum Flag_Iface	flag_iface;
 bool		flag_exit;
 bool		flag_color;
 
-char		files_path [FILENAME_MAX];
-char		files_name [FILENAME_MAX];
+char		share_path [FILENAME_MAX];
 
 char		home_path [FILENAME_MAX];
 char		user_game_path [FILENAME_MAX];
@@ -66,16 +65,11 @@ static	void	init_values_color	(void);
  ******************************************************************************/
 void	init_values	(void)
 {
-	strcpy(files_path, INSTALL_DIR);
-	strcat(files_path, "/");
-	strcat(files_path, FILES_DIR);
-	strcat(files_path, "/");
-/*
-	strcpy(saved_path, getenv(ENV_HOME));
-	strcat(saved_path, "/");
-	strcat(saved_path, USER_SAVED_DIR);
-	strcat(saved_path, "/");
-*/
+	strcpy(share_path, INSTALL_SHARE_DIR);
+	strcat(share_path, "/");
+	strcat(share_path, SHARE_DIR);
+	strcat(share_path, "/");
+
 	strcpy(saved_name, SAVED_NAME_DEFAULT);
 
 	board.p =	0.16;
@@ -113,6 +107,8 @@ static	void	init_values_home	(void)
 	strcat(saved_path, "/");
 	strcat(saved_path, USER_SAVED_DIR);
 	strcat(saved_path, "/");
+
+	strcpy(saved_name, SAVED_NAME_DEFAULT);
 
 	err	= mkdir(user_game_path, 0700);
 

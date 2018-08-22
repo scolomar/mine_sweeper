@@ -37,7 +37,6 @@
 	# endif
 
 	# define		MAIN_DIR		"mine_sweeper/"
-	# define		FILES_DIR		"mine_sweeper/files/"
 
 	# define		ROWS_MAX		22
 	# define		COLS_MAX		33
@@ -194,8 +193,7 @@
 	extern	bool		flag_exit;
 	extern	bool		flag_color;
 
-	extern	char		files_path [FILENAME_MAX];
-	extern	char		files_name [FILENAME_MAX];
+	extern	char		share_path [FILENAME_MAX];
 
 	extern	char		home_path [FILENAME_MAX];
 	extern	char		user_game_path [FILENAME_MAX];
