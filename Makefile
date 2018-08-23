@@ -2,7 +2,7 @@
 # This Makefile has parts of the linux kernel Makefile code.
 VERSION	= 3
 PATCHLEVEL = a
-SUBLEVEL = 7
+SUBLEVEL = 8
 EXTRAVERSION =
 NAME = instalable
 
@@ -109,7 +109,7 @@ ifeq ($(OS), linux)
   INSTALL_SHARE_DIR	= /usr/local/share/
   SHARE_DIR		= mine_sweeper/
 else ifeq ($(OS), win)
-  INSTALL_DIR		= c:/Program\ files/
+  INSTALL_DIR		= c:/Program files (x86)/
   INSTALL_SHARE_DIR	= $(INSTALL_DIR)/mine_sweeper/
   SHARE_DIR		= share/
 endif
@@ -131,7 +131,7 @@ export	CC
 ################################################################################
 CFLAGS		= -std=c11
 CFLAGS	       += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
-CFLAGS	       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
+CFLAGS	       += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
 CFLAGS	       += -D SHARE_DIR=\"$(SHARE_DIR)\"
 
 ifeq ($(OS), linux)
@@ -176,16 +176,7 @@ binary:
 	$(Q)cd $(BIN_DIR) && $(MAKE) && cd ..
 
 PHONY += install
-ifeq ($(OS), linux)
-install: install-for-linux
-
-else ifeq ($(OS), win)
-install: install-for-wind
-
-endif
-
-PHONY += install-for-linux
-install-for-linux: uninstall-for-linux
+install: uninstall
 	$(Q)cp $(BIN_DIR)/mine_sweeper		$(INSTALL_BIN_DIR)/
 	@echo "Copy mine_sweeper"
 	@echo  ""
@@ -197,47 +188,11 @@ install-for-linux: uninstall-for-linux
 	@echo  "Done"
 	@echo  ""
 
-PHONY += install-for-win
-install-for-win: uninstall-for-win
-	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper/
-	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper//bin/
-	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper//files/
-	@echo  "Create /usr/local/games//mine_sweeper//"
-	@echo  ""
-	$(Q)cp ./COPYING.txt			$(INSTALL_DIR)/mine_sweeper//
-	@echo "Copy COPYING.txt"
-	$(Q)cp ./README.txt			$(INSTALL_DIR)/mine_sweeper//
-	@echo "Copy README.txt"
-	$(Q)cp ./bin/mine_sweeper		$(INSTALL_DIR)/mine_sweeper//bin/
-	@echo "Copy bin/mine_sweeper"
-	$(Q)cp -r ./share/			$(INSTALL_DIR)/mine_sweeper//
-	@echo "Copy -r share/"
-	@echo  ""
-	@echo  "Done"
-	@echo  ""
-
 PHONY += uninstall
-ifeq ($(OS), linux)
-uninstall: uninstall-for-linux
-
-else ifeq ($(OS), win)
-uninstall: uninstall-for-windows
-
-endif
-	
-
-PHONY += uninstall-for-linux
-uninstall-for-linux:
+uninstall:
 	$(Q)rm -f $(INSTALL_BIN_DIR)/mine_sweeper
 	$(Q)rm -f -r $(INSTALL_SHARE_DIR)/mine_sweeper//
-	@echo  "Clean old builds"
-	@echo  ""
-	
-
-PHONY += uninstall-for-win
-uninstall-for-win:
-	$(Q)rm -f -r $(INSTALL_DIR)/mine_sweeper//
-	@echo  "Clean old builds"
+	@echo  "Clean old installations"
 	@echo  ""
 
 PHONY += clean

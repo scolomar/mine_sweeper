@@ -68,7 +68,7 @@ void	game_tui_init			(void)
 	const int	c2 =	0;
 	win_help =	newwin(h2, w2, r2, c2);
 
-	/* Activate keypad, don't echo input, and set timeout=30ms */
+	/* Activate keypad, don't echo input, and set timeout = 100 ms */
 	keypad(win_board, true);
 	noecho();
 	wtimeout(win_board, 100);
@@ -156,8 +156,7 @@ static	int	usr_input		(WINDOW *win)
 
 	case 'x':
 		/* Wait for special sequence "xyzzy" */
-		wtimeout(win, 1000);
-
+		wtimeout(win_board, 1000);
 		ch = wgetch(win);
 		if (ch == 'y') {
 			ch = wgetch(win);
@@ -171,9 +170,8 @@ static	int	usr_input		(WINDOW *win)
 				}
 			}
 		}
-
-		/* Resume normal mode */
-		wtimeout(win, 100);
+		/* Resume */
+		wtimeout(win_board, 100);
 		break;
 
 	case '0':
@@ -212,7 +210,7 @@ static	int	usr_input		(WINDOW *win)
 static	void	show_board		(WINDOW *win, int pos_row, int pos_col)
 {
 	/* Clear & box */
-	wclear(win);
+	werase(win);
 	box(win, 0, 0);
 
 	/* Title */
@@ -415,13 +413,12 @@ static	void	show_char		(WINDOW *win, int row, int col, wchar_t ch)
 	if (flag_color) {
 		wattroff(win, A_BOLD | COLOR_PAIR(pair));
 	}
-	wrefresh(win);
 }
 
 static	void	show_help		(WINDOW *win)
 {
 	/* Clear */
-	wclear(win);
+	werase(win);
 
 	switch (board.state) {
 	case GAME_READY:
