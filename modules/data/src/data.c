@@ -110,11 +110,20 @@ static	void	init_values_home	(void)
 
 	strcpy(saved_name, SAVED_NAME_DEFAULT);
 
+#if defined	OS_LINUX
 	err	= mkdir(user_game_path, 0700);
+#elif defined	OS_WIN
+	err	= mkdir(user_game_path);
+#endif
 
 	if (!err) {
-		mkdir(saved_path, 0700);
+#if defined	OS_LINUX
+		mkdir(user_game_path, 0700);
+#elif defined	OS_WIN
+		mkdir(user_game_path);
+#endif
 	} else {
+
 		switch (errno) {
 		case EACCES:
 			printf("err = EACCES");
@@ -123,11 +132,11 @@ static	void	init_values_home	(void)
 		case EEXIST:
 			/* OK */
 			break;
-
+/* fails on mingw
 		case ELOOP:
 			printf("err = ELOOP");
 			break;
-
+*/
 		case EMLINK:
 			printf("err = EMLINK");
 			break;
