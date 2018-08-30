@@ -2,61 +2,127 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
+
+/******************************************************************************
+ ******* headers **************************************************************
+ ******************************************************************************/
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Standard	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
 		/* WINDOW & wgetch() & KEY_... & ... */
 	#include <ncursesw/ncurses.h>
-		/* sprintf() */
-	#include <stdio.h>
 		/* wchar_t */
 	#include <wchar.h>
 
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Other	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
 		/* alx_..._curses() & alx_ncur_prn_...() */
 	#include "alx_ncur.h"
 
-		/* board & macros */
-	#include "data.h"
+		/* struct Game_Iface_Out */
+	#include "game_iface.h"
 
-	#include "game_tui.h"
+		/* struct Player_Iface_Position */
+	#include "player_iface.h"
 
-
-	# define	TITLE_SIZE	(20)
+	#include "player_tui.h"
 
 
 /******************************************************************************
- ******| static |**************************************************************
+ ******* variables ************************************************************
  ******************************************************************************/
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Global	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+bool	flag_color;
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Static	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
 static	WINDOW	*win_board;
 static	WINDOW	*win_help;
 
 
-static	int	usr_input		(WINDOW *win);
+/******************************************************************************
+ ******* static functions *****************************************************
+ ******************************************************************************/
+	/* Start */
+static	void	show_board_start(const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle);
 
-static	void	show_board		(WINDOW *win, int pos_row, int pos_col);
-static	void	board_loop		(WINDOW *win, int pos_row, int pos_col);
-static	void	show_char		(WINDOW *win, int row, int col,
-					wchar_t ch);
+static	void	board_loop_start(const struct Player_Iface_Position	*position);
+static	void	highlight_cursor_start(const struct Player_Iface_Position *position);
 
-static	void	show_help		(WINDOW *win);
-static	void	show_help_ready		(WINDOW *win);
-static	void	show_help_playing	(WINDOW *win);
-static	void	show_help_pause		(WINDOW *win);
-static	void	show_help_xyzzy		(WINDOW *win);
-static	void	show_help_cheated	(WINDOW *win);
-static	void	show_help_end		(WINDOW *win);
+	/* Play */
+static	void	show_board	(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle);
 
-static	void	highlight_cursor	(void);
+static	void	board_loop	(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position);
+
+static	void	highlight_cursor(wchar_t				wch,
+				const struct Player_Iface_Position	*position);
+
+static	wchar_t	set_char	(int game_iface_visible);
+static	void	show_char	(int row, int col, wchar_t wch);
+	/* Input */
+static	int	usr_input	(void);
+	/* Help */
+static	void	show_help	(const struct Game_Iface_Out	*board);
+static	void	show_help_start	(void);
+static	void	show_help_play	(void);
+static	void	show_help_pause	(void);
+static	void	show_help_xyzzy	(void);
+static	void	show_help_cheat	(void);
+static	void	show_help_end	(void);
 
 
 /******************************************************************************
- ******| main |****************************************************************
+ ******* main *****************************************************************
  ******************************************************************************/
-void	game_tui_init			(void)
+void	player_tui_init		(int rows, int cols)
 {
 	/* Use curses mode */
 	alx_resume_curses();
 
+	/* Colors */
+	flag_color	= false;
+	if (has_colors()) {
+		flag_color	= true;
+		/* Clear */
+		init_pair(PAIR_1, COLOR_BLUE, COLOR_WHITE);
+		init_pair(PAIR_2, COLOR_GREEN, COLOR_WHITE);
+		init_pair(PAIR_3, COLOR_RED, COLOR_WHITE);
+		init_pair(PAIR_4, COLOR_BLUE, COLOR_WHITE);
+		init_pair(PAIR_5, COLOR_RED, COLOR_WHITE);
+		init_pair(PAIR_6, COLOR_CYAN, COLOR_WHITE);
+		init_pair(PAIR_7, COLOR_BLACK, COLOR_WHITE);
+		init_pair(PAIR_8, COLOR_BLACK, COLOR_WHITE);
+		init_pair(PAIR_BLANK, COLOR_BLACK, COLOR_WHITE);
+		/* Hidden */
+		init_pair(PAIR_MINE, COLOR_WHITE, COLOR_BLACK);
+		init_pair(PAIR_HIDDEN, COLOR_WHITE, COLOR_BLACK);
+		/* Possible */
+		init_pair(PAIR_fail, COLOR_RED, COLOR_BLACK);
+		init_pair(PAIR_POSSIBLE, COLOR_BLUE, COLOR_BLACK);
+		/* Flag */
+		init_pair(PAIR_FAIL, COLOR_RED, COLOR_BLACK);
+		init_pair(PAIR_FLAG, COLOR_RED, COLOR_BLACK);
+		/* Kboom */
+		init_pair(PAIR_KBOOM, COLOR_BLACK, COLOR_RED);
+		/* Highlight */
+		init_pair(PAIR_HILITE, COLOR_YELLOW, COLOR_RED);
+		/* Terminal */
+		init_pair(PAIR_TERM, -1, -1);
+	}
+
 	/* Dimensions: board */
-	const int	h1 =	board.rows + 2;
-	const int	w1 =	2 * board.cols + 3;
+	const int	h1 =	rows + 2;
+	const int	w1 =	2 * cols + 3;
 	const int	r1 =	0;
 	const int	c1 =	11;
 	win_board =	newwin(h1, w1, r1, c1);
@@ -74,18 +140,28 @@ void	game_tui_init			(void)
 	wtimeout(win_board, 100);
 }
 
-int	game_tui			(int pos_row, int pos_col)
+int	player_tui_start	(const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle,
+				int					*action)
 {
-	int	action;
-
-	show_help(win_help);
-	show_board(win_board, pos_row, pos_col);
-	action = usr_input(win_board);
-
-	return	action;
+	show_help_start();
+	show_board_start(position, title, subtitle);
+	*action	= usr_input();
 }
 
-void	game_tui_cleanup		(void)
+int	player_tui		(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle,
+				int					*action)
+{
+	show_help(board);
+	show_board(board, position, title, subtitle);
+	*action	= usr_input();
+}
+
+void	player_tui_cleanup	(void)
 {
 	/* Del wins & return to terminal mode */
 	alx_win_del(win_board);
@@ -95,303 +171,327 @@ void	game_tui_cleanup		(void)
 
 
 /******************************************************************************
- ******| static |**************************************************************
+ ******* static functions *****************************************************
  ******************************************************************************/
-static	int	usr_input		(WINDOW *win)
-{
-	wchar_t	ch;
-	ch = wgetch(win);
-
-	int	action;
-
-	switch (ch) {
-	case KEY_UP:
-	case 'k':
-		action =	ACT_MOVE_UP;
-		break;
-
-	case KEY_DOWN:
-	case 'j':
-		action =	ACT_MOVE_DOWN;
-		break;
-
-	case KEY_RIGHT:
-	case 'l':
-		action =	ACT_MOVE_RIGHT;
-		break;
-
-	case KEY_LEFT:
-	case 'h':
-		action =	ACT_MOVE_LEFT;
-		break;
-
-	case '+':
-	case '\r':
-	case '\n':
-		action =	ACT_STEP;
-		break;
-
-	case ' ':
-		action =	ACT_FLAG;
-		break;
-
-	case 'f':
-		action =	ACT_FLAG_POSSIBLE;
-		break;
-
-		/* ASCII 0x08 is BS */
-	case KEY_BACKSPACE:
-	case 0x08:
-		action =	ACT_RM_FLAG;
-		break;
-
-	case KEY_BREAK:
-	case 'p':
-		action =	ACT_PAUSE;
-		break;
-
-	case 's':
-		action =	ACT_SAVE;
-		break;
-
-	case 'x':
-		/* Wait for special sequence "xyzzy" */
-		wtimeout(win_board, 1000);
-		ch = wgetch(win);
-		if (ch == 'y') {
-			ch = wgetch(win);
-			if (ch == 'z') {
-				ch = wgetch(win);
-				if (ch == 'z') {
-					ch = wgetch(win);
-					if (ch == 'y') {
-						action =	ACT_XYZZY_ON;
-					}
-				}
-			}
-		}
-		/* Resume */
-		wtimeout(win_board, 100);
-		break;
-
-	case '0':
-		action =	ACT_XYZZY_OFF;
-		break;
-
-	case '1':
-		action =	ACT_XYZZY_LIN;
-		break;
-
-	case '2':
-		action =	ACT_XYZZY_P;
-		break;
-
-	case '3':
-		action =	ACT_XYZZY_NP;
-		break;
-
-	case 'q':
-		action =	ACT_QUIT;
-		break;
-
-	case 'c':
-		highlight_cursor();
-		action =	ACT_FOO;
-		break;
-
-	default:
-		action =	ACT_FOO;
-		break;
-	}
-
-	return	action;
-}
-
-static	void	show_board		(WINDOW *win, int pos_row, int pos_col)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Start	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	show_board_start(const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle)
 {
 	/* Clear & box */
-	werase(win);
-	box(win, 0, 0);
+	werase(win_board);
+	box(win_board, 0, 0);
 
 	/* Title */
-	char	tit[TITLE_SIZE];
-	switch (board.state) {
-	case GAME_READY:
-	case GAME_XYZZY:
-	case GAME_CHEATED:
-	case GAME_PLAYING:
-	case GAME_PAUSE:
-		sprintf(tit, "Mines: %i/%i", board.flags, board.mines);
-		break;
-
-	case GAME_OVER:
-		sprintf(tit, "GAME OVER");
-		break;
-
-	case GAME_WIN:
-		sprintf(tit, "You win!");
-		break;
-	}
-	alx_ncur_prn_title(win, tit);
-
+	alx_ncur_prn_title(win_board, title);
 	/* Subtitle */
-	char	subtit[TITLE_SIZE];
-	int	hours;
-	int	mins;
-	int	secs;
-	if (board.time != CHEATED) {
-		hours =	((int)board.time / 3600);
-		mins =	(((int)board.time % 3600) / 60);
-		secs =	((int)board.time % 60);
-
-		if (board.time >= 3600) {
-			sprintf(subtit, "%02i:%02i:%02i | %i", hours, mins, secs, board.clicks);
-		} else {
-			sprintf(subtit, "%02i:%02i | %i", mins, secs, board.clicks);
-		}
-
-		alx_ncur_prn_subtitle(win, subtit);
-	}
+	alx_ncur_prn_subtitle(win_board, subtitle);
 
 	/* Board */
-	board_loop(win, pos_row, pos_col);
+	board_loop_start(position);
 
 	/* Cursor */
-	wmove(win, 1 + pos_row, 2 + 2 * pos_col);
+	wmove(win_board, 1 + position->row, 2 + 2 * position->col);
 
 	/* Refresh */
-	wrefresh(win);
+	wrefresh(win_board);
 }
 
-static	void	board_loop		(WINDOW *win, int pos_row, int pos_col)
+static	void	board_loop_start(const struct Player_Iface_Position	*position)
+{
+	int	i;
+	int	j;
+
+	int	k;
+	int	l;
+	wchar_t	wch;
+	wch	= PLAYER_TUI_CHAR_HIDDEN_FIELD;
+
+	for (i = 0; i < position->rows; i++) {
+		k = 1 + i;
+
+		/* hidden */
+		for (j = 0; j < position->cols; j++) {
+			l = 2 + 2 * j;
+
+			show_char(k, l, wch);
+		}
+	}
+
+	/* Highlight cursor */
+	if (position->highlight) {
+		highlight_cursor(wch, position);
+	}
+}
+
+static	void	highlight_cursor_start(const struct Player_Iface_Position *position)
+{
+	int	k;
+	int	l;
+	wchar_t	wch;
+	int	pair;
+
+	k	= 1 + position->row;
+	l	= 2 + 2 * position->col;
+	wch	= PLAYER_TUI_CHAR_HIDDEN_FIELD;
+
+	pair	= PAIR_HILITE;
+	if (flag_color) {
+		wattron(win_board, A_BOLD | COLOR_PAIR(pair));
+	}
+	mvwaddch(win_board, k, l - 1, '<');
+	mvwaddch(win_board, k, l, wch);
+	mvwaddch(win_board, k, l + 1, '>');
+	if (flag_color) {
+		wattroff(win_board, A_BOLD | COLOR_PAIR(pair));
+	}
+}
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Play	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	show_board	(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle)
+{
+	/* Clear & box */
+	werase(win_board);
+	box(win_board, 0, 0);
+
+	/* Title */
+	alx_ncur_prn_title(win_board, title);
+	/* Subtitle */
+	alx_ncur_prn_subtitle(win_board, subtitle);
+
+	/* Board */
+	board_loop(board, position);
+
+	/* Cursor */
+	wmove(win_board, 1 + position->row, 2 + 2 * position->col);
+
+	/* Refresh */
+	wrefresh(win_board);
+}
+
+static	void	board_loop	(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position)
 {
 	int	i;
 	int	j;
 	int	k;
 	int	l;
-	wchar_t	ch;
+	wchar_t	wch;
 
-	for (i = 0; i < board.rows; i++) {
+	for (i = 0; i < board->rows; i++) {
 		k = 1 + i;
 
 		/* clear */
-		for (j = 0; j < board.cols; j++) {
+		for (j = 0; j < board->cols; j++) {
 			l = 2 + 2 * j;
-			if (board.usr[i][j] == USR_CLEAR) {
-				ch	= board.visible[i][j];
-				show_char(win, k, l, ch);
+			if (board->usr[i][j] == GAME_IFACE_USR_CLEAR) {
+				wch	= set_char(board->visible[i][j]);
+				show_char(k, l, wch);
 			}
 		}
 		/* xyzzy */
 		/* hidden */
-		for (j = 0; j < board.cols; j++) {
+		for (j = 0; j < board->cols; j++) {
 			l = 2 + 2 * j;
-			if (board.usr[i][j] != USR_CLEAR) {
-				ch	= board.visible[i][j];
-				show_char(win, k, l, ch);
+			if (board->usr[i][j] != GAME_IFACE_USR_CLEAR) {
+				wch	= set_char(board->visible[i][j]);
+				show_char(k, l, wch);
 			}
 		}
 		/* kboom */
-		for (j = 0; j < board.cols; j++) {
+		for (j = 0; j < board->cols; j++) {
 			l = 2 + 2 * j;
-			if (board.usr[i][j] == KBOOM) {
-				ch	= board.visible[i][j];
-				show_char(win, k, l, ch);
+			if (board->usr[i][j] == GAME_IFACE_USR_KBOOM) {
+				wch	= set_char(board->visible[i][j]);
+				show_char(k, l, wch);
 			}
 		}
 	}
 
 	/* Highlight cursor */
-	int	pair;
-	if (highlight) {
-		k	= 1 + pos_row;
-		l	= 2 + 2 * pos_col;
-		ch	= board.visible[pos_row][pos_col];
-
-		pair	= PAIR_HILITE;
-		if (flag_color) {
-			wattron(win, A_BOLD | COLOR_PAIR(pair));
-		}
-		mvwaddch(win, k, l - 1, '<');
-		mvwaddch(win, k, l, ch);
-		mvwaddch(win, k, l + 1, '>');
-		if (flag_color) {
-			wattroff(win, A_BOLD | COLOR_PAIR(pair));
-		}
+	if (position->highlight) {
+		wch	= set_char(board->visible[position->row][position->col]);
+		highlight_cursor(wch, position);
 	}
-
-	/* Refresh */
-	wrefresh(win);
 }
 
-static	void	show_char		(WINDOW *win, int row, int col, wchar_t ch)
+static	void	highlight_cursor(wchar_t				wch,
+				const struct Player_Iface_Position	*position)
+{
+	int	k;
+	int	l;
+	int	pair;
+
+	k	= 1 + position->row;
+	l	= 2 + 2 * position->col;
+
+	pair	= PAIR_HILITE;
+	if (flag_color) {
+		wattron(win_board, A_BOLD | COLOR_PAIR(pair));
+	}
+	mvwaddch(win_board, k, l - 1, '<');
+	mvwaddch(win_board, k, l, wch);
+	mvwaddch(win_board, k, l + 1, '>');
+	if (flag_color) {
+		wattroff(win_board, A_BOLD | COLOR_PAIR(pair));
+	}
+}
+
+static	wchar_t	set_char	(int game_iface_visible)
+{
+	wchar_t	wch;
+	switch (game_iface_visible) {
+	case GAME_IFACE_VIS_KBOOM:
+		wch =	PLAYER_TUI_CHAR_KBOOM;
+		break;
+
+	case GAME_IFACE_VIS_HIDDEN_FIELD:
+		wch =	PLAYER_TUI_CHAR_HIDDEN_FIELD;
+		break;
+
+	case GAME_IFACE_VIS_HIDDEN_MINE:
+		wch =	PLAYER_TUI_CHAR_HIDDEN_MINE;
+		break;
+
+	case GAME_IFACE_VIS_HIDDEN_SAFE:
+		wch =	PLAYER_TUI_CHAR_HIDDEN_SAFE;
+		break;
+
+	case GAME_IFACE_VIS_SAFE_MINE:
+		wch =	PLAYER_TUI_CHAR_SAFE_MINE;
+		break;
+
+	case GAME_IFACE_VIS_0:
+		wch =	PLAYER_TUI_CHAR_0;
+		break;
+
+	case GAME_IFACE_VIS_1:
+		wch =	PLAYER_TUI_CHAR_1;
+		break;
+
+	case GAME_IFACE_VIS_2:
+		wch =	PLAYER_TUI_CHAR_2;
+		break;
+
+	case GAME_IFACE_VIS_3:
+		wch =	PLAYER_TUI_CHAR_3;
+		break;
+
+	case GAME_IFACE_VIS_4:
+		wch =	PLAYER_TUI_CHAR_4;
+		break;
+
+	case GAME_IFACE_VIS_5:
+		wch =	PLAYER_TUI_CHAR_5;
+		break;
+
+	case GAME_IFACE_VIS_6:
+		wch =	PLAYER_TUI_CHAR_6;
+		break;
+
+	case GAME_IFACE_VIS_7:
+		wch =	PLAYER_TUI_CHAR_7;
+		break;
+
+	case GAME_IFACE_VIS_8:
+		wch =	PLAYER_TUI_CHAR_8;
+		break;
+
+	case GAME_IFACE_VIS_FLAG:
+		wch =	PLAYER_TUI_CHAR_FLAG;
+		break;
+
+	case GAME_IFACE_VIS_FLAG_FALSE:
+		wch =	PLAYER_TUI_CHAR_FLAG_FALSE;
+		break;
+
+	case GAME_IFACE_VIS_POSSIBLE:
+		wch =	PLAYER_TUI_CHAR_POSSIBLE;
+		break;
+
+	case GAME_IFACE_VIS_POSSIBLE_FALSE:
+		wch =	PLAYER_TUI_CHAR_POSSIBLE_FALSE;
+		break;
+	}
+
+	return	wch;
+}
+
+static	void	show_char	(int row, int col, wchar_t wch)
 {
 	/* Select attributes */
 	int	pair;
-	switch (ch) {
-	case '1':
+	switch (wch) {
+	case PLAYER_TUI_CHAR_1:
 		pair =	PAIR_1;
 		break;
 
-	case '2':
+	case PLAYER_TUI_CHAR_2:
 		pair =	PAIR_2;
 		break;
 
-	case '3':
+	case PLAYER_TUI_CHAR_3:
 		pair =	PAIR_3;
 		break;
 
-	case '4':
+	case PLAYER_TUI_CHAR_4:
 		pair =	PAIR_4;
 		break;
 
-	case '5':
+	case PLAYER_TUI_CHAR_5:
 		pair =	PAIR_5;
 		break;
 
-	case '6':
+	case PLAYER_TUI_CHAR_6:
 		pair =	PAIR_6;
 		break;
 
-	case '7':
+	case PLAYER_TUI_CHAR_7:
 		pair =	PAIR_7;
 		break;
 
-	case '8':
+	case PLAYER_TUI_CHAR_8:
 		pair =	PAIR_8;
 		break;
 
-	case ' ':
+	case PLAYER_TUI_CHAR_0:
 		pair =	PAIR_BLANK;
 		break;
 
-	case '*':
-	case 'v':
+	case PLAYER_TUI_CHAR_HIDDEN_MINE:
+	case PLAYER_TUI_CHAR_SAFE_MINE:
 		pair =	PAIR_MINE;
 		break;
 
-	case '+':
-	case '-':
+	case PLAYER_TUI_CHAR_HIDDEN_FIELD:
+	case PLAYER_TUI_CHAR_HIDDEN_SAFE:
 		pair =	PAIR_HIDDEN;
 		break;
 
-	case 'f':
+	case PLAYER_TUI_CHAR_POSSIBLE_FALSE:
 		pair =	PAIR_fail;
 		break;
 
-	case '?':
+	case PLAYER_TUI_CHAR_POSSIBLE:
 		pair =	PAIR_POSSIBLE;
 		break;
 
-	case 'F':
+	case PLAYER_TUI_CHAR_FLAG_FALSE:
 		pair =	PAIR_FAIL;
 		break;
 
-	case '!':
+	case PLAYER_TUI_CHAR_FLAG:
 		pair =	PAIR_FLAG;
 		break;
 
-	case '#':
+	case PLAYER_TUI_CHAR_KBOOM:
 		pair =	PAIR_KBOOM;
 		break;
 
@@ -402,306 +502,411 @@ static	void	show_char		(WINDOW *win, int row, int col, wchar_t ch)
 
 	/* Print char */
 	if (flag_color) {
-		wattron(win, A_BOLD | COLOR_PAIR(pair));
+		wattron(win_board, A_BOLD | COLOR_PAIR(pair));
 	}
-	if (ch == 'c') {
-	} else {
-		mvwaddch(win, row, col - 1, ' ');
-		mvwaddch(win, row, col, ch);
-		mvwaddch(win, row, col + 1, ' ');
-	}
+	mvwaddch(win_board, row, col - 1, ' ');
+	mvwaddch(win_board, row, col, wch);
+	mvwaddch(win_board, row, col + 1, ' ');
 	if (flag_color) {
-		wattroff(win, A_BOLD | COLOR_PAIR(pair));
+		wattroff(win_board, A_BOLD | COLOR_PAIR(pair));
 	}
 }
 
-static	void	show_help		(WINDOW *win)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Input	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	int	usr_input	(void)
+{
+	wchar_t	ch;
+	ch = wgetch(win_board);
+
+	int	action;
+
+	switch (ch) {
+	case '+':
+	case '\r':
+	case '\n':
+		action	= PLAYER_IFACE_ACT_STEP;
+		break;
+
+	case ' ':
+		action	= PLAYER_IFACE_ACT_FLAG;
+		break;
+
+	case 'f':
+		action	= PLAYER_IFACE_ACT_FLAG_POSSIBLE;
+		break;
+
+		/* ASCII 0x08 is BS */
+	case KEY_BACKSPACE:
+	case 0x08:
+		action	= PLAYER_IFACE_ACT_RM_FLAG;
+		break;
+
+
+	case KEY_BREAK:
+	case 'p':
+		action	= PLAYER_IFACE_ACT_PAUSE;
+		break;
+
+	case 's':
+		action	= PLAYER_IFACE_ACT_SAVE;
+		break;
+
+	case 'x':
+		/* Wait for special sequence "xyzzy" */
+		wtimeout(win_board, 1000);
+
+		ch = wgetch(win_board);
+		if (ch == 'y') {
+			ch = wgetch(win_board);
+			if (ch == 'z') {
+
+			ch = wgetch(win_board);
+			if (ch == 'z') {
+
+			ch = wgetch(win_board);
+			if (ch == 'y') {
+				action	= PLAYER_IFACE_ACT_XYZZY_ON;
+			}
+			}
+			}
+		}
+
+		/* Resume */
+		wtimeout(win_board, 100);
+		break;
+
+	case '0':
+		action	= PLAYER_IFACE_ACT_XYZZY_OFF;
+		break;
+
+	case '1':
+		action	= PLAYER_IFACE_ACT_XYZZY_LIN;
+		break;
+
+	case '2':
+		action	= PLAYER_IFACE_ACT_XYZZY_P;
+		break;
+
+	case '3':
+		action	= PLAYER_IFACE_ACT_XYZZY_NP;
+		break;
+
+	case 'q':
+		action	= PLAYER_IFACE_ACT_QUIT;
+		break;
+
+
+	case KEY_LEFT:
+	case 'h':
+		action	= PLAYER_IFACE_ACT_MOVE_LEFT;
+		break;
+
+	case KEY_DOWN:
+	case 'j':
+		action	= PLAYER_IFACE_ACT_MOVE_DOWN;
+		break;
+
+	case KEY_UP:
+	case 'k':
+		action	= PLAYER_IFACE_ACT_MOVE_UP;
+		break;
+
+	case KEY_RIGHT:
+	case 'l':
+		action	= PLAYER_IFACE_ACT_MOVE_RIGHT;
+		break;
+
+	case 'c':
+		action	= PLAYER_IFACE_ACT_HIGHLIGHT;
+		break;
+
+	default:
+		action	= PLAYER_IFACE_ACT_FOO;
+		break;
+	}
+
+	return	action;
+}
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Help	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	show_help	(const struct Game_Iface_Out	*board)
 {
 	/* Clear */
-	werase(win);
+	werase(win_help);
 
-	switch (board.state) {
-	case GAME_READY:
-		show_help_ready(win);
+	switch (board->state) {
+	case GAME_IFACE_STATE_PLAYING:
+		show_help_play();
 		break;
 
-	case GAME_PLAYING:
-		show_help_playing(win);
+	case GAME_IFACE_STATE_PAUSE:
+		show_help_pause();
 		break;
 
-	case GAME_PAUSE:
-		show_help_pause(win);
+	case GAME_IFACE_STATE_XYZZY:
+		show_help_xyzzy();
 		break;
 
-	case GAME_XYZZY:
-		show_help_xyzzy(win);
+	case GAME_IFACE_STATE_CHEATED:
+		show_help_cheat();
 		break;
 
-	case GAME_CHEATED:
-		show_help_cheated(win);
-		break;
-
-	case GAME_WIN:
-	case GAME_OVER:
-		show_help_end(win);
+	case GAME_IFACE_STATE_SAFE:
+	case GAME_IFACE_STATE_GAMEOVER:
+		show_help_end();
 		break;
 	}
+
+	/* Refresh */
+	wrefresh(win_help);
 }
 
-static	void	show_help_ready		(WINDOW *win)
+static	void	show_help_start	(void)
 {
 	int	r;
 	int	c;
 
 	r =	0;
 	c =	0;
-	mvwaddstr(win, r++, c++, "Move:");
+	mvwaddstr(win_help, r++, c++, "Move:");
 	/* hjkl */
-	mvwaddch(win, r, c, 'h');
+	mvwaddch(win_help, r, c, 'h');
 	c += 2;
-	mvwaddch(win, r, c, 'j');
+	mvwaddch(win_help, r, c, 'j');
 	c += 2;
-	mvwaddch(win, r, c, 'k');
+	mvwaddch(win_help, r, c, 'k');
 	c += 2;
-	mvwaddch(win, r, c, 'l');
+	mvwaddch(win_help, r, c, 'l');
 	/* Arrows */
 	r++;
 	c = 1;
-	mvwaddch(win, r, c, ACS_LARROW);
+	mvwaddch(win_help, r, c, ACS_LARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_DARROW);
+	mvwaddch(win_help, r, c, ACS_DARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_UARROW);
+	mvwaddch(win_help, r, c, ACS_UARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_RARROW);
+	mvwaddch(win_help, r, c, ACS_RARROW);
 
 	r++;
 	c = 0;
-	mvwaddstr(win, r++, c, "Cursor:");
-	mvwprintw(win, r++, c, " %c", 'c');
+	mvwaddstr(win_help, r++, c, "Cursor:");
+	mvwprintw(win_help, r++, c, " %c", 'c');
 
-	mvwaddstr(win, r++, c, "Step:");
-	mvwprintw(win, r++, c, " Enter / %c", '+');
+	mvwaddstr(win_help, r++, c, "Step:");
+	mvwprintw(win_help, r++, c, " Enter / %c", '+');
 
-	mvwaddstr(win, r++, c, "Save:");
-	mvwprintw(win, r++, c, " %c", 's');
+	mvwaddstr(win_help, r++, c, "Save:");
+	mvwprintw(win_help, r++, c, " %c", 's');
 
-	mvwaddstr(win, r++, c, "Quit:");
-	mvwprintw(win, r++, c, " %c", 'q');
-
-	wrefresh(win);
+	mvwaddstr(win_help, r++, c, "Quit:");
+	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_playing	(WINDOW *win)
+static	void	show_help_play	(void)
 {
 	int	r;
 	int	c;
 
 	r =	0;
 	c =	0;
-	mvwaddstr(win, r++, c++, "Move:");
+	mvwaddstr(win_help, r++, c++, "Move:");
 	/* hjkl */
-	mvwaddch(win, r, c, 'h');
+	mvwaddch(win_help, r, c, 'h');
 	c += 2;
-	mvwaddch(win, r, c, 'j');
+	mvwaddch(win_help, r, c, 'j');
 	c += 2;
-	mvwaddch(win, r, c, 'k');
+	mvwaddch(win_help, r, c, 'k');
 	c += 2;
-	mvwaddch(win, r, c, 'l');
+	mvwaddch(win_help, r, c, 'l');
 	/* Arrows */
 	r++;
 	c = 1;
-	mvwaddch(win, r, c, ACS_LARROW);
+	mvwaddch(win_help, r, c, ACS_LARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_DARROW);
+	mvwaddch(win_help, r, c, ACS_DARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_UARROW);
+	mvwaddch(win_help, r, c, ACS_UARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_RARROW);
+	mvwaddch(win_help, r, c, ACS_RARROW);
 
 	r++;
 	c = 0;
-	mvwaddstr(win, r++, c, "Cursor:");
-	mvwprintw(win, r++, c, " %c", 'c');
+	mvwaddstr(win_help, r++, c, "Cursor:");
+	mvwprintw(win_help, r++, c, " %c", 'c');
 
-	mvwaddstr(win, r++, c, "Step:");
-	mvwprintw(win, r++, c, " Enter / %c", '+');
+	mvwaddstr(win_help, r++, c, "Step:");
+	mvwprintw(win_help, r++, c, " Enter / %c", '+');
 
-	mvwaddstr(win, r++, c, "Flag:");
-	mvwprintw(win, r++, c, " Space");
+	mvwaddstr(win_help, r++, c, "Flag:");
+	mvwprintw(win_help, r++, c, " Space");
 
-	mvwaddstr(win, r++, c, "Possible:");
-	mvwprintw(win, r++, c, " %c", 'f');
+	mvwaddstr(win_help, r++, c, "Possible:");
+	mvwprintw(win_help, r++, c, " %c", 'f');
 
-	mvwaddstr(win, r++, c, "rm flag:");
-	mvwprintw(win, r++, c, " Backspace");
+	mvwaddstr(win_help, r++, c, "rm flag:");
+	mvwprintw(win_help, r++, c, " Backspace");
 
-	mvwaddstr(win, r++, c, "Pause:");
-	mvwprintw(win, r++, c, " Break / %c", 'p');
+	mvwaddstr(win_help, r++, c, "Pause:");
+	mvwprintw(win_help, r++, c, " Break / %c", 'p');
 
-	mvwaddstr(win, r++, c, "Save:");
-	mvwprintw(win, r++, c, " %c", 's');
+	mvwaddstr(win_help, r++, c, "Save:");
+	mvwprintw(win_help, r++, c, " %c", 's');
 
-	mvwaddstr(win, r++, c, "Quit:");
-	mvwprintw(win, r++, c, " %c", 'q');
-
-	wrefresh(win);
+	mvwaddstr(win_help, r++, c, "Quit:");
+	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_pause		(WINDOW *win)
+static	void	show_help_pause	(void)
 {
 	int	r;
 	int	c;
 
 	r =	0;
 	c =	0;
-	mvwaddstr(win, r++, c, "Cursor:");
-	mvwprintw(win, r++, c, " %c", 'c');
+	mvwaddstr(win_help, r++, c, "Cursor:");
+	mvwprintw(win_help, r++, c, " %c", 'c');
 
-	mvwaddstr(win, r++, c, "Continue:");
-	mvwprintw(win, r++, c, " Break / %c", 'p');
+	mvwaddstr(win_help, r++, c, "Continue:");
+	mvwprintw(win_help, r++, c, " Break / %c", 'p');
 
-	mvwaddstr(win, r++, c, "Save:");
-	mvwprintw(win, r++, c, " %c", 's');
+	mvwaddstr(win_help, r++, c, "Save:");
+	mvwprintw(win_help, r++, c, " %c", 's');
 
-	mvwaddstr(win, r++, c, "Quit:");
-	mvwprintw(win, r++, c, " %c", 'q');
-
-	wrefresh(win);
+	mvwaddstr(win_help, r++, c, "Quit:");
+	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_xyzzy		(WINDOW *win)
+static	void	show_help_xyzzy	(void)
 {
 	int	r;
 	int	c;
 
 	r =	0;
 	c =	0;
-	mvwaddstr(win, r++, c++, "XYZZY:");
-	mvwprintw(win, r, c, "%c", '1');
+	mvwaddstr(win_help, r++, c++, "XYZZY:");
+	mvwprintw(win_help, r, c, "%c", '1');
 	c += 2;
-	mvwprintw(win, r, c, "%c", '2');
+	mvwprintw(win_help, r, c, "%c", '2');
 //	c += 2;
-//	mvwprintw(win, r, c, "%c", 'd');
+//	mvwprintw(win_help, r, c, "%c", 'd');
 
 	r++;
 	c = 0;
-	mvwaddstr(win, r++, c, "XYZZY off:");
-	mvwprintw(win, r++, c, " %c", '0');
+	mvwaddstr(win_help, r++, c, "XYZZY off:");
+	mvwprintw(win_help, r++, c, " %c", '0');
 
-	mvwaddstr(win, r++, c++, "Move:");
+	mvwaddstr(win_help, r++, c++, "Move:");
 	/* hjkl */
-	mvwaddch(win, r, c, 'h');
+	mvwaddch(win_help, r, c, 'h');
 	c += 2;
-	mvwaddch(win, r, c, 'j');
+	mvwaddch(win_help, r, c, 'j');
 	c += 2;
-	mvwaddch(win, r, c, 'k');
+	mvwaddch(win_help, r, c, 'k');
 	c += 2;
-	mvwaddch(win, r, c, 'l');
+	mvwaddch(win_help, r, c, 'l');
 	/* Arrows */
 	r++;
 	c = 1;
-	mvwaddch(win, r, c, ACS_LARROW);
+	mvwaddch(win_help, r, c, ACS_LARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_DARROW);
+	mvwaddch(win_help, r, c, ACS_DARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_UARROW);
+	mvwaddch(win_help, r, c, ACS_UARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_RARROW);
+	mvwaddch(win_help, r, c, ACS_RARROW);
 
 	r++;
 	c = 0;
-	mvwaddstr(win, r++, c, "Cursor:");
-	mvwprintw(win, r++, c, " %c", 'c');
+	mvwaddstr(win_help, r++, c, "Cursor:");
+	mvwprintw(win_help, r++, c, " %c", 'c');
 
-	mvwaddstr(win, r++, c, "Step:");
-	mvwprintw(win, r++, c, " Enter / %c", '+');
+	mvwaddstr(win_help, r++, c, "Step:");
+	mvwprintw(win_help, r++, c, " Enter / %c", '+');
 
-	mvwaddstr(win, r++, c, "Flag:");
-	mvwprintw(win, r++, c, " Space");
+	mvwaddstr(win_help, r++, c, "Flag:");
+	mvwprintw(win_help, r++, c, " Space");
 
-	mvwaddstr(win, r++, c, "Possible:");
-	mvwprintw(win, r++, c, " %c", 'f');
+	mvwaddstr(win_help, r++, c, "Possible:");
+	mvwprintw(win_help, r++, c, " %c", 'f');
 
-	mvwaddstr(win, r++, c, "rm flag:");
-	mvwprintw(win, r++, c, " Backspace");
+	mvwaddstr(win_help, r++, c, "rm flag:");
+	mvwprintw(win_help, r++, c, " Backspace");
 
-	mvwaddstr(win, r++, c, "Save:");
-	mvwprintw(win, r++, c, " %c", 's');
+	mvwaddstr(win_help, r++, c, "Save:");
+	mvwprintw(win_help, r++, c, " %c", 's');
 
-	mvwaddstr(win, r++, c, "Quit:");
-	mvwprintw(win, r++, c, " %c", 'q');
-
-	wrefresh(win);
+	mvwaddstr(win_help, r++, c, "Quit:");
+	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_cheated	(WINDOW *win)
+static	void	show_help_cheat	(void)
 {
 	int	r;
 	int	c;
 
 	r =	0;
 	c =	0;
-	mvwaddstr(win, r++, c++, "Move:");
+	mvwaddstr(win_help, r++, c++, "Move:");
 	/* hjkl */
-	mvwaddch(win, r, c, 'h');
+	mvwaddch(win_help, r, c, 'h');
 	c += 2;
-	mvwaddch(win, r, c, 'j');
+	mvwaddch(win_help, r, c, 'j');
 	c += 2;
-	mvwaddch(win, r, c, 'k');
+	mvwaddch(win_help, r, c, 'k');
 	c += 2;
-	mvwaddch(win, r, c, 'l');
+	mvwaddch(win_help, r, c, 'l');
 	/* Arrows */
 	r++;
 	c = 1;
-	mvwaddch(win, r, c, ACS_LARROW);
+	mvwaddch(win_help, r, c, ACS_LARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_DARROW);
+	mvwaddch(win_help, r, c, ACS_DARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_UARROW);
+	mvwaddch(win_help, r, c, ACS_UARROW);
 	c += 2;
-	mvwaddch(win, r, c, ACS_RARROW);
+	mvwaddch(win_help, r, c, ACS_RARROW);
 
 	r++;
 	c = 0;
-	mvwaddstr(win, r++, c, "Cursor:");
-	mvwprintw(win, r++, c, " %c", 'c');
+	mvwaddstr(win_help, r++, c, "Cursor:");
+	mvwprintw(win_help, r++, c, " %c", 'c');
 
-	mvwaddstr(win, r++, c, "Step:");
-	mvwprintw(win, r++, c, " Enter / %c", '+');
+	mvwaddstr(win_help, r++, c, "Step:");
+	mvwprintw(win_help, r++, c, " Enter / %c", '+');
 
-	mvwaddstr(win, r++, c, "Flag:");
-	mvwprintw(win, r++, c, " Space");
+	mvwaddstr(win_help, r++, c, "Flag:");
+	mvwprintw(win_help, r++, c, " Space");
 
-	mvwaddstr(win, r++, c, "Possible:");
-	mvwprintw(win, r++, c, " %c", 'f');
+	mvwaddstr(win_help, r++, c, "Possible:");
+	mvwprintw(win_help, r++, c, " %c", 'f');
 
-	mvwaddstr(win, r++, c, "rm flag:");
-	mvwprintw(win, r++, c, " Backspace");
+	mvwaddstr(win_help, r++, c, "rm flag:");
+	mvwprintw(win_help, r++, c, " Backspace");
 
-	mvwaddstr(win, r++, c, "Save:");
-	mvwprintw(win, r++, c, " %c", 's');
+	mvwaddstr(win_help, r++, c, "Save:");
+	mvwprintw(win_help, r++, c, " %c", 's');
 
-	mvwaddstr(win, r++, c, "Quit:");
-	mvwprintw(win, r++, c, " %c", 'q');
-
-	wrefresh(win);
+	mvwaddstr(win_help, r++, c, "Quit:");
+	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_end		(WINDOW *win)
+static	void	show_help_end	(void)
 {
 	int	r;
 	int	c;
 
 	r =	0;
 	c =	0;
-	mvwaddstr(win, r++, c, "Quit:");
-	mvwprintw(win, r++, c, " %c", 'q');
-
-	wrefresh(win);
+	mvwaddstr(win_help, r++, c, "Quit:");
+	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	highlight_cursor	(void)
-{
-	highlight =	!highlight;
-}
+
+/******************************************************************************
+ ******* end of file **********************************************************
+ ******************************************************************************/

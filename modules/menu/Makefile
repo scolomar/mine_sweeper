@@ -4,7 +4,7 @@
 
 # directories
 
-OBJ_DIR = $(UI_DIR)/obj/
+OBJ_DIR = $(MENU_DIR)/obj/
 
 # target: dependencies
 #	action

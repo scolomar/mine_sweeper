@@ -2,85 +2,130 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
+
+/******************************************************************************
+ ******* headers **************************************************************
+ ******************************************************************************/
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Standard	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+		/* errno */
 	#include <errno.h>
 		/* fflush(stdout) */
 	#include <stdio.h>
 
-		/* global variables */
-	#include "data.h"
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Other	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+		/* game() */
+	#include "game.h"
 		/* game_iface() */
 	#include "game_iface.h"
-		/* init_board_...() */
-	#include "init.h"
-		/* print_...() & show_board_...() */
-	#include "print.h"
+		/* menu_iface_board() */
+	#include "menu_iface.h"
+		/* player_iface() */
+	#include "player_iface.h"
 
 	#include "start.h"
 
 
-static	void	start		(void);
+/******************************************************************************
+ ******* variables ************************************************************
+ ******************************************************************************/
+int	start_mode;
+
+
+/******************************************************************************
+ ******* static functions *****************************************************
+ ******************************************************************************/
 static	void	start_foo	(void);
-static	void	start_custom	(void);
 static	void	start_rand	(void);
+static	void	start_load	(void);
 
 
+/******************************************************************************
+ ******* main *****************************************************************
+ ******************************************************************************/
 void	start_switch	(void)
 {
-	switch (flag_s) {
+	switch (start_mode) {
 	case START_FOO:
 		start_foo();
 		break;
 
-	case START_NEW:
+	case START_RAND:
 		start_rand();
 		break;
 
 	case START_LOAD:
-		start_custom();
+		start_load();
 		break;
 	}
-
-	fflush(stdout);
 }
 
 
+/******************************************************************************
+ ******* static functions *****************************************************
+ ******************************************************************************/
 static	void	start_foo	(void)
 {
-	/* foo */
-}
-
-static	void	start_custom	(void)
-{
-	/* sets errno */
-	init_board_custom();
-
-	if (!errno) {
-		start();
-	}
+	/* empty */
 }
 
 static	void	start_rand	(void)
 {
-	/* clear */
-	init_board_clr();
+	/* size & mines */
+	int	rows;
+	int	cols;
+	int	mines;
+	menu_iface_board(&rows, &cols, &mines);
 
-	start();
-}
+	/* user iface init */
+	player_iface_init(rows, cols);
 
+	/* start position */
+	int	r;
+	int	c;
+	player_iface_start(&r, &c);
 
-static	void	start		(void)
-{
+	/* game init */
+	game_init_rand(rows, cols, mines, r, c);
+
+	/* game iface init */
+	game_iface_init_rand(r, c);
+
+	/* game loop */
 	game_iface();
+
+	/* user iface cluanup */
+	player_iface_cleanup();
+	fflush(stdout);
 }
 
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*--| END OF FILE |-----------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
+static	void	start_load	(void)
+{
+	/* size & game init (sets errno) */
+	int	rows;
+	int	cols;
+	game_init_load(&rows, &cols);
 
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*--| END OF FILE |-----------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
+	/* player iface init */
+	player_iface_init(rows, cols);
+
+	if (!errno) {
+		/* game iface init */
+		game_iface_init_load();
+
+		/* game loop */
+		game_iface();
+	}
+
+	/* user iface cluanup */
+	player_iface_cleanup();
+	fflush(stdout);
+}
+
+
+/******************************************************************************
+ ******* end of file **********************************************************
+ ******************************************************************************/

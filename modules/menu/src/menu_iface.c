@@ -9,82 +9,72 @@
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Standard	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
-		/* getchar() */
-	#include <stdio.h>
+	#include <math.h>
+	#include <stdbool.h>
 
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Other	*	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
-	#include "alx_ncur.h"
-
-		/* about_init() & print_cpright() */
-	#include "about.h"
-	#include "game.h"
-	#include "menu_iface.h"
-	#include "player_iface.h"
-	#include "parser.h"
-	#include "save.h"
 	#include "start.h"
+
+//	#include "menu_clui.h"
+	#include "menu_tui.h"
+
+	#include "menu_iface.h"
 
 
 /******************************************************************************
- ******* static functions *****************************************************
+ ******* variables ************************************************************
  ******************************************************************************/
-void	init_all	(void);
-void	cleanup		(void);
+bool				flag_exit;
+int				menu_iface_mode;
+struct Menu_Iface_Variables	menu_iface_variables;
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-int	main	(int argc, char *argv[])
+void	menu_iface_init		(void)
 {
-	init_all();
-	
-	/* Parse command line options */
-	parser(argc, argv);
-
-	/* Print copyright () and wait for any key to continue */
-	print_cpright();
-	getchar();
-
-	/* Start () */
-	start_switch();
-
-	/* Menu () */
-	menu_iface();
-
-	cleanup();
-
-	return	0;
+	menu_iface_variables.rows	= 8;
+	menu_iface_variables.cols	= 8;
+	menu_iface_variables.p		= 0.16;
 }
 
-
-/******************************************************************************
- ******* static functions *****************************************************
- ******************************************************************************/
-void	init_all	(void)
+void	menu_iface_board	(int *rows, int *cols, int *mines)
 {
-	/* Init modules */
-	alx_start_curses();
-	menu_iface_init();
-	alx_pause_curses();
-	game_init();
-	about_init();
-	save_init();
+	*rows	= menu_iface_variables.rows;
+	*cols	= menu_iface_variables.cols;
 
-	/* Modes */
-	start_mode		= START_FOO;
-	flag_exit		= false;
-	menu_iface_mode		= MENU_IFACE_TUI;
-	player_iface_mode	= PLAYER_IFACE_TUI;
+	/* calc number of mines */
+	*mines	= menu_iface_variables.p * (*rows) * (*cols);
+
+	/* at least one safe field */
+	if ((*mines) == (*rows) * (*cols)) {
+		(*mines)--;
+	}
 }
 
-void	cleanup		(void)
+void	menu_iface		(void)
 {
-	/* End curses */
-	alx_resume_curses();
-	alx_end_curses();
+	start_mode	= START_RAND;
+
+	if (!flag_exit) {
+		switch (menu_iface_mode) {
+		case MENU_IFACE_FOO:
+			break;
+
+		case MENU_IFACE_CLUI:
+			break;
+
+		case MENU_IFACE_TUI:
+			menu_tui();
+			break;
+
+		case MENU_IFACE_GUI:
+			break;
+		}
+	}
 }
 
 

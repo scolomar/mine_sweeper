@@ -3,468 +3,512 @@
  ******************************************************************************/
 
 
-		/* clock_t & clock() & CLOCKS_PER_SEC */
+/******************************************************************************
+ ******* headers **************************************************************
+ ******************************************************************************/
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Standard	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+	#include <stdbool.h>
+		/* time_t & time() */
 	#include <time.h>
-		/* wchar_t */
-	#include <wchar.h>
 
-		/* board & macros */
-	#include "data.h"
-		/* game_action() & game_state() & game_update_time() */
-	#include "game.h"
-		/* game_tui() */
-	#include "game_clui.h"
-		/* game_tui() */
-	#include "game_tui.h"
-		/* init_board_rand() */
-	#include "init.h"
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Other	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+		/* player_iface() */
+	#include "player_iface.h"
 		/* save_game_file() */
 	#include "save.h"
 		/* xyzzy_...() */
 	#include "xyzzy.h"
 
+		/* game_action() */
+	#include "game.h"
+
 	#include "game_iface.h"
 
 
 /******************************************************************************
- ******| static |**************************************************************
+ ******* variables ************************************************************
  ******************************************************************************/
-static	void	game_iface_act		(int action, int *pos_row, int *pos_col);
-static	void	game_iface_act_ready	(int action, int *pos_row, int *pos_col);
-static	void	game_iface_act_playing	(int action, int *pos_row, int *pos_col);
-static	void	game_iface_act_xyzzy	(int action, int *pos_row, int *pos_col);
-static	void	game_iface_act_pause	(int action, int *pos_row, int *pos_col);
-static	void	game_iface_act_end	(int action, int *pos_row, int *pos_col);
+static	struct Game_Iface_Out	game_iface_out;
+static	struct Game_Iface_In	game_iface_in;
+static	struct Game_Iface_Score	game_iface_score;
+static	time_t			tim_ini;
 
-static	void	game_iface_first_step	(int pos_row, int pos_col);
-static	void	game_iface_update_time	(void);
+
+/******************************************************************************
+ ******* static functions *****************************************************
+ ******************************************************************************/
+	/* Init */
+static	void	game_iface_init_score	(void);
+static	void	game_iface_init_cheated	(void);
+	/* Actions */
+static	void	game_iface_act		(void);
+static	void	game_iface_playing_act	(void);
+static	void	game_iface_xyzzy_act	(void);
+static	void	game_iface_cheated_act	(void);
+static	void	game_iface_pause_act	(void);
+static	void	game_iface_end_act	(void);
+	/* Actions:  game */
+static	void	game_iface_act_game	(void);
+	/* Actions:  game_iface */
 static	void	game_iface_pause	(void);
+static	void	game_iface_unpause	(void);
+static	void	game_iface_xyzzy_on	(void);
+static	void	game_iface_xyzzy_off	(void);
 static	void	game_iface_quit		(void);
-
-static	void	game_iface_xyzzy_on		(void);
-static	void	game_iface_xyzzy_off		(void);
-
-static	void	game_iface_visible_board	(void);
-static	wchar_t	game_iface_visible_char		(int row, int col);
+	/* Output */
+static	void	game_iface_update_out	(void);
+static	void	game_iface_update_board	(void);
+static	void	game_iface_update_vis	(int r, int c);
+static	void	game_iface_update_usr	(int r, int c);
+	/* Score */
+static	void	game_iface_update_score	(void);
+	/* Prepare input */
+static	void	game_iface_clean_in	(void);
 
 
 /******************************************************************************
- ******| main |****************************************************************
+ ******* main *****************************************************************
  ******************************************************************************/
-void	game_iface	(void)
+void	game_iface_init_rand	(int pos_row, int pos_col)
 {
-	/* Init interface */
-	switch (flag_iface) {
-	case IFACE_CLUI:
-		/* Empty */
-		break;
+	/* first step */
+	game_action(GAME_ACT_STEP, pos_row, pos_col);
 
-	case IFACE_TUI:
-		game_tui_init();
-		break;
-	}
+	game_iface_out.state	= GAME_IFACE_STATE_PLAYING;
+	game_iface_init_score();
 
-	/* Board position */
-	int	pos_row;
-	int	pos_col;
-	pos_row =	0;
-	pos_col =	0;
+	game_iface_out.rows	= game_board.rows;
+	game_iface_out.cols	= game_board.cols;
+	game_iface_out.mines	= game_board.mines;
+	game_iface_update_out();
+	game_iface_update_score();
+	game_iface_clean_in();
+}
 
-	/* User action */
-	int	action;
+void	game_iface_init_load	(void)
+{
+	game_iface_init_cheated();
 
-	/* Game loop */
-	while (board.state != GAME_QUIT) {
-		game_iface_visible_board();
-		switch (flag_iface) {
-		case IFACE_CLUI:
-			action	= game_clui(action, pos_row, pos_col);
-			break;
+	game_iface_out.mines	= game_board.mines;
+	game_iface_update_out();
+	game_iface_clean_in();
+}
 
-		case IFACE_TUI:
-			action	= game_tui(pos_row, pos_col);
-			break;
-		}
+void	game_iface		(void)
+{
+	while (game_iface_out.state != GAME_IFACE_STATE_QUIT) {
+		game_iface_update_out();
+		game_iface_update_score();
+		game_iface_clean_in();
 
-		game_iface_act(action, &pos_row, &pos_col);
-		game_iface_update_time();
-	}
+		player_iface(&game_iface_out, &game_iface_score, &game_iface_in);
 
-	/* Cleanup interface */
-	switch (flag_iface) {
-	case IFACE_CLUI:
-		/* Empty */
-		break;
-
-	case IFACE_TUI:
-		game_tui_cleanup();
-		break;
+		game_iface_act();
 	}
 }
 
 
 /******************************************************************************
- ******| static |**************************************************************
+ ******* static functions *****************************************************
  ******************************************************************************/
-static	void	game_iface_act		(int action, int *pos_row, int *pos_col)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Init	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_iface_init_score	(void)
 {
-	switch (board.state) {
-	case GAME_READY:
-		game_iface_act_ready(action, pos_row, pos_col);
+	tim_ini			= time(NULL);
+	game_iface_score.clicks	= 1;
+}
+
+static	void	game_iface_init_cheated	(void)
+{
+	game_iface_out.state	= GAME_IFACE_STATE_CHEATED;
+	game_iface_score.time	= CHEATED;
+	game_iface_score.clicks	= CHEATED;
+}
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Actions	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_iface_act		(void)
+{
+	switch (game_iface_out.state) {
+	case GAME_IFACE_STATE_PLAYING:
+		game_iface_playing_act();
 		break;
 
-	case GAME_CHEATED:
-	case GAME_PLAYING:
-		game_iface_act_playing(action, pos_row, pos_col);
+	case GAME_IFACE_STATE_CHEATED:
+		game_iface_cheated_act();
 		break;
 
-	case GAME_XYZZY:
-		game_iface_act_xyzzy(action, pos_row, pos_col);
+	case GAME_IFACE_STATE_XYZZY:
+		game_iface_xyzzy_act();
 		break;
 
-	case GAME_PAUSE:
-		game_iface_act_pause(action, pos_row, pos_col);
+	case GAME_IFACE_STATE_PAUSE:
+		game_iface_pause_act();
 		break;
 
-	case GAME_WIN:
-	case GAME_OVER:
-		game_iface_act_end(action, pos_row, pos_col);
+	case GAME_IFACE_STATE_SAFE:
+	case GAME_IFACE_STATE_GAMEOVER:
+		game_iface_end_act();
 		break;
 	}
 }
 
-static	void	game_iface_act_ready	(int action, int *pos_row, int *pos_col)
+static	void	game_iface_playing_act	(void)
 {
-	switch (action) {
-	case ACT_STEP:
-		/* First step: gen map & set timer before stepping */
-		if (!board.set) {
-			game_iface_first_step(*pos_row, *pos_col);
+	switch (game_iface_in.action) {
+	case GAME_IFACE_ACT_PLAY:
+		game_iface_act_game();
+		break;
+
+	case GAME_IFACE_ACT_PAUSE:
+		game_iface_pause();
+		break;
+
+	case GAME_IFACE_ACT_XYZZY_ON:
+		game_iface_xyzzy_on();
+		break;
+
+	case GAME_IFACE_ACT_SAVE:
+		save_game_file();
+		break;
+
+	case GAME_IFACE_ACT_QUIT:
+		game_iface_quit();
+		break;
+	}
+}
+
+static	void	game_iface_xyzzy_act	(void)
+{
+	xyzzy_init();
+
+	bool	wh;
+	wh	= true;
+	while (wh) {
+		switch (game_iface_in.action) {
+		case GAME_IFACE_ACT_PLAY:
+			game_iface_act_game();
+			wh	= false;
+			break;
+
+		case GAME_IFACE_ACT_XYZZY_OFF:
+			game_iface_xyzzy_off();
+			wh	= false;
+			break;
+
+		case GAME_IFACE_ACT_XYZZY_LIN:
+			wh	= xyzzy_lin(&game_iface_out, &game_iface_in);
+			game_iface_act_game();
+			break;
+
+		case GAME_IFACE_ACT_XYZZY_P:
+			wh	= xyzzy_p(&game_iface_out, &game_iface_in);
+			game_iface_act_game();
+			game_iface_update_out();
+			break;
+
+		case GAME_IFACE_ACT_SAVE:
+			save_game_file();
+			wh	= false;
+			break;
+
+		case GAME_IFACE_ACT_QUIT:
+			game_iface_quit();
+			wh	= false;
+			break;
+
+		default:
+			wh	= false;
+			break;
 		}
-		game_action(action, pos_row, pos_col);
-		break;
-
-	case ACT_SAVE:
-		save_game_file();
-		break;
-/*
-	case ACT_XYZZY_ON:
-		game_iface_xyzzy_on();
-		break;
-*/
-	case ACT_QUIT:
-		game_iface_quit();
-		break;
-
-	case ACT_FOO:
-	case ACT_FLAG:
-	case ACT_FLAG_POSSIBLE:
-	case ACT_RM_FLAG:
-	case ACT_PAUSE:
-	case ACT_XYZZY_ON:
-	case ACT_XYZZY_OFF:
-	case ACT_XYZZY_LIN:
-	case ACT_XYZZY_P:
-	case ACT_XYZZY_NP:
-		/* Empty */
-		break;
-
-	default:
-		game_action(action, pos_row, pos_col);
-		break;
 	}
 }
 
-static	void	game_iface_act_playing	(int action, int *pos_row, int *pos_col)
+static	void	game_iface_cheated_act	(void)
 {
-	switch (action) {
-	case ACT_PAUSE:
-		game_iface_pause();
+	switch (game_iface_in.action) {
+	case GAME_IFACE_ACT_PLAY:
+		game_iface_act_game();
 		break;
 
-	case ACT_SAVE:
-		save_game_file();
-		break;
-
-	case ACT_XYZZY_ON:
+	case GAME_IFACE_ACT_XYZZY_ON:
 		game_iface_xyzzy_on();
 		break;
 
-	case ACT_QUIT:
-		game_iface_quit();
-		break;
-
-	case ACT_FOO:
-	case ACT_XYZZY_OFF:
-	case ACT_XYZZY_LIN:
-	case ACT_XYZZY_P:
-	case ACT_XYZZY_NP:
-		/* Empty */
-		break;
-
-	default:
-		game_action(action, pos_row, pos_col);
-		break;
-	}
-}
-
-static	void	game_iface_act_xyzzy	(int action, int *pos_row, int *pos_col)
-{
-	switch (action) {
-	case ACT_SAVE:
+	case GAME_IFACE_ACT_SAVE:
 		save_game_file();
 		break;
 
-	case ACT_XYZZY_LIN:
-		xyzzy_lin();
-		break;
-
-	case ACT_XYZZY_P:
-		xyzzy_p();
-		break;
-
-	case ACT_XYZZY_OFF:
-		game_iface_xyzzy_off();
-		break;
-
-	case ACT_QUIT:
+	case GAME_IFACE_ACT_QUIT:
 		game_iface_quit();
-		break;
-
-	case ACT_FOO:
-	case ACT_PAUSE:
-	case ACT_XYZZY_ON:
-	case ACT_XYZZY_NP:
-		/* Empty */
-		break;
-
-	default:
-		game_action(action, pos_row, pos_col);
 		break;
 	}
 }
 
-static	void	game_iface_act_pause	(int action, int *pos_row, int *pos_col)
+static	void	game_iface_pause_act	(void)
 {
-	switch (action) {
-	case ACT_PAUSE:
-		game_iface_pause();
+	switch (game_iface_in.action) {
+	case GAME_IFACE_ACT_PAUSE:
+		game_iface_unpause();
 		break;
 
-	case ACT_SAVE:
+	case GAME_IFACE_ACT_XYZZY_ON:
+		game_iface_xyzzy_on();
+		break;
+
+	case GAME_IFACE_ACT_SAVE:
 		save_game_file();
 		break;
 
-	case ACT_QUIT:
+	case GAME_IFACE_ACT_QUIT:
 		game_iface_quit();
 		break;
 	}
 }
 
-static	void	game_iface_act_end	(int action, int *pos_row, int *pos_col)
+static	void	game_iface_end_act	(void)
 {
-	switch (action) {
-	case ACT_QUIT:
-		board.state =	GAME_QUIT;
+	switch (game_iface_in.action) {
+	case GAME_IFACE_ACT_QUIT:
+		game_iface_quit();
 		break;
 	}
 }
 
-
-static	void	game_iface_first_step	(int pos_row, int pos_col)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Actions:  game	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_iface_act_game	(void)
 {
-	/* Generate map */
-	init_board_rand(pos_row, pos_col);
-	board.set	= true;
+	int	i;
+	int	j;
 
-	/* Play */
-	if (board.state == GAME_READY) {
-		board.state = GAME_PLAYING;
-	}
-
-	/* Start timer */
-	tim_ini		= time(NULL);
-	game_iface_update_time();
-}
-
-static	void	game_iface_update_time	(void)
-{
-	time_t		tim_now;
-
-	switch (board.state) {
-	case GAME_PLAYING:
-		tim_now =	time(NULL);
-		board.time =	(int)(tim_now - tim_ini);
-		break;
-
-	case GAME_XYZZY:
-		board.time =	CHEATED;
-		board.clicks =	CHEATED;
-		break;
+	for (i = 0; i < game_board.rows; i++) {
+		for (j = 0; j < game_board.cols; j++) {
+			if (game_iface_in.act_game[i][j]) {
+				game_action(game_iface_in.act_game[i][j], i, j);
+				game_iface_score.clicks++;
+			}
+		}
 	}
 }
 
-static	void	game_iface_pause		(void)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Actions:  game_iface	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_iface_pause	(void)
 {
 	time_t	tim_now;
 
-	switch (board.state) {
-	case GAME_PLAYING:
-		tim_now		= time(NULL);
-		board.time	= (int)(tim_now - tim_ini);
-		board.state	= GAME_PAUSE;
-		break;
-
-	case GAME_PAUSE:
-		tim_now		= time(NULL);
-		tim_ini		= tim_now - (time_t)board.time;
-		board.state	= GAME_PLAYING;
-		break;
-	}
+	tim_now			= time(NULL);
+	game_iface_score.time	= (int)(tim_now - tim_ini);
+	game_iface_out.state	= GAME_IFACE_STATE_PAUSE;
 }
 
-static	void	game_iface_xyzzy_on		(void)
+static	void	game_iface_unpause	(void)
 {
-	board.state	= GAME_XYZZY;
+	time_t	tim_now;
+
+	tim_now			= time(NULL);
+	tim_ini			= tim_now - (time_t)game_iface_score.time;
+	game_iface_out.state	= GAME_IFACE_STATE_PLAYING;
 }
 
-static	void	game_iface_xyzzy_off		(void)
+static	void	game_iface_xyzzy_on	(void)
 {
-	board.state	= GAME_CHEATED;
+	game_iface_out.state	= GAME_IFACE_STATE_XYZZY;
+}
+
+static	void	game_iface_xyzzy_off	(void)
+{
+	game_iface_out.state	= GAME_IFACE_STATE_CHEATED;
 }
 
 static	void	game_iface_quit		(void)
 {
-	board.state	= GAME_QUIT;
+	game_iface_out.state	= GAME_IFACE_STATE_QUIT;
 }
 
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Output	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_iface_update_out	(void)
+{
+	game_iface_out.flags	= game_board.flags;
+	game_iface_out.clr	= game_board.clr;
 
-static	void	game_iface_visible_board	(void)
+	switch (game_board.state) {
+	case GAME_STATE_SAFE:
+		game_iface_out.state	= GAME_IFACE_STATE_SAFE;
+		break;
+
+	case GAME_STATE_GAMEOVER:
+		game_iface_out.state	= GAME_IFACE_STATE_GAMEOVER;
+		break;
+	}
+
+	game_iface_update_board();
+}
+
+static	void	game_iface_update_board	(void)
 {
 	int	i;
 	int	j;
-	wchar_t	ch;
 
-	for (i = 0; i < board.rows; i++) {
-		for (j = 0; j < board.cols; j++) {
-			ch =	game_iface_visible_char(i, j);
-			board.visible[i][j] =	ch;
+	for (i = 0; i < game_board.rows; i++) {
+		for (j = 0; j < game_board.cols; j++) {
+			game_iface_update_vis(i, j);
+			game_iface_update_usr(i, j);
 		}
 	}
 }
 
-static	wchar_t	game_iface_visible_char		(int row, int col)
+static	void	game_iface_update_vis	(int r, int c)
 {
-	wchar_t	ch;
+	int	field_vis;
 
-	switch (board.state) {
-	case GAME_READY:
-		switch (board.usr[row][col]) {
-		case USR_HIDDEN:
-			ch =	'+';
+	switch (game_iface_out.state) {
+	case GAME_IFACE_STATE_SAFE:
+	case GAME_IFACE_STATE_CHEATED:
+	case GAME_IFACE_STATE_XYZZY:
+	case GAME_IFACE_STATE_PLAYING:
+		switch (game_board.usr[r][c]) {
+		case GAME_USR_HIDDEN:
+			field_vis	= GAME_IFACE_VIS_HIDDEN_FIELD;
 			break;
 
-		case USR_FLAG:
-			ch =	'!';
+		case GAME_USR_CLEAR:
+			field_vis	= GAME_IFACE_VIS_0 + game_board.gnd[r][c];
 			break;
 
-		case USR_POSSIBLE:
-			ch =	'?';
+		case GAME_USR_FLAG:
+			field_vis	= GAME_IFACE_VIS_FLAG;
+			break;
+
+		case GAME_USR_POSSIBLE:
+			field_vis	= GAME_IFACE_VIS_POSSIBLE;
 			break;
 		}
 		break;
 
-	case GAME_CHEATED:
-	case GAME_XYZZY:
-	case GAME_PLAYING:
-		switch (board.usr[row][col]) {
-		case USR_HIDDEN:
-			ch =	'+';
-			break;
-		case USR_CLEAR:
-			if (board.gnd[row][col] == MINE_NO) {
-				ch =	' ';
-			} else {
-				ch =	'0' + board.gnd[row][col];
-			}
-			break;
-		case USR_FLAG:
-			ch =	'!';
-			break;
-		case USR_POSSIBLE:
-			ch =	'?';
-			break;
-		}
-		break;
-
-	case GAME_WIN:
-		switch (board.usr[row][col]) {
-		case USR_HIDDEN:
-			ch =	'v';
+	case GAME_IFACE_STATE_GAMEOVER:
+		switch (game_board.usr[r][c]) {
+		case GAME_USR_KBOOM:
+			field_vis	= GAME_IFACE_VIS_KBOOM;
 			break;
 
-		case USR_CLEAR:
-			if (board.gnd[row][col] == MINE_NO) {
-				ch =	' ';
+		case GAME_USR_HIDDEN:
+			if (game_board.gnd[r][c] >= GAME_MINE_YES) {
+				field_vis	= GAME_IFACE_VIS_HIDDEN_MINE;
 			} else {
-				ch =	'0' + board.gnd[row][col];
+				field_vis	= GAME_IFACE_VIS_HIDDEN_SAFE;
 			}
 			break;
 
-		case USR_FLAG:
-			ch =	'!';
+		case GAME_USR_CLEAR:
+			field_vis	= GAME_IFACE_VIS_0 + game_board.gnd[r][c];
 			break;
 
-		case USR_POSSIBLE:
-			ch =	'?';
-			break;
-		}
-		break;
-
-	case GAME_OVER:
-		switch (board.usr[row][col]) {
-		case KBOOM:
-			ch =	'#';
-			break;
-
-		case USR_HIDDEN:
-			if (board.gnd[row][col] >= MINE_YES) {
-				ch =	'*';
+		case GAME_USR_FLAG:
+			if (game_board.gnd[r][c] >= GAME_MINE_YES) {
+				field_vis	= GAME_IFACE_VIS_FLAG;
 			} else {
-				ch =	'-';
+				field_vis	= GAME_IFACE_VIS_FLAG_FALSE;
 			}
 			break;
 
-		case USR_CLEAR:
-			if (board.gnd[row][col] == MINE_NO) {
-				ch =	' ';
+		case GAME_USR_POSSIBLE:
+			if (game_board.gnd[r][c] >= GAME_MINE_YES) {
+				field_vis	= GAME_IFACE_VIS_POSSIBLE;
 			} else {
-				ch =	'0' + board.gnd[row][col];
-			}
-			break;
-
-		case USR_FLAG:
-			if (board.gnd[row][col] >= MINE_YES) {
-				ch =	'!';
-			} else {
-				ch =	'F';
-			}
-			break;
-
-		case USR_POSSIBLE:
-			if (board.gnd[row][col] >= MINE_YES) {
-				ch =	'*';
-			} else {
-				ch =	'f';
+				field_vis	= GAME_IFACE_VIS_POSSIBLE_FALSE;
 			}
 			break;
 		}
 		break;
 
 	default:
-		ch =	'0';
+		field_vis	= GAME_IFACE_VIS_HIDDEN_FIELD;
 		break;
 	}
 
-	return	ch;
+	game_iface_out.visible[r][c]	= field_vis;
 }
+
+static	void	game_iface_update_usr	(int r, int c)
+{
+	int	field_usr;
+
+	switch (game_board.usr[r][c]) {
+	case GAME_USR_KBOOM:
+		field_usr	= GAME_IFACE_USR_KBOOM;
+		break;
+
+	case GAME_USR_HIDDEN:
+		field_usr	= GAME_IFACE_USR_HIDDEN;
+		break;
+
+	case GAME_USR_CLEAR:
+		field_usr	= GAME_IFACE_USR_CLEAR;
+		break;
+
+	case GAME_USR_FLAG:
+		field_usr	= GAME_IFACE_VIS_FLAG;
+		break;
+
+	case GAME_USR_POSSIBLE:
+		field_usr	= GAME_IFACE_VIS_POSSIBLE;
+		break;
+	}
+
+	game_iface_out.usr[r][c]	= field_usr;
+}
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Score	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_iface_update_score	(void)
+{
+	time_t		tim_now;
+
+	switch (game_iface_out.state) {
+	case GAME_IFACE_STATE_PLAYING:
+		tim_now			= time(NULL);
+		game_iface_score.time	= (int)(tim_now - tim_ini);
+		break;
+
+	case GAME_IFACE_STATE_XYZZY:
+	case GAME_IFACE_STATE_CHEATED:
+		game_iface_score.time	= CHEATED;
+		game_iface_score.clicks	= CHEATED;
+		break;
+	}
+}
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Prepare input	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_iface_clean_in	(void)
+{
+	int	i;
+	int	j;
+	for (i = 0; i < game_board.rows; i++) {
+		for (j = 0; j < game_board.cols; j++) {
+			game_iface_in.act_game[i][j]	= GAME_IFACE_GAME_ACT_FOO;
+		}
+	}
+
+	game_iface_in.action	= GAME_IFACE_ACT_FOO;
+}
+
+
+/******************************************************************************
+ ******* end of file **********************************************************
+ ******************************************************************************/

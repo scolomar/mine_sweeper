@@ -2,62 +2,57 @@
 
 # directories
 
-LIBALX_OBJ_DIR = $(LIBALX_DIR)/obj/
+LIBALX_OBJ_DIR	= $(LIBALX_DIR)/obj/
 
-CTRL_DIR = $(MODULES_DIR)/ctrl/
-CTRL_OBJ_DIR = $(CTRL_DIR)/obj/
+ABOUT_DIR	= $(MODULES_DIR)/about/
+ABOUT_OBJ_DIR	= $(ABOUT_DIR)/obj/
 
-DATA_DIR = $(MODULES_DIR)/data/
-DATA_OBJ_DIR = $(DATA_DIR)/obj/
+CTRL_DIR	= $(MODULES_DIR)/ctrl/
+CTRL_OBJ_DIR	= $(CTRL_DIR)/obj/
 
-GAME_DIR = $(MODULES_DIR)/game/
-GAME_OBJ_DIR = $(GAME_DIR)/obj/
+GAME_DIR	= $(MODULES_DIR)/game/
+GAME_OBJ_DIR	= $(GAME_DIR)/obj/
 
-GEN_DIR = $(MODULES_DIR)/gen/
-GEN_OBJ_DIR = $(GEN_DIR)/obj/
+MENU_DIR	= $(MODULES_DIR)/menu/
+MENU_OBJ_DIR	= $(MENU_DIR)/obj/
 
-PRNT_DIR = $(MODULES_DIR)/prnt/
-PRNT_OBJ_DIR = $(PRNT_DIR)/obj/
+PLAY_DIR	= $(MODULES_DIR)/player/
+PLAY_OBJ_DIR	= $(PLAY_DIR)/obj/
 
-SAVE_DIR = $(MODULES_DIR)/save/
-SAVE_OBJ_DIR = $(SAVE_DIR)/obj/
+SAVE_DIR	= $(MODULES_DIR)/save/
+SAVE_OBJ_DIR	= $(SAVE_DIR)/obj/
 
-UI_DIR = $(MODULES_DIR)/ui/
-UI_OBJ_DIR = $(UI_DIR)/obj/
+XYZZY_DIR	= $(MODULES_DIR)/xyzzy/
+XYZZY_OBJ_DIR	= $(XYZZY_DIR)/obj/
 
-XYZZY_DIR = $(MODULES_DIR)/xyzzy/
-XYZZY_OBJ_DIR = $(XYZZY_DIR)/obj/
-
-OBJ_DIR = $(MAIN_DIR)/obj/
+OBJ_DIR	= $(MAIN_DIR)/obj/
 
 # dependencies
-_ALL = mine_sweeper mine_sweeper.exe
+_ALL	= mine_sweeper mine_sweeper.exe
 
 ifeq ($(OS), linux)
-  ALL = mine_sweeper
+  ALL	= mine_sweeper
 else ifeq ($(OS), win)
-  ALL = mine_sweeper.exe
+  ALL	= mine_sweeper.exe
 endif
 
-MAIN_OBJ_LIBALX =	alx_file.o alx_getnum.o alx_ncur.o alx_seed.o
-MAIN_OBJ_CTRL =		start.o
-MAIN_OBJ_DATA =		data.o
-MAIN_OBJ_GAME =		game.o
-MAIN_OBJ_GEN =		init.o
-MAIN_OBJ_PRNT =		about.o print.o
-MAIN_OBJ_SAVE =		save.o
-MAIN_OBJ_UI =		parser.o game_iface.o game_clui.o game_tui.o tui.o
-MAIN_OBJ_XYZZY =	xyzzy.o
+MAIN_OBJ_LIBALX	= alx_file.o alx_getnum.o alx_ncur.o alx_seed.o
+MAIN_OBJ_ABOUT	= about_mod.o
+MAIN_OBJ_CTRL	= ctrl_mod.o
+MAIN_OBJ_GAME	= game_mod.o
+MAIN_OBJ_MENU	= menu_mod.o
+MAIN_OBJ_PLAY	= player_mod.o
+MAIN_OBJ_SAVE	= save_mod.o
+MAIN_OBJ_XYZZY	= xyzzy_mod.o
 
-MAIN_OBJS = $(OBJ_DIR)/main.o \
+MAIN_OBJS	= $(OBJ_DIR)/main.o \
 			$(patsubst %,$(LIBALX_OBJ_DIR)/%,$(MAIN_OBJ_LIBALX)) \
+			$(patsubst %,$(ABOUT_OBJ_DIR)/%,$(MAIN_OBJ_ABOUT)) \
 			$(patsubst %,$(CTRL_OBJ_DIR)/%,$(MAIN_OBJ_CTRL)) \
-			$(patsubst %,$(DATA_OBJ_DIR)/%,$(MAIN_OBJ_DATA)) \
 			$(patsubst %,$(GAME_OBJ_DIR)/%,$(MAIN_OBJ_GAME)) \
-			$(patsubst %,$(GEN_OBJ_DIR)/%,$(MAIN_OBJ_GEN)) \
-			$(patsubst %,$(PRNT_OBJ_DIR)/%,$(MAIN_OBJ_PRNT)) \
+			$(patsubst %,$(MENU_OBJ_DIR)/%,$(MAIN_OBJ_MENU)) \
+			$(patsubst %,$(PLAY_OBJ_DIR)/%,$(MAIN_OBJ_PLAY)) \
 			$(patsubst %,$(SAVE_OBJ_DIR)/%,$(MAIN_OBJ_SAVE)) \
-			$(patsubst %,$(UI_OBJ_DIR)/%,$(MAIN_OBJ_UI)) \
 			$(patsubst %,$(XYZZY_OBJ_DIR)/%,$(MAIN_OBJ_XYZZY))
 
 
@@ -79,7 +74,7 @@ mine_sweeper.exe: $(MAIN_OBJS)
 
 
 clean:
-	$(Q)rm -f $(ALL)
+	$(Q)rm -f $(_ALL)
 	@echo  "Clean binaries"
 
 ################################################################################

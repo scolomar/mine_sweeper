@@ -3,58 +3,283 @@
  ******************************************************************************/
 
 
+/******************************************************************************
+ ******* headers **************************************************************
+ ******************************************************************************/
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Standard	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+	#include <stdbool.h>
 		/* sprintf() */
 	#include <stdio.h>
-		/* wchar_t */
 	#include <wchar.h>
 
-		/* board & macros */
-	#include "data.h"
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Other	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+		/* struct Game_Iface_Out */
+	#include "game_iface.h"
 
-	#include "game_clui.h"
+		/* struct Player_Iface_Position */
+	#include "player_iface.h"
 
-
-	# define	TITLE_SIZE	(20)
-
-
-/******************************************************************************
- ******| static |**************************************************************
- ******************************************************************************/
-static	int	usr_input		(void);
-
-static	void	show_board		(int pos_row, int pos_col);
-static	void	board_loop		(int pos_row, int pos_col);
-
-static	void	show_help		(void);
-static	void	show_help_ready		(void);
-static	void	show_help_playing	(void);
-static	void	show_help_pause		(void);
-static	void	show_help_xyzzy		(void);
-static	void	show_help_cheated	(void);
-static	void	show_help_end		(void);
+	#include "player_clui.h"
 
 
 /******************************************************************************
- ******| main |****************************************************************
+ ******* variables ************************************************************
  ******************************************************************************/
-int	game_clui			(int oldaction, int pos_row, int pos_col)
+static	int	oldaction;
+
+
+/******************************************************************************
+ ******* static functions *****************************************************
+ ******************************************************************************/
+	/* Start */
+static	void	show_board_start(const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle);
+
+static	void	board_loop_start(const struct Player_Iface_Position	*position);
+
+	/* Play */
+static	void	show_board	(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle);
+
+static	void	board_loop	(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position);
+
+static	char	set_char	(int game_iface_visible);
+	/* Input */
+static	int	usr_input	(void);
+	/* Help */
+static	void	show_help	(const struct Game_Iface_Out	*board);
+static	void	show_help_start	(void);
+static	void	show_help_play	(void);
+static	void	show_help_pause	(void);
+static	void	show_help_xyzzy	(void);
+static	void	show_help_cheat	(void);
+static	void	show_help_end	(void);
+
+
+/******************************************************************************
+ ******* main *****************************************************************
+ ******************************************************************************/
+void	player_clui_start(const struct Player_Iface_Position	*position,
+			const char				*title,
+			const char				*subtitle,
+			int					*action)
 {
 	/* User action */
-	int	action;
-	if (oldaction != ACT_FOO) {
-		show_help();
-		show_board(pos_row, pos_col);
-	}
-	action = usr_input();
+	show_help_start();
+	show_board_start(position, title, subtitle);
 
-	return	action;
+	*action		= usr_input();
+	oldaction	= *action;
+}
+
+void	player_clui	(const struct Game_Iface_Out		*board,
+			const struct Player_Iface_Position	*position,
+			const char				*title,
+			const char				*subtitle,
+			int					*action)
+{
+	/* User action */
+
+
+	if (oldaction != PLAYER_IFACE_ACT_FOO) {
+		show_help(board);
+		show_board(board, position, title, subtitle);
+	}
+	*action		= usr_input();
+	oldaction	= *action;
 }
 
 
 /******************************************************************************
- ******| static |**************************************************************
+ ******* static functions *****************************************************
  ******************************************************************************/
-static	int	usr_input		(void)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Start	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	show_board_start(const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle)
+{
+	/* Title */
+	puts("________________________________________________________________________________");
+	puts(title);
+
+	/* Board */
+	board_loop_start(position);
+
+	/* Subtitle */
+	puts(subtitle);
+	puts("--------------------------------------------------------------------------------");
+}
+
+static	void	board_loop_start(const struct Player_Iface_Position	*position)
+{
+	int	i;
+	int	j;
+	char	ch;
+
+	putchar('\n');
+	for (i = 0; i < position->rows; i++) {
+		for (j = 0; j < position->cols; j++) {
+			ch =	PLAYER_CLUI_CHAR_HIDDEN_FIELD;
+
+			/* Print char */
+			if (i == position->row && j == position->col) {
+				putchar('<');
+				putchar(ch);
+				putchar('>');
+			} else {
+				putchar(' ');
+				putchar(ch);
+				putchar(' ');
+			}
+		}
+		putchar('\n');
+	}
+	putchar('\n');
+}
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Play	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	show_board	(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle)
+{
+	/* Title */
+	puts("________________________________________________________________________________");
+	puts(title);
+
+	/* Board */
+	board_loop(board, position);
+
+	/* Subtitle */
+	puts(subtitle);
+	puts("--------------------------------------------------------------------------------");
+
+}
+
+static	void	board_loop	(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position)
+{
+	int	i;
+	int	j;
+	char	ch;
+
+	putchar('\n');
+	for (i = 0; i < board->rows; i++) {
+		for (j = 0; j < board->cols; j++) {
+			ch =	set_char(board->visible[i][j]);
+
+			/* Print char */
+			if (i == position->row && j == position->col) {
+				putchar('<');
+				putchar(ch);
+				putchar('>');
+			} else {
+				putchar(' ');
+				putchar(ch);
+				putchar(' ');
+			}
+		}
+		putchar('\n');
+	}
+	putchar('\n');
+}
+
+static	char	set_char	(int game_iface_visible)
+{
+	char	ch;
+	switch (game_iface_visible) {
+	case GAME_IFACE_VIS_KBOOM:
+		ch	= PLAYER_CLUI_CHAR_KBOOM;
+		break;
+
+	case GAME_IFACE_VIS_HIDDEN_FIELD:
+		ch	= PLAYER_CLUI_CHAR_HIDDEN_FIELD;
+		break;
+
+	case GAME_IFACE_VIS_HIDDEN_MINE:
+		ch	= PLAYER_CLUI_CHAR_HIDDEN_MINE;
+		break;
+
+	case GAME_IFACE_VIS_HIDDEN_SAFE:
+		ch	= PLAYER_CLUI_CHAR_HIDDEN_SAFE;
+		break;
+
+	case GAME_IFACE_VIS_SAFE_MINE:
+		ch	= PLAYER_CLUI_CHAR_SAFE_MINE;
+		break;
+
+	case GAME_IFACE_VIS_0:
+		ch	= PLAYER_CLUI_CHAR_0;
+		break;
+
+	case GAME_IFACE_VIS_1:
+		ch	= PLAYER_CLUI_CHAR_1;
+		break;
+
+	case GAME_IFACE_VIS_2:
+		ch	= PLAYER_CLUI_CHAR_2;
+		break;
+
+	case GAME_IFACE_VIS_3:
+		ch	= PLAYER_CLUI_CHAR_3;
+		break;
+
+	case GAME_IFACE_VIS_4:
+		ch	= PLAYER_CLUI_CHAR_4;
+		break;
+
+	case GAME_IFACE_VIS_5:
+		ch	= PLAYER_CLUI_CHAR_5;
+		break;
+
+	case GAME_IFACE_VIS_6:
+		ch	= PLAYER_CLUI_CHAR_6;
+		break;
+
+	case GAME_IFACE_VIS_7:
+		ch	= PLAYER_CLUI_CHAR_7;
+		break;
+
+	case GAME_IFACE_VIS_8:
+		ch	= PLAYER_CLUI_CHAR_8;
+		break;
+
+	case GAME_IFACE_VIS_FLAG:
+		ch	= PLAYER_CLUI_CHAR_FLAG;
+		break;
+
+	case GAME_IFACE_VIS_FLAG_FALSE:
+		ch	= PLAYER_CLUI_CHAR_FLAG_FALSE;
+		break;
+
+	case GAME_IFACE_VIS_POSSIBLE:
+		ch	= PLAYER_CLUI_CHAR_POSSIBLE;
+		break;
+
+	case GAME_IFACE_VIS_POSSIBLE_FALSE:
+		ch	= PLAYER_CLUI_CHAR_POSSIBLE_FALSE;
+		break;
+	}
+
+	return	ch;
+}
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Input	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	int	usr_input	(void)
 {
 	wchar_t	ch;
 	ch = getchar();
@@ -71,19 +296,19 @@ static	int	usr_input		(void)
 			ch = getchar();
 			switch (ch) {
 			case 65:
-				action =	ACT_MOVE_UP;
+				action =	PLAYER_IFACE_ACT_MOVE_UP;
 				break;
 
 			case 66:
-				action =	ACT_MOVE_DOWN;
+				action =	PLAYER_IFACE_ACT_MOVE_DOWN;
 				break;
 
 			case 67:
-				action =	ACT_MOVE_RIGHT;
+				action =	PLAYER_IFACE_ACT_MOVE_RIGHT;
 				break;
 
 			case 68:
-				action =	ACT_MOVE_LEFT;
+				action =	PLAYER_IFACE_ACT_MOVE_LEFT;
 				break;
 			}
 			break;
@@ -91,45 +316,45 @@ static	int	usr_input		(void)
 		break;
 
 	case 'h':
-		action =	ACT_MOVE_LEFT;
+		action =	PLAYER_IFACE_ACT_MOVE_LEFT;
 		break;
 
 	case 'j':
-		action =	ACT_MOVE_DOWN;
+		action =	PLAYER_IFACE_ACT_MOVE_DOWN;
 		break;
 
 	case 'k':
-		action =	ACT_MOVE_UP;
+		action =	PLAYER_IFACE_ACT_MOVE_UP;
 		break;
 
 	case 'l':
-		action =	ACT_MOVE_RIGHT;
+		action =	PLAYER_IFACE_ACT_MOVE_RIGHT;
 		break;
 
 	case '+':
-		action =	ACT_STEP;
+		action =	PLAYER_IFACE_ACT_STEP;
 		break;
 
 	case ' ':
-		action =	ACT_FLAG;
+		action =	PLAYER_IFACE_ACT_FLAG;
 		break;
 
 	case 'f':
-		action =	ACT_FLAG_POSSIBLE;
+		action =	PLAYER_IFACE_ACT_FLAG_POSSIBLE;
 		break;
 
 		/* ASCII 0x08 is BS */
 	case 0x7F:
 	case 0x08:
-		action =	ACT_RM_FLAG;
+		action =	PLAYER_IFACE_ACT_RM_FLAG;
 		break;
 
 	case 'p':
-		action =	ACT_PAUSE;
+		action =	PLAYER_IFACE_ACT_PAUSE;
 		break;
 
 	case 's':
-		action =	ACT_SAVE;
+		action =	PLAYER_IFACE_ACT_SAVE;
 		break;
 
 	case 'x':
@@ -142,7 +367,7 @@ static	int	usr_input		(void)
 				if (ch == 'z') {
 					ch = getchar();
 					if (ch == 'y') {
-						action =	ACT_XYZZY_ON;
+						action =	PLAYER_IFACE_ACT_XYZZY_ON;
 					}
 				}
 			}
@@ -150,132 +375,63 @@ static	int	usr_input		(void)
 		break;
 
 	case '0':
-		action =	ACT_XYZZY_OFF;
+		action =	PLAYER_IFACE_ACT_XYZZY_OFF;
 		break;
 
 	case '1':
-		action =	ACT_XYZZY_LIN;
+		action =	PLAYER_IFACE_ACT_XYZZY_LIN;
 		break;
 
 	case '2':
-		action =	ACT_XYZZY_P;
+		action =	PLAYER_IFACE_ACT_XYZZY_P;
 		break;
 
 	case '3':
-		action =	ACT_XYZZY_NP;
+		action =	PLAYER_IFACE_ACT_XYZZY_NP;
 		break;
 
 	case 'q':
-		action =	ACT_QUIT;
+		action =	PLAYER_IFACE_ACT_QUIT;
 		break;
 
 	default:
-		action =	ACT_FOO;
+		action =	PLAYER_IFACE_ACT_FOO;
 		break;
 	}
 
 	return	action;
 }
 
-static	void	show_board		(int pos_row, int pos_col)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Help	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	show_help	(const struct Game_Iface_Out	*board)
 {
-	/* Title */
-	char	tit [TITLE_SIZE];
-	switch (board.state) {
-	case GAME_READY:
-	case GAME_XYZZY:
-	case GAME_CHEATED:
-	case GAME_PLAYING:
-	case GAME_PAUSE:
-		sprintf(tit, "Mines: %i/%i", board.flags, board.mines);
+	switch (board->state) {
+	case GAME_IFACE_STATE_PLAYING:
+		show_help_play();
 		break;
 
-	case GAME_OVER:
-		sprintf(tit, "GAME OVER");
-		break;
-
-	case GAME_WIN:
-		sprintf(tit, "You win!");
-		break;
-	}
-	puts("________________________________________________________________________________");
-	puts(tit);
-
-	/* Board */
-	board_loop(pos_row, pos_col);
-
-	/* Subtitle */
-	char	subtit[TITLE_SIZE];
-	int	mins;
-	int	secs;
-	if (board.time != CHEATED) {
-		mins =	(int)(board.time / 60);
-		secs =	((int)board.time % 60);
-		sprintf(subtit, "%i:%02i | %i", mins, secs, board.clicks);
-		puts(subtit);
-	}
-	puts("--------------------------------------------------------------------------------");
-
-}
-
-static	void	board_loop		(int pos_row, int pos_col)
-{
-	int	i;
-	int	j;
-	wchar_t	ch;
-
-	putchar('\n');
-	for (i = 0; i < board.rows; i++) {
-		for (j = 0; j < board.cols; j++) {
-			ch =	board.visible[i][j];
-
-			/* Print char */
-			if (i == pos_row && j == pos_col) {
-				putchar('<');
-				putchar(ch);
-				putchar('>');
-			} else {
-				putchar(' ');
-				putchar(ch);
-				putchar(' ');
-			}
-		}
-		putchar('\n');
-	}
-	putchar('\n');
-}
-
-static	void	show_help		(void)
-{
-	switch (board.state) {
-	case GAME_READY:
-		show_help_ready();
-		break;
-
-	case GAME_PLAYING:
-		show_help_playing();
-		break;
-
-	case GAME_PAUSE:
+	case GAME_IFACE_STATE_PAUSE:
 		show_help_pause();
 		break;
 
-	case GAME_XYZZY:
+	case GAME_IFACE_STATE_XYZZY:
 		show_help_xyzzy();
 		break;
 
-	case GAME_CHEATED:
-		show_help_cheated();
+	case GAME_IFACE_STATE_CHEATED:
+		show_help_cheat();
 		break;
 
-	case GAME_WIN:
-	case GAME_OVER:
+	case GAME_IFACE_STATE_SAFE:
+	case GAME_IFACE_STATE_GAMEOVER:
 		show_help_end();
 		break;
 	}
 }
 
-static	void	show_help_ready		(void)
+static	void	show_help_start	(void)
 {
 	puts("Move:");
 	/* hjkl */
@@ -304,7 +460,7 @@ static	void	show_help_ready		(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_playing	(void)
+static	void	show_help_play	(void)
 {
 	puts("Move:");
 	/* hjkl */
@@ -345,7 +501,7 @@ static	void	show_help_playing	(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_pause		(void)
+static	void	show_help_pause	(void)
 {
 
 	puts("Continue:");
@@ -361,7 +517,7 @@ static	void	show_help_pause		(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_xyzzy		(void)
+static	void	show_help_xyzzy	(void)
 {
 	puts("XYZZY:");
 	printf(" %c", '1');
@@ -407,7 +563,7 @@ static	void	show_help_xyzzy		(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_cheated	(void)
+static	void	show_help_cheat	(void)
 {
 	puts("Move:");
 	/* hjkl */
@@ -445,7 +601,7 @@ static	void	show_help_cheated	(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_end		(void)
+static	void	show_help_end	(void)
 {
 	puts("Quit:");
 	printf(" %c\n", 'q');
@@ -453,3 +609,8 @@ static	void	show_help_end		(void)
 	puts("Confirm:");
 	printf(" Enter\n");
 }
+
+
+/******************************************************************************
+ ******* end of file **********************************************************
+ ******************************************************************************/

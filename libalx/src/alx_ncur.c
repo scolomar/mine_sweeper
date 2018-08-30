@@ -67,12 +67,13 @@ void	alx_pause_curses	(void)
 void	alx_resume_curses	(void)
 {
 	fflush(stdout);
-//	getchar();
 	reset_prog_mode();
 }
 
 void	alx_end_curses		(void)
 {
+	clear();
+	refresh();
 	endwin();
 }
 

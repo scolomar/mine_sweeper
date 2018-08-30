@@ -4,7 +4,7 @@
 
 # directories
 
-OBJ_DIR = $(ABOUT_DIR)/obj/
+OBJ_DIR = $(PLAY_DIR)/obj/
 
 # target: dependencies
 #	action
