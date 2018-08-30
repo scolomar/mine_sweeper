@@ -6,85 +6,84 @@
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# ifndef		MSW_GAME_H
-	# define	MSW_GAME_H
+# ifndef		MSW_PLAYER_IFACE_H
+	# define	MSW_PLAYER_IFACE_H
 
 
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-	/* ¡ Need to include these in the Makefile ! */
-	/* ROWS_MAX & COLS_MAX */
+	/* struct Game_Iface_... */
 	#include "game_iface.h"
 
 
 /******************************************************************************
  ******* enums ****************************************************************
  ******************************************************************************/
-	enum	Game_Mine_Board {
-		GAME_MINE_NO = 0,
-		GAME_MINE_YES = 9
+	enum	Player_Iface_Mode {
+		PLAYER_IFACE_FOO = 0,
+		PLAYER_IFACE_CLUI,
+		PLAYER_IFACE_TUI,
+		PLAYER_IFACE_GUI
 	};
 
-	enum	Game_Usr_Board {
-		GAME_USR_KBOOM = -1,
-		GAME_USR_HIDDEN,
-		GAME_USR_CLEAR,
-		GAME_USR_FLAG,
-		GAME_USR_POSSIBLE
-	};
+	enum	Player_Iface_Action {
+		PLAYER_IFACE_ACT_FOO,
+		PLAYER_IFACE_ACT_STEP,
+		PLAYER_IFACE_ACT_FLAG,
+		PLAYER_IFACE_ACT_FLAG_POSSIBLE,
+		PLAYER_IFACE_ACT_RM_FLAG,
 
-	enum	Game_Action {
-		GAME_ACT_FOO = 0,
-		GAME_ACT_STEP,
-		GAME_ACT_FLAG,
-		GAME_ACT_FLAG_POSSIBLE,
-		GAME_ACT_RM_FLAG
-	};
+		PLAYER_IFACE_ACT_PAUSE,
+		PLAYER_IFACE_ACT_SAVE,
+		PLAYER_IFACE_ACT_XYZZY_ON,
+		PLAYER_IFACE_ACT_XYZZY_OFF,
+		PLAYER_IFACE_ACT_XYZZY_LIN,
+		PLAYER_IFACE_ACT_XYZZY_P,
+		PLAYER_IFACE_ACT_XYZZY_NP,
+		PLAYER_IFACE_ACT_QUIT,
 
-	enum	Game_State {
-		GAME_STATE_PLAYING = 0,
-		GAME_STATE_SAFE,
-		GAME_STATE_GAMEOVER
+		PLAYER_IFACE_ACT_MOVE_UP,
+		PLAYER_IFACE_ACT_MOVE_DOWN,
+		PLAYER_IFACE_ACT_MOVE_RIGHT,
+		PLAYER_IFACE_ACT_MOVE_LEFT,
+		PLAYER_IFACE_ACT_HIGHLIGHT
 	};
-
 
 
 /******************************************************************************
  ******* structs **************************************************************
  ******************************************************************************/
-	struct	Game_Board {
+	struct	Player_Iface_Position {
 		int	rows;
 		int	cols;
-		int	mines;
-		int	gnd [ROWS_MAX] [COLS_MAX];
-		int	usr [ROWS_MAX] [COLS_MAX];
-		int	flags;
-		int	clr;
-		int	state;
+		int	row;
+		int	col;
+		int	highlight;
 	};
 
 
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	struct Game_Board	game_board;
+extern	int	player_iface_mode;
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void	game_init	(void);
-	void	game_init_rand	(int rows, int cols, int p,
-				int pos_row, int pos_col);
-	void	game_init_load	(int *rows, int *cols);
-	void	game_action	(int action, int row, int col);
+void	player_iface_init	(int rows, int cols);
+void	player_iface_start	(int *pos_row, int *pos_col);
+void	player_iface		(const	struct Game_Iface_Out	*game_iface_out,
+				const	struct Game_Iface_Score	*game_iface_score,
+					struct Game_Iface_In	*game_iface_in);
+void	player_iface_cleanup	(void);
 
 
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# endif			/* game.h */
+# endif			/* player_iface.h */
 
 
 /******************************************************************************
