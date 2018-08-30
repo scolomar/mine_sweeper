@@ -122,11 +122,14 @@ export	SHARE_DIR
 # Make variables (CC, etc...)
 ifeq ($(OS), linux)
   CC		= gcc
+  LD		= ld
 else ifeq ($(OS), win)
   CC		= gcc.exe
+  LD		= ld.exe
 endif
 
 export	CC
+export	LD
 
 ################################################################################
 CFLAGS		= -std=c11

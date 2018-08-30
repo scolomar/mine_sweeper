@@ -6,85 +6,39 @@
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# ifndef		MSW_GAME_H
-	# define	MSW_GAME_H
+# ifndef		MSW_ABOUT_H
+	# define	MSW_ABOUT_H
 
 
 /******************************************************************************
- ******* headers **************************************************************
+ ******* macros ***************************************************************
  ******************************************************************************/
-	/* ¡ Need to include these in the Makefile ! */
-	/* ROWS_MAX & COLS_MAX */
-	#include "game_iface.h"
-
-
-/******************************************************************************
- ******* enums ****************************************************************
- ******************************************************************************/
-	enum	Game_Mine_Board {
-		GAME_MINE_NO = 0,
-		GAME_MINE_YES = 9
-	};
-
-	enum	Game_Usr_Board {
-		GAME_USR_KBOOM = -1,
-		GAME_USR_HIDDEN,
-		GAME_USR_CLEAR,
-		GAME_USR_FLAG,
-		GAME_USR_POSSIBLE
-	};
-
-	enum	Game_Action {
-		GAME_ACT_FOO = 0,
-		GAME_ACT_STEP,
-		GAME_ACT_FLAG,
-		GAME_ACT_FLAG_POSSIBLE,
-		GAME_ACT_RM_FLAG
-	};
-
-	enum	Game_State {
-		GAME_STATE_PLAYING = 0,
-		GAME_STATE_SAFE,
-		GAME_STATE_GAMEOVER
-	};
-
-
-
-/******************************************************************************
- ******* structs **************************************************************
- ******************************************************************************/
-	struct	Game_Board {
-		int	rows;
-		int	cols;
-		int	mines;
-		int	gnd [ROWS_MAX] [COLS_MAX];
-		int	usr [ROWS_MAX] [COLS_MAX];
-		int	flags;
-		int	clr;
-		int	state;
-	};
+	# define	PROG_NAME	"mine_sweeper"
+	# define	PROG_YEAR	"2015"
 
 
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	struct Game_Board	game_board;
+	extern	char	share_path [FILENAME_MAX];
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void	game_init	(void);
-	void	game_init_rand	(int rows, int cols, int p,
-				int pos_row, int pos_col);
-	void	game_init_load	(int *rows, int *cols);
-	void	game_action	(int action, int row, int col);
+	void	about_init	(void);
+	void	print_cpright	(void);
+	void	print_disclaim	(void);
+	void	print_help	(void);
+	void	print_license	(void);
+	void	print_usage	(void);
+	void	print_version	(void);
 
 
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# endif			/* game.h */
+# endif			/* about.h */
 
 
 /******************************************************************************

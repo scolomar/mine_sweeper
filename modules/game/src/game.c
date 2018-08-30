@@ -2,187 +2,262 @@
  *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
-		/* macros */
-	#include "data.h"
+
+/******************************************************************************
+ ******* headers **************************************************************
+ ******************************************************************************/
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Standard	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+		/* rand() */
+	#include <stdlib.h>
+		/* time_t & clock() & time() */
+	#include <time.h>
+		/* getpid() */
+	#include <unistd.h>
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Other	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+		/* seedf() */
+	#include "alx_seed.h"
+
+	#include "save.h"
 
 	#include "game.h"
 
 
 /******************************************************************************
- ******| static |**************************************************************
+ ******* variables ************************************************************
  ******************************************************************************/
-static	void	game_move_up		(int *pos_row);
-static	void	game_move_down		(int *pos_row);
-static	void	game_move_right		(int *pos_col);
-static	void	game_move_left		(int *pos_col);
-
-static	void	game_step		(int pos_row, int pos_col);
-static	void	game_first_step		(int pos_row, int pos_col);
-static	void	game_discover		(int pos_row, int pos_col);
-static	void	game_discover_recursive	(int pos_row, int pos_col);
-static	void	game_big_step		(int pos_row, int pos_col);
-static	int	game_count_flags	(int pos_row, int pos_col);
-static	void	game_step_recursive	(int pos_row, int pos_col);
-
-static	void	game_flag		(int pos_row, int pos_col);
-static	void	game_possible		(int pos_row, int pos_col);
-static	void	game_rmflag		(int pos_row, int pos_col);
-static	void	game_all_flags		(int pos_row, int pos_col);
-static	int	game_count_nclear	(int pos_row, int pos_col);
-static	void	game_flag_recursive	(int pos_row, int pos_col);
+struct Game_Board	game_board;
 
 
 /******************************************************************************
- ******| main |****************************************************************
+ ******* static functions *****************************************************
  ******************************************************************************/
-void	game_action		(int action, int *pos_row, int *pos_col)
+	/* Init */
+static	void	game_init_clr		(void);
+static	void	game_init_mines		(int pos_row, int pos_col);
+static	void	game_init_adjnums	(void);
+	/* Step */
+static	void	game_step		(int r, int c);
+static	void	game_first_step		(int r, int c);
+static	void	game_discover		(int r, int c);
+static	void	game_discover_recursive	(int r, int c);
+static	void	game_big_step		(int r, int c);
+static	int	game_count_flags	(int r, int c);
+static	void	game_step_recursive	(int r, int c);
+	/* Flag */
+static	void	game_flag		(int r, int c);
+static	void	game_possible		(int r, int c);
+static	void	game_rmflag		(int r, int c);
+static	void	game_all_flags		(int r, int c);
+static	int	game_count_nclear	(int r, int c);
+static	void	game_flag_recursive	(int r, int c);
+
+
+/******************************************************************************
+ ******* main *****************************************************************
+ ******************************************************************************/
+void	game_init		(void)
+{
+	int	seed;
+	seed	= seedf(clock(), time(NULL), getpid());
+	srand(seed);
+}
+
+void	game_init_rand		(int rows, int cols, int mines,
+				int pos_row, int pos_col)
+{
+	/* size & mines */
+	game_board.rows		= rows;
+	game_board.cols		= cols;
+	game_board.mines	= mines;
+
+	/* clear */
+	game_init_clr();
+
+	/* place mines */
+	game_init_mines(pos_row, pos_col);
+
+	/* calc adjacency numbers */
+	game_init_adjnums();
+}
+
+void	game_init_load		(int *rows, int *cols)
+{
+	load_game_file();
+
+	game_board.state	= GAME_STATE_PLAYING;
+
+	*rows	= game_board.rows;
+	*cols	= game_board.cols;
+}
+
+void	game_action		(int action, int row, int col)
 {
 	switch (action) {
-	case ACT_MOVE_UP:
-		game_move_up(pos_row);
+	case GAME_ACT_STEP:
+		game_step(row, col);
 		break;
 
-	case ACT_MOVE_DOWN:
-		game_move_down(pos_row);
+	case GAME_ACT_FLAG:
+		game_flag(row, col);
 		break;
 
-	case ACT_MOVE_RIGHT:
-		game_move_right(pos_col);
+	case GAME_ACT_FLAG_POSSIBLE:
+		game_possible(row, col);
 		break;
 
-	case ACT_MOVE_LEFT:
-		game_move_left(pos_col);
-		break;
-
-	case ACT_STEP:
-		game_step(*pos_row, *pos_col);
-		break;
-
-	case ACT_FLAG:
-		game_flag(*pos_row, *pos_col);
-		break;
-
-	case ACT_FLAG_POSSIBLE:
-		game_possible(*pos_row, *pos_col);
-		break;
-
-	case ACT_RM_FLAG:
-		game_rmflag(*pos_row, *pos_col);
+	case GAME_ACT_RM_FLAG:
+		game_rmflag(row, col);
 		break;
 	}
 }
 
 
 /******************************************************************************
- ******| static |**************************************************************
+ ******* static functions *****************************************************
  ******************************************************************************/
-static	void	game_move_up		(int *pos_row)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Init	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_init_clr		(void)
 {
-	if (*pos_row) {
-		(*pos_row)--;
-	} else {
-		*pos_row = board.rows - 1;
+	int	i;
+	int	j;
+	for (i = 0; i < game_board.rows; i++) {
+		for (j = 0; j < game_board.cols; j++) {
+			game_board.gnd[i][j]	= GAME_MINE_NO;
+			game_board.usr[i][j]	= GAME_USR_HIDDEN;
+		}
 	}
+	game_board.flags	= 0;
+	game_board.clr		= 0;
+	game_board.state	= GAME_STATE_PLAYING;
 }
 
-static	void	game_move_down		(int *pos_row)
+static	void	game_init_mines		(int pos_row, int pos_col)
 {
-	if (*pos_row != board.rows - 1) {
-		(*pos_row)++;
-	} else {
-		*pos_row = 0;
-	}
-}
+	/* place mines */
+	int	i;
+	int	r;
+	int	c;
+	i	= 0;
+	while (i < game_board.mines) {
+		r	= (rand() % game_board.rows);
+		c	= (rand() % game_board.cols);
 
-static	void	game_move_right		(int *pos_col)
-{
-	if (*pos_col != board.cols - 1) {
-		(*pos_col)++;
-	} else {
-		*pos_col = 0;
-	}
-}
-
-static	void	game_move_left		(int *pos_col)
-{
-	if (*pos_col) {
-		(*pos_col)--;
-	} else {
-		*pos_col = board.cols - 1;
-	}
-}
-
-static	void	game_step		(int pos_row, int pos_col)
-{
-	switch (board.usr[pos_row][pos_col]) {
-	case USR_HIDDEN:
-	case USR_POSSIBLE:
-		game_discover(pos_row, pos_col);
-		break;
-
-	case USR_CLEAR:
-		game_big_step(pos_row, pos_col);
-		break;
-	}
-	board.clicks++;
-}
-
-static	void	game_discover		(int pos_row, int pos_col)
-{
-	const int	total_safe_fields = board.rows * board.cols -
-								board.mines;
-
-	if (board.gnd[pos_row][pos_col] >= MINE_YES) {
-		board.usr[pos_row][pos_col] =	KBOOM;
-		board.state =	GAME_OVER;
-
-	} else if (board.usr[pos_row][pos_col] != USR_CLEAR) {
-		board.usr[pos_row][pos_col] =	USR_CLEAR;
-		board.cleared++;
-
-		if (board.cleared == total_safe_fields) {
-			board.state =	GAME_WIN;
-		} else if (board.gnd[pos_row][pos_col] == MINE_NO) {
-			game_discover_recursive(pos_row, pos_col);
+		if (game_board.gnd[r][c] == GAME_MINE_NO) {
+			/* first step is safe */
+			if (!((r == pos_row) && (c == pos_col))) {
+				game_board.gnd[r][c]	= GAME_MINE_YES;
+				i++;
+			}
 		}
 	}
 }
 
-static	void	game_discover_recursive	(int pos_row, int pos_col)
+static	void	game_init_adjnums	(void)
+{
+	int	r;
+	int	c;
+	int	i;
+	int	j;
+	for (r = 0; r < game_board.rows; r++) {
+	for (c = 0; c < game_board.cols; c++) {
+		if (game_board.gnd[r][c] >= GAME_MINE_YES) {
+			for (i = r-1; i < r+2; i++) {
+			for (j = c-1; j < c+2; j++) {
+				if (i >= 0 && i < game_board.rows) {
+				if (j >= 0 && j < game_board.cols) {
+					game_board.gnd[i][j]++;
+				}
+				}
+			}
+			}
+		}
+	}
+	}
+}
+
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Step	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_step		(int r, int c)
+{
+	switch (game_board.usr[r][c]) {
+	case GAME_USR_HIDDEN:
+	case GAME_USR_POSSIBLE:
+		game_discover(r, c);
+		break;
+
+	case GAME_USR_CLEAR:
+		game_big_step(r, c);
+		break;
+	}
+}
+
+static	void	game_discover		(int r, int c)
+{
+	int	safe_fields;
+	safe_fields	= (game_board.rows * game_board.cols) - game_board.mines;
+
+	if (game_board.gnd[r][c] >= GAME_MINE_YES) {
+		game_board.usr[r][c]	= GAME_USR_KBOOM;
+		game_board.state	= GAME_STATE_GAMEOVER;
+
+	} else if (game_board.usr[r][c] != GAME_USR_CLEAR) {
+		game_board.usr[r][c]	= GAME_USR_CLEAR;
+		game_board.clr++;
+
+		if (game_board.clr == safe_fields) {
+			game_board.state	= GAME_STATE_SAFE;
+
+		} else if (game_board.gnd[r][c] == GAME_MINE_NO) {
+			game_discover_recursive(r, c);
+		}
+	}
+}
+
+static	void	game_discover_recursive	(int r, int c)
 {
 	int	i;
 	int	j;
 
-	for (i = pos_row-1; i < pos_row+2; i++) {
-		for (j = pos_col-1; j < pos_col+2; j++) {
-			if (i >= 0 && i < board.rows && j >= 0 && j < board.cols) {
+	for (i = r - 1; i < r + 2; i++) {
+		for (j = c - 1; j < c + 2; j++) {
+			if (i >= 0 && i < game_board.rows &&
+						j >= 0 && j < game_board.cols) {
 				game_discover(i, j);
 			}
 		}
 	}
 }
 
-static	void	game_big_step		(int pos_row, int pos_col)
+static	void	game_big_step		(int r, int c)
 {
 	int	cnt;
-	cnt =	game_count_flags(pos_row, pos_col);
+	cnt	= game_count_flags(r, c);
 
-	if (cnt && (board.gnd[pos_row][pos_col] == cnt)) {
-		game_step_recursive(pos_row, pos_col);
+	if (cnt && (game_board.gnd[r][c] == cnt)) {
+		game_step_recursive(r, c);
 	}
 }
 
-static	int	game_count_flags	(int pos_row, int pos_col)
+static	int	game_count_flags	(int r, int c)
 {
 	int	cnt;
 	int	i;
 	int	j;
 
 	cnt =	0;
-	for (i = pos_row-1; i < pos_row+2; i++) {
-		for (j = pos_col-1; j < pos_col+2; j++) {
-			if (i >= 0 && i < board.rows && j >= 0 && j < board.cols) {
-				if (board.usr[i][j] == USR_FLAG) {
+	for (i = r - 1; i < r + 2; i++) {
+		for (j = c - 1; j < c + 2; j++) {
+			if (i >= 0 && i < game_board.rows &&
+						j >= 0 && j < game_board.cols) {
+				if (game_board.usr[i][j] == GAME_USR_FLAG) {
 					cnt++;
 				}
 			}
@@ -192,17 +267,18 @@ static	int	game_count_flags	(int pos_row, int pos_col)
 	return	cnt;
 }
 
-static	void	game_step_recursive	(int pos_row, int pos_col)
+static	void	game_step_recursive	(int r, int c)
 {
 	int	i;
 	int	j;
 
-	for (i = pos_row-1; i < pos_row+2; i++) {
-		for (j = pos_col-1; j < pos_col+2; j++) {
-			if (i >= 0 && i < board.rows && j >= 0 && j < board.cols) {
-				switch (board.usr[i][j]) {
-				case USR_HIDDEN:
-				case USR_POSSIBLE:
+	for (i = r - 1; i < r + 2; i++) {
+		for (j = c - 1; j < c + 2; j++) {
+			if (i >= 0 && i < game_board.rows &&
+						j >= 0 && j < game_board.cols) {
+				switch (game_board.usr[i][j]) {
+				case GAME_USR_HIDDEN:
+				case GAME_USR_POSSIBLE:
 					game_discover(i, j);
 					break;
 				}
@@ -211,81 +287,81 @@ static	void	game_step_recursive	(int pos_row, int pos_col)
 	}
 }
 
-static	void	game_flag		(int pos_row, int pos_col)
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Flag	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+static	void	game_flag		(int r, int c)
 {
-	switch (board.usr[pos_row][pos_col]) {
-	case USR_HIDDEN:
-		board.usr[pos_row][pos_col] =	USR_FLAG;
-		board.flags++;
-		board.clicks++;
+	switch (game_board.usr[r][c]) {
+	case GAME_USR_HIDDEN:
+		game_board.usr[r][c]	= GAME_USR_FLAG;
+		game_board.flags++;
 		break;
 
-	case USR_FLAG:
-		board.usr[pos_row][pos_col] =	USR_POSSIBLE;
-		board.flags--;
-		board.clicks++;
+	case GAME_USR_FLAG:
+		game_board.usr[r][c]	= GAME_USR_POSSIBLE;
+		game_board.flags--;
 		break;
 
-	case USR_POSSIBLE:
-		game_rmflag(pos_row, pos_col);
+	case GAME_USR_POSSIBLE:
+		game_rmflag(r, c);
 		break;
 
-	case USR_CLEAR:
-		game_all_flags(pos_row, pos_col);
-		board.clicks++;
+	case GAME_USR_CLEAR:
+		game_all_flags(r, c);
 		break;
 	}
 }
 
-static	void	game_possible		(int pos_row, int pos_col)
+static	void	game_possible		(int r, int c)
 {
-	switch (board.usr[pos_row][pos_col]) {
-	case USR_HIDDEN:
-		board.usr[pos_row][pos_col] =	USR_POSSIBLE;
+	switch (game_board.usr[r][c]) {
+	case GAME_USR_HIDDEN:
+		game_board.usr[r][c]	= GAME_USR_POSSIBLE;
 		break;
 
-	case USR_POSSIBLE:
-		game_rmflag(pos_row, pos_col);
+	case GAME_USR_POSSIBLE:
+		game_rmflag(r, c);
 		break;
 	}
 }
 
-static	void	game_rmflag		(int pos_row, int pos_col)
+static	void	game_rmflag		(int r, int c)
 {
-	switch (board.usr[pos_row][pos_col]) {
-	case USR_FLAG:
-		board.usr[pos_row][pos_col] =	USR_HIDDEN;
-		board.flags--;
-		board.clicks++;
+	switch (game_board.usr[r][c]) {
+	case GAME_USR_FLAG:
+		game_board.usr[r][c]	= GAME_USR_HIDDEN;
+		game_board.flags--;
 		break;
 
-	case USR_POSSIBLE:
-		board.usr[pos_row][pos_col] =	USR_HIDDEN;
+	case GAME_USR_POSSIBLE:
+		game_board.usr[r][c]	= GAME_USR_HIDDEN;
 		break;
 	}
 }
 
-static	void	game_all_flags		(int pos_row, int pos_col)
+static	void	game_all_flags		(int r, int c)
 {
 	int	cnt;
-	cnt =	game_count_nclear(pos_row, pos_col);
+	cnt =	game_count_nclear(r, c);
 
-	if (cnt && (board.gnd[pos_row][pos_col] == cnt)) {
-		game_flag_recursive(pos_row, pos_col);
+	if (cnt && (game_board.gnd[r][c] == cnt)) {
+		game_flag_recursive(r, c);
 	}
 }
 
-static	int	game_count_nclear	(int pos_row, int pos_col)
+static	int	game_count_nclear	(int r, int c)
 {
 	int	cnt;
 	int	i;
 	int	j;
 
 	cnt =	0;
-	for (i = pos_row-1; i < pos_row+2; i++) {
-		for (j = pos_col-1; j < pos_col+2; j++) {
-			if (i >= 0 && i < board.rows && j >= 0 && j < board.cols) {
-				if (board.usr[i][j] != USR_CLEAR) {
+	for (i = r - 1; i < r + 2; i++) {
+		for (j = c - 1; j < c + 2; j++) {
+			if (i >= 0 && i < game_board.rows &&
+						j >= 0 && j < game_board.cols) {
+				if (game_board.usr[i][j] != GAME_USR_CLEAR) {
 					cnt++;
 				}
 			}
@@ -295,19 +371,20 @@ static	int	game_count_nclear	(int pos_row, int pos_col)
 	return	cnt;
 }
 
-static	void	game_flag_recursive	(int pos_row, int pos_col)
+static	void	game_flag_recursive	(int r, int c)
 {
 	int	i;
 	int	j;
 
-	for (i = pos_row-1; i < pos_row+2; i++) {
-		for (j = pos_col-1; j < pos_col+2; j++) {
-			if (i >= 0 && i < board.rows && j >= 0 && j < board.cols) {
-				switch (board.usr[i][j]) {
-				case USR_HIDDEN:
-				case USR_POSSIBLE:
-					board.usr[i][j] =	USR_FLAG;
-					board.flags++;
+	for (i = r - 1; i < r + 2; i++) {
+		for (j = c - 1; j < c + 2; j++) {
+			if (i >= 0 && i < game_board.rows &&
+						j >= 0 && j < game_board.cols) {
+				switch (game_board.usr[i][j]) {
+				case GAME_USR_HIDDEN:
+				case GAME_USR_POSSIBLE:
+					game_board.usr[i][j]	= GAME_USR_FLAG;
+					game_board.flags++;
 					break;
 				}
 			}
@@ -315,14 +392,7 @@ static	void	game_flag_recursive	(int pos_row, int pos_col)
 	}
 }
 
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*--| END OF FILE |-----------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*--| END OF FILE |-----------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
+/******************************************************************************
+ ******* end of file **********************************************************
+ ******************************************************************************/
