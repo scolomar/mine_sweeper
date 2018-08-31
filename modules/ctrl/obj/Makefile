@@ -4,10 +4,9 @@
 
 # directories
 
-DATA_INC_DIR = $(DATA_DIR)/inc/
-GEN_INC_DIR = $(GEN_DIR)/inc/
-PRNT_INC_DIR = $(PRNT_DIR)/inc/
-UI_INC_DIR = $(UI_DIR)/inc/
+GAME_INC_DIR = $(GAME_DIR)/inc/
+MENU_INC_DIR = $(MENU_DIR)/inc/
+PLAY_INC_DIR = $(PLAY_DIR)/inc/
 
 INC_DIR = $(CTRL_DIR)/inc/
 SRC_DIR = $(CTRL_DIR)/src/
@@ -15,30 +14,34 @@ TST_DIR = $(CTRL_DIR)/tst/
 
 # dependencies
 
-ALL = start.o
+_ALL = start.o
+ALL = $(_ALL) ctrl_mod.o
 
-STRT_INC_DATA =		data.h
-STRT_INC_GEN =		init.h
-STRT_INC_PRNT =		print.h
-STRT_INC_UI =		game_iface.h
-STRT_INC =	start.h
-STRT_DEPS = $(SRC_DIR)/start.c \
-			$(patsubst %,$(DATA_INC_DIR)/%,$(STRT_INC_DATA)) \
-			$(patsubst %,$(GEN_INC_DIR)/%,$(STRT_INC_GEN)) \
-			$(patsubst %,$(PRNT_INC_DIR)/%,$(STRT_INC_PRNT)) \
-			$(patsubst %,$(UI_INC_DIR)/%,$(STRT_INC_UI)) \
+STRT_INC_GAME	= game.h game_iface.h
+STRT_INC_MENU	= menu_iface.h
+STRT_INC_PLAY	= player_iface.h
+STRT_INC	= start.h
+STRT_DEPS	= $(SRC_DIR)/start.c \
+			$(patsubst %,$(GAME_INC_DIR)/%,$(STRT_INC_GAME)) \
+			$(patsubst %,$(MENU_INC_DIR)/%,$(STRT_INC_MENU)) \
+			$(patsubst %,$(PLAY_INC_DIR)/%,$(STRT_INC_PLAY)) \
 			$(patsubst %,$(INC_DIR)/%,$(STRT_INC))
 STRT_INC_DIRS = -I $(INC_DIR) \
-			-I $(DATA_INC_DIR) \
-			-I $(GEN_INC_DIR) \
-			-I $(PRNT_INC_DIR) \
-			-I $(UI_INC_DIR)
+			-I $(GAME_INC_DIR) \
+			-I $(MENU_INC_DIR) \
+			-I $(PLAY_INC_DIR)
 
 # target: dependencies
 #	action
 
 all: $(ALL)
 	
+
+ctrl_mod.o: $(_ALL)
+	$(Q)$(LD) -r $^ -o $@
+	@echo  "\tLD $@"
+	@echo  ""
+
 
 start.o: $(STRT_DEPS)
 	$(Q)$(CC) $(CFLAGS) $(STRT_INC_DIRS) -c $< -o $@ $(LIBS)

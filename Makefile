@@ -2,7 +2,7 @@
 # This Makefile has parts of the linux kernel Makefile code.
 VERSION	= 3
 PATCHLEVEL = a
-SUBLEVEL = 4
+SUBLEVEL = 10
 EXTRAVERSION =
 NAME = instalable
 
@@ -105,27 +105,37 @@ export	MODULES_DIR
 
 
 ifeq ($(OS), linux)
-  INSTALL_DIR	= /usr/local/games/
+  INSTALL_BIN_DIR	= /usr/local/games/
+  INSTALL_SHARE_DIR	= /usr/local/share/
+  SHARE_DIR		= mine_sweeper/
 else ifeq ($(OS), win)
-  INSTALL_DIR	= c:/Program\ files/
+  INSTALL_DIR		= c:/Program files (x86)/
+  INSTALL_SHARE_DIR	= $(INSTALL_DIR)/mine_sweeper/
+  SHARE_DIR		= share/
 endif
 
 export	INSTALL_DIR
+export	INSTALL_SHARE_DIR
+export	SHARE_DIR
 
 ################################################################################
 # Make variables (CC, etc...)
 ifeq ($(OS), linux)
   CC		= gcc
+  LD		= ld
 else ifeq ($(OS), win)
   CC		= gcc.exe
+  LD		= ld.exe
 endif
 
 export	CC
+export	LD
 
 ################################################################################
 CFLAGS		= -std=c11
 CFLAGS	       += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
-CFLAGS	       += -D INSTALL_DIR=\"$(INSTALL_DIR)\"
+CFLAGS	       += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
+CFLAGS	       += -D SHARE_DIR=\"$(SHARE_DIR)\"
 
 ifeq ($(OS), linux)
   CFLAGS       += -D OS_LINUX
@@ -170,28 +180,22 @@ binary:
 
 PHONY += install
 install: uninstall
-	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper/
-	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper//bin/
-	$(Q)mkdir $(INSTALL_DIR)/mine_sweeper//files/
-	@echo  "Create /usr/local/games//mine_sweeper//"
+	$(Q)cp $(BIN_DIR)/mine_sweeper		$(INSTALL_BIN_DIR)/
+	@echo "Copy mine_sweeper"
 	@echo  ""
-	$(Q)cp ./COPYING.txt			$(INSTALL_DIR)/mine_sweeper//
-	@echo "Copy COPYING.txt"
-	$(Q)cp ./README.txt			$(INSTALL_DIR)/mine_sweeper//
-	@echo "Copy README.txt"
-	$(Q)cp ./bin/mine_sweeper		$(INSTALL_DIR)/mine_sweeper//bin/
-	@echo "Copy bin/mine_sweeper"
-	$(Q)cp -r ./files/			$(INSTALL_DIR)/mine_sweeper//
-	@echo "Copy -r files/"
+	$(Q)mkdir $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
+	@echo  "Create $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
+	$(Q)cp -r ./share/*			$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
+	@echo "Copy share/*"
 	@echo  ""
 	@echo  "Done"
 	@echo  ""
-	
 
 PHONY += uninstall
 uninstall:
-	$(Q)rm -f -r $(INSTALL_DIR)/mine_sweeper//
-	@echo  "Clean old builds"
+	$(Q)rm -f $(INSTALL_BIN_DIR)/mine_sweeper
+	$(Q)rm -f -r $(INSTALL_SHARE_DIR)/mine_sweeper//
+	@echo  "Clean old installations"
 	@echo  ""
 
 PHONY += clean

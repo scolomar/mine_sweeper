@@ -28,9 +28,9 @@
 				const char	*formatB,
 						...);
 
-	int64_t	alx_getint	(int64_t	m,
+	int64_t	alx_getint	(double		m,
 				int64_t		def,
-				int64_t		M,
+				double		M,
 				const char	*formatA,
 				const char	*formatB,
 						...);

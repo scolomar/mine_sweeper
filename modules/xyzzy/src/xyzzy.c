@@ -1,5 +1,5 @@
 /******************************************************************************
- *	Copyright (C) 2015	Alejandro Colomar Andrés		      *
+ *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
  ******************************************************************************/
 
 
@@ -9,121 +9,108 @@
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Standard	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
-		/* errno */
-	#include <errno.h>
-		/* fflush(stdout) */
-	#include <stdio.h>
+	#include <stdbool.h>
 
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Other	*	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
-		/* game() */
-	#include "game.h"
-		/* game_iface() */
+		/* game_action() */
 	#include "game_iface.h"
-		/* menu_iface_board() */
-	#include "menu_iface.h"
-		/* player_iface() */
-	#include "player_iface.h"
 
-	#include "start.h"
+	#include "xyzzy.h"
 
 
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-int	start_mode;
+static	int	x;
+static	bool	step_notflag;
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	start_foo	(void);
-static	void	start_rand	(void);
-static	void	start_load	(void);
+void	xyzzy_step_all	(const struct Game_Iface_Out	*game_iface_out,
+			struct Game_Iface_In		*game_iface_in);
+void	xyzzy_flag_all	(const struct Game_Iface_Out	*game_iface_out,
+			struct Game_Iface_In		*game_iface_in);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	start_switch	(void)
+void	xyzzy_init	(void)
 {
-	switch (start_mode) {
-	case START_FOO:
-		start_foo();
-		break;
+	x		= 0;
+	step_notflag	= true;
+}
 
-	case START_RAND:
-		start_rand();
-		break;
-
-	case START_LOAD:
-		start_load();
-		break;
+int	xyzzy_lin	(const struct Game_Iface_Out	*game_iface_out,
+			struct Game_Iface_In		*game_iface_in)
+{
+	if (!x) {
+		x	= 1;
 	}
+
+	if (step_notflag) {
+		xyzzy_step_all(game_iface_out, game_iface_in);
+	} else {
+		xyzzy_flag_all(game_iface_out, game_iface_in);
+		x--;
+	}
+
+	step_notflag	= !step_notflag;
+
+	return	x;
+}
+
+int	xyzzy_p		(const struct Game_Iface_Out	*game_iface_out,
+			struct Game_Iface_In		*game_iface_in)
+{
+	int	fields;
+	fields	= game_iface_out->rows * game_iface_out->cols;
+
+	if (!x) {
+		x	= fields / 2;
+	}
+
+	xyzzy_lin(game_iface_out, game_iface_in);
+
+	return	x;
 }
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	start_foo	(void)
+void	xyzzy_step_all	(const struct Game_Iface_Out	*game_iface_out,
+			struct Game_Iface_In		*game_iface_in)
 {
-	/* empty */
-}
+	int	i;
+	int	j;
 
-static	void	start_rand	(void)
-{
-	/* size & mines */
-	int	level;
-	int	rows;
-	int	cols;
-	int	mines;
-	menu_iface_board(&level, &rows, &cols, &mines);
-
-	/* user iface init */
-	player_iface_init(rows, cols);
-
-	/* start position */
-	int	r;
-	int	c;
-	player_iface_start(&r, &c);
-
-	/* game init */
-	game_init_rand(rows, cols, mines, r, c);
-
-	/* game iface init */
-	game_iface_init_rand(level, r, c);
-
-	/* game loop */
-	game_iface();
-
-	/* user iface cluanup */
-	player_iface_cleanup();
-	fflush(stdout);
-}
-
-static	void	start_load	(void)
-{
-	/* size & game init (sets errno) */
-	int	rows;
-	int	cols;
-	game_init_load(&rows, &cols);
-
-	/* player iface init */
-	player_iface_init(rows, cols);
-
-	if (!errno) {
-		/* game iface init */
-		game_iface_init_load();
-
-		/* game loop */
-		game_iface();
+	for (i = 0; i < game_iface_out->rows; i++) {
+		for (j = 0; j < game_iface_out->cols; j++) {
+			if (game_iface_out->usr[i][j] == GAME_IFACE_USR_CLEAR) {
+				game_iface_in->act_game[i][j]	= GAME_IFACE_GAME_ACT_STEP;
+			}
+		}
 	}
+}
 
-	/* user iface cluanup */
-	player_iface_cleanup();
-	fflush(stdout);
+void	xyzzy_flag_all	(const struct Game_Iface_Out	*game_iface_out,
+			struct Game_Iface_In		*game_iface_in)
+{
+	int	i;
+	int	j;
+
+	for (i = 0; i < game_iface_out->rows; i++) {
+		for (j = 0; j < game_iface_out->cols; j++) {
+			if (game_iface_out->usr[i][j] == GAME_IFACE_USR_CLEAR) {
+				game_iface_in->act_game[i][j]	= GAME_IFACE_GAME_ACT_FLAG;
+			}
+		}
+	}
 }
 
 

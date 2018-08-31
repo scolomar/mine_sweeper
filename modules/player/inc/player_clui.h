@@ -6,85 +6,63 @@
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# ifndef		MSW_GAME_H
-	# define	MSW_GAME_H
+# ifndef		MSW_PLAYER_CLUI_H
+	# define	MSW_PLAYER_CLUI_H
 
 
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-	/* ¡ Need to include these in the Makefile ! */
-	/* ROWS_MAX & COLS_MAX */
+		/* struct Game_Iface_... */
 	#include "game_iface.h"
+
+	#include "player_iface.h"
 
 
 /******************************************************************************
  ******* enums ****************************************************************
  ******************************************************************************/
-	enum	Game_Mine_Board {
-		GAME_MINE_NO = 0,
-		GAME_MINE_YES = 9
+	enum	Player_CLUI_Char {
+		PLAYER_CLUI_CHAR_KBOOM		= '#',
+		PLAYER_CLUI_CHAR_HIDDEN_FIELD	= '+',
+		PLAYER_CLUI_CHAR_HIDDEN_MINE	= '*',
+		PLAYER_CLUI_CHAR_HIDDEN_SAFE	= '-',
+		PLAYER_CLUI_CHAR_SAFE_MINE	= 'v',
+		PLAYER_CLUI_CHAR_0		= ' ',
+		PLAYER_CLUI_CHAR_1		= '1',
+		PLAYER_CLUI_CHAR_2		= '2',
+		PLAYER_CLUI_CHAR_3		= '3',
+		PLAYER_CLUI_CHAR_4		= '4',
+		PLAYER_CLUI_CHAR_5		= '5',
+		PLAYER_CLUI_CHAR_6		= '6',
+		PLAYER_CLUI_CHAR_7		= '7',
+		PLAYER_CLUI_CHAR_8		= '8',
+		PLAYER_CLUI_CHAR_FLAG		= '!',
+		PLAYER_CLUI_CHAR_FLAG_FALSE	= 'F',
+		PLAYER_CLUI_CHAR_POSSIBLE	= '?',
+		PLAYER_CLUI_CHAR_POSSIBLE_FALSE	= 'f'
 	};
-
-	enum	Game_Usr_Board {
-		GAME_USR_KBOOM = -1,
-		GAME_USR_HIDDEN,
-		GAME_USR_CLEAR,
-		GAME_USR_FLAG,
-		GAME_USR_POSSIBLE
-	};
-
-	enum	Game_Action {
-		GAME_ACT_FOO = 0,
-		GAME_ACT_STEP,
-		GAME_ACT_FLAG,
-		GAME_ACT_FLAG_POSSIBLE,
-		GAME_ACT_RM_FLAG
-	};
-
-	enum	Game_State {
-		GAME_STATE_PLAYING = 0,
-		GAME_STATE_SAFE,
-		GAME_STATE_GAMEOVER
-	};
-
-
-
-/******************************************************************************
- ******* structs **************************************************************
- ******************************************************************************/
-	struct	Game_Board {
-		int	rows;
-		int	cols;
-		int	mines;
-		int	gnd [ROWS_MAX] [COLS_MAX];
-		int	usr [ROWS_MAX] [COLS_MAX];
-		int	flags;
-		int	clr;
-		int	state;
-	};
-
-
-/******************************************************************************
- ******* variables ************************************************************
- ******************************************************************************/
-	extern	struct Game_Board	game_board;
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void	game_init	(void);
-	void	game_init_rand	(int rows, int cols, int p,
-				int pos_row, int pos_col);
-	void	game_init_load	(int *rows, int *cols);
-	void	game_action	(int action, int row, int col);
+void	player_clui_start(const struct Player_Iface_Position	*position,
+			const char				*title,
+			const char				*subtitle,
+			int					*action);
+
+void	player_clui	(const struct Game_Iface_Out		*board,
+			const struct Player_Iface_Position	*position,
+			const char				*title,
+			const char				*subtitle,
+			int					*action);
 
 
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# endif			/* game.h */
+# endif			/* player_clui.h */
 
 
 /******************************************************************************
