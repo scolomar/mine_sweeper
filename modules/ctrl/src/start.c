@@ -75,10 +75,11 @@ static	void	start_foo	(void)
 static	void	start_rand	(void)
 {
 	/* size & mines */
+	int	level;
 	int	rows;
 	int	cols;
 	int	mines;
-	menu_iface_board(&rows, &cols, &mines);
+	menu_iface_board(&level, &rows, &cols, &mines);
 
 	/* user iface init */
 	player_iface_init(rows, cols);
@@ -92,7 +93,7 @@ static	void	start_rand	(void)
 	game_init_rand(rows, cols, mines, r, c);
 
 	/* game iface init */
-	game_iface_init_rand(r, c);
+	game_iface_init_rand(level, r, c);
 
 	/* game loop */
 	game_iface();

@@ -27,6 +27,12 @@
 
 
 /******************************************************************************
+ ******* macros ***************************************************************
+ ******************************************************************************/
+	# define	BUFF_SIZE	(1024)
+
+
+/******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
 static	int	oldaction;
@@ -281,19 +287,24 @@ static	char	set_char	(int game_iface_visible)
  *	*	*	*	*	*	*	*	*	*/
 static	int	usr_input	(void)
 {
-	wchar_t	ch;
-	ch = getchar();
+	/* Wait for input */
+	char	buff [BUFF_SIZE];
+	char	ch;
+	buff[0]	= '\0';
+	ch	= '\0';
+	fgets(buff, BUFF_SIZE, stdin);
 
+	/* Interpret input */
 	int	action;
-
+	sscanf(buff, "%c", &ch);
 	switch (ch) {
-	/* Escape sequence */
+		/* Escape sequence */
 	case 27:
-		/* Arrows ¿? */
-		ch = getchar();
+			/* Arrows */
+		sscanf(buff, "%*c""%c", &ch);
 		switch (ch) {
 		case 91:
-			ch = getchar();
+			sscanf(buff, "%*2c""%c", &ch);
 			switch (ch) {
 			case 65:
 				action =	PLAYER_IFACE_ACT_MOVE_UP;
@@ -359,17 +370,17 @@ static	int	usr_input	(void)
 
 	case 'x':
 		/* Special sequence "xyzzy" */
-		ch = getchar();
+		sscanf(buff, "%*c""%c", &ch);
 		if (ch == 'y') {
-			ch = getchar();
+			sscanf(buff, "%*2c""%c", &ch);
 			if (ch == 'z') {
-				ch = getchar();
-				if (ch == 'z') {
-					ch = getchar();
-					if (ch == 'y') {
-						action =	PLAYER_IFACE_ACT_XYZZY_ON;
-					}
-				}
+			sscanf(buff, "%*3c""%c", &ch);
+			if (ch == 'z') {
+			sscanf(buff, "%*4c""%c", &ch);
+			if (ch == 'y') {
+				action =	PLAYER_IFACE_ACT_XYZZY_ON;
+			}
+			}
 			}
 		}
 		break;

@@ -42,7 +42,7 @@ static	time_t			tim_ini;
  ******* static functions *****************************************************
  ******************************************************************************/
 	/* Init */
-static	void	game_iface_init_score	(void);
+static	void	game_iface_init_score	(int level);
 static	void	game_iface_init_cheated	(void);
 	/* Actions */
 static	void	game_iface_act		(void);
@@ -73,13 +73,13 @@ static	void	game_iface_clean_in	(void);
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	game_iface_init_rand	(int pos_row, int pos_col)
+void	game_iface_init_rand	(int level, int pos_row, int pos_col)
 {
 	/* first step */
 	game_action(GAME_ACT_STEP, pos_row, pos_col);
 
 	game_iface_out.state	= GAME_IFACE_STATE_PLAYING;
-	game_iface_init_score();
+	game_iface_init_score(level);
 
 	game_iface_out.rows	= game_board.rows;
 	game_iface_out.cols	= game_board.cols;
@@ -118,8 +118,9 @@ void	game_iface		(void)
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Init	*	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
-static	void	game_iface_init_score	(void)
+static	void	game_iface_init_score	(int level)
 {
+	game_iface_score.level	= level;
 	tim_ini			= time(NULL);
 	game_iface_score.clicks	= 1;
 }
@@ -127,6 +128,7 @@ static	void	game_iface_init_score	(void)
 static	void	game_iface_init_cheated	(void)
 {
 	game_iface_out.state	= GAME_IFACE_STATE_CHEATED;
+	game_iface_score.level	= GAME_IFACE_LEVEL_CUSTOM;
 	game_iface_score.time	= CHEATED;
 	game_iface_score.clicks	= CHEATED;
 }
@@ -486,6 +488,7 @@ static	void	game_iface_update_score	(void)
 
 	case GAME_IFACE_STATE_XYZZY:
 	case GAME_IFACE_STATE_CHEATED:
+		game_iface_score.level	= GAME_IFACE_LEVEL_CUSTOM;
 		game_iface_score.time	= CHEATED;
 		game_iface_score.clicks	= CHEATED;
 		break;

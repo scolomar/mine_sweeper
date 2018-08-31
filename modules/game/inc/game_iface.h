@@ -13,14 +13,33 @@
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
-	# define	ROWS_MAX	(22)
-	# define	COLS_MAX	(33)
-	# define	CHEATED		(-1)
+	# define	ROWS_MAX				(999)
+	# define	COLS_MAX				(999)
+	# define	CHEATED					(-1)
+
+	# define	GAME_IFACE_LEVEL_BEGINNER_ROWS		(8)
+	# define	GAME_IFACE_LEVEL_BEGINNER_COLS		(8)
+	# define	GAME_IFACE_LEVEL_BEGINNER_MINES		(10)
+
+	# define	GAME_IFACE_LEVEL_INTERMEDIATE_ROWS	(16)
+	# define	GAME_IFACE_LEVEL_INTERMEDIATE_COLS	(16)
+	# define	GAME_IFACE_LEVEL_INTERMEDIATE_MINES	(40)
+
+	# define	GAME_IFACE_LEVEL_EXPERT_ROWS		(16)
+	# define	GAME_IFACE_LEVEL_EXPERT_COLS		(30)
+	# define	GAME_IFACE_LEVEL_EXPERT_MINES		(99)
 
 
 /******************************************************************************
  ******* enums ****************************************************************
  ******************************************************************************/
+	enum	Game_Iface_Level {
+		GAME_IFACE_LEVEL_BEGINNER = 0,
+		GAME_IFACE_LEVEL_INTERMEDIATE,
+		GAME_IFACE_LEVEL_EXPERT,
+		GAME_IFACE_LEVEL_CUSTOM
+	};
+
 	enum	Game_Iface_Visible_Board {
 		GAME_IFACE_VIS_KBOOM,
 		GAME_IFACE_VIS_HIDDEN_FIELD,
@@ -100,6 +119,7 @@
 	};
 
 	struct	Game_Iface_Score {
+		int	level;
 		int	time;
 		int	clicks;
 	};
@@ -113,7 +133,7 @@
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void	game_iface_init_rand	(int pos_row, int pos_col);
+	void	game_iface_init_rand	(int level, int pos_row, int pos_col);
 	void	game_iface_init_load	(void);
 	void	game_iface		(void);
 

@@ -13,6 +13,7 @@
 	#include <math.h>
 	#include <ncurses.h>
 	#include <stdbool.h>
+		/* srand() */
 	#include <stdlib.h>
 
 /*	*	*	*	*	*	*	*	*	*
@@ -21,6 +22,7 @@
 	#include "alx_ncur.h"
 
 	#include "about.h"
+	#include "game_iface.h"
 	#include "save.h"
 	#include "start.h"
 
@@ -33,7 +35,14 @@
  ******* macros ***************************************************************
  ******************************************************************************/
 	# define	ROWS_TUI_MAX	(22)
+#if (ROWS_TUI_MAX > ROWS_MAX)
+#	error	"rows max (tui)"
+#endif
+
 	# define	COLS_TUI_MAX	(33)
+#if (COLS_TUI_MAX > COLS_MAX)
+#	error	"cols max (tui)"
+#endif
 
 
 /******************************************************************************
@@ -41,7 +50,8 @@
  ******************************************************************************/
 static	void	menu_tui_continue	(void);
 static	void	menu_tui_select		(void);
-static	void	menu_tui_difficulty	(void);
+static	void	menu_tui_level		(void);
+static	void	menu_tui_custom		(void);
 static	void	menu_tui_devel		(void);
 static	void	menu_tui_verbose	(void);
 
@@ -170,7 +180,7 @@ static	void	menu_tui_continue	(void)
 
 		case 3:
 			alx_win_del(win);
-			menu_tui_difficulty();
+			menu_tui_level();
 			break;
 
 		case 4:
@@ -228,7 +238,51 @@ static	void	menu_tui_select	(void)
 
 }
 
-static	void	menu_tui_difficulty	(void)
+static	void	menu_tui_level	(void)
+{
+	/* Menu dimensions & options */
+	WINDOW	*win;
+	int	h;
+	int	w;
+	h	= 10;
+	w	= 70;
+	int	N;
+	N	= 5;
+	struct alx_optn	mnu[5]	= {
+		{7, 4, "[0]	Back"},
+		{2, 4, "[1]	Beginner"},
+		{3, 4, "[2]	Intermediate"},
+		{4, 4, "[3]	Expert"},
+		{5, 4, "[4]	Custom"}
+	};
+
+	/* Menu loop */
+	int	sw;
+	sw	= alx_menu(h, w, N, mnu, "SELECT LEVEL:");
+
+	/* Selection */
+	switch (sw) {
+	case 1:
+		menu_iface_variables.level	= GAME_IFACE_LEVEL_BEGINNER;
+		break;
+
+	case 2:
+		menu_iface_variables.level	= GAME_IFACE_LEVEL_INTERMEDIATE;
+		break;
+
+	case 3:
+		menu_iface_variables.level	= GAME_IFACE_LEVEL_EXPERT;
+		break;
+
+	case 4:
+		menu_iface_variables.level	= GAME_IFACE_LEVEL_CUSTOM;
+		menu_tui_custom();
+		break;
+	}
+
+}
+
+static	void	menu_tui_custom	(void)
 {
 	/* Menu dimensions & options */
 	WINDOW	*win;
@@ -274,7 +328,7 @@ static	void	menu_tui_difficulty	(void)
 		wrefresh(win);
 
 		/* Selection */
-		sw	= alx_menu_2(win, N, mnu, "Difficulty:");
+		sw	= alx_menu_2(win, N, mnu, "Custom:");
 
 		switch (sw) {
 		case 0:
