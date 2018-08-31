@@ -22,7 +22,7 @@
 
 
 static	double	loop_getdbl	(double m, double def, double M);
-static	int64_t	loop_getint	(int64_t m, int64_t def, int64_t M);
+static	int64_t	loop_getint	(double m, int64_t def, double M);
 static	void	manage_error	(int err);
 
 
@@ -63,7 +63,7 @@ double	alx_getdbl	(double m, double def, double M,
 	 * the number two more times. After that, it uses the default
 	 * value.
 	 */
-int64_t	alx_getint	(int64_t m, int64_t def, int64_t M,
+int64_t	alx_getint	(double m, int64_t def, double M,
 			const char *formatA, const char *formatB, ...)
 {
 	va_list	args;
@@ -75,7 +75,7 @@ int64_t	alx_getint	(int64_t m, int64_t def, int64_t M,
 		puts(formatA);
 	}
 	if (formatB == NULL) {
-		printf("Introduce an integer number [%"PRIi64" U %"PRIi64"] (default %"PRIi64"):...\t", m, M, def);
+		printf("Introduce an integer number [%lf U %lf] (default %"PRIi64"):...\t", m, M, def);
 	} else {
 		vprintf(formatB, args);
 	}
@@ -91,26 +91,21 @@ static	double	loop_getdbl	(double m, double def, double M)
 {
 	int	i;
 	char	buff [BUFF_SIZE];
-	char	*x1;
-	int	x2;
+	char	*x;
 	double	R;
 	int	err;
 
 	for (i = 0; i < MAX_TRIES; i++) {
-		x1 =	fgets(buff, BUFF_SIZE, stdin);
+		x	= fgets(buff, BUFF_SIZE, stdin);
 
-		if (x1 == NULL) {
-			err = ERR_FGETS;
+		if (x == NULL) {
+			err	= ERR_FGETS;
+		} else if (sscanf(buff, "%lf", &R) != 1) {
+			err	= ERR_SSCANF;
+		} else if (R < m || R > M) {
+			err	= ERR_RANGE;
 		} else {
-			x2 =	sscanf(buff, "%lf", &R);
-
-			if (x2 != 1) {
-				err = ERR_SSCANF;
-			} else if (R < m || R > M) {
-				err = ERR_RANGE;
-			} else {
-				break;
-			}
+			break;
 		}
 
 		manage_error(err);
@@ -120,34 +115,29 @@ static	double	loop_getdbl	(double m, double def, double M)
 	return	R;
 }
 
-static	int64_t	loop_getint	(int64_t m, int64_t def, int64_t M)
+static	int64_t	loop_getint	(double m, int64_t def, double M)
 {
 	int	i;
 	char	buff [BUFF_SIZE];
-	char	*x1;
-	int	x2;
+	char	*x;
 	int64_t	Z;
 	int	err;
 
 	for (i = 0; i < MAX_TRIES; i++) {
-		x1 =	fgets(buff, BUFF_SIZE, stdin);
+		x	= fgets(buff, BUFF_SIZE, stdin);
 
-		if (x1 == NULL) {
-			err = ERR_FGETS;
+		if (x == NULL) {
+			err	= ERR_FGETS;
+		} else if (sscanf(buff, "%"SCNi64, &Z) != 1) {
+			err	= ERR_SSCANF;
+		} else if (Z < m || Z > M) {
+			err	= ERR_RANGE;
 		} else {
-			x2 =	sscanf(buff, "%"SCNi64, &Z);
-
-			if (x2 != 1) {
-				err = ERR_SSCANF;
-			} else if (Z < m || Z > M) {
-				err = ERR_RANGE;
-			} else {
-				break;
-			}
+			break;
 		}
 
 		manage_error(err);
-		Z = def;
+		Z	= def;
 	}
 
 	return	Z;

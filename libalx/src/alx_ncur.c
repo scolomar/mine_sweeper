@@ -422,7 +422,7 @@ void	alx_ncur_prn_title	(WINDOW *win, const char *title)
 	len =	strlen(title);
 
 	/* Print title centered */
-	mvwaddch(win, 0, (w - len)/2 - 1, ACS_RTEE);
+	mvwaddch(win, 0, (w - (len + 2))/2 - 1, ACS_RTEE);
 	wprintw(win, " %s ", title);
 	waddch(win, ACS_LTEE);
 

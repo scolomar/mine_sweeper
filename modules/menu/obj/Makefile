@@ -17,7 +17,7 @@ SRC_DIR	= $(MENU_DIR)/src/
 
 # dependencies
 
-_ALL	= parser.o menu_iface.o menu_tui.o
+_ALL	= parser.o menu_iface.o menu_clui.o menu_tui.o
 ALL	= $(_ALL) menu_mod.o
 
 PARS_INC_LIBALX	= alx_seed.h
@@ -44,39 +44,54 @@ PARS_INC_DIRS	= -I $(INC_DIR) \
 			-I $(SAVE_INC_DIR)
 
 MENUI_INC_CTRL	= start.h
-MENUI_INC	= menu_iface.h	menu_tui.h #menu_clui.h
+MENUI_INC_GAME	= game_iface.h
+MENUI_INC	= menu_iface.h	menu_clui.h menu_tui.h
 MENUI_DEPS	= $(SRC_DIR)/menu_iface.c \
 			$(patsubst %,$(INC_DIR)/%,$(MENUI_INC)) \
-			$(patsubst %,$(CTRL_INC_DIR)/%,$(MENUI_INC_CTRL))
+			$(patsubst %,$(CTRL_INC_DIR)/%,$(MENUI_INC_CTRL)) \
+			$(patsubst %,$(GAME_INC_DIR)/%,$(MENUI_INC_GAME))
 MENUI_INC_DIRS	= -I $(INC_DIR) \
-			-I $(CTRL_INC_DIR)
+			-I $(CTRL_INC_DIR) \
+			-I $(GAME_INC_DIR)
 
-#MENUCLUI_INC_LIBALX =
-#MENUCLUI_INC_DATA =	data.h
-#MENUCLUI_INC =	game_clui.h
-#MENUCLUI_DEPS = $(SRC_DIR)/game_clui.c \
-#			$(patsubst %,$(INC_DIR)/%,$(MENUCLUI_INC)) \
-#			$(patsubst %,$(LIBALX_INC_DIR)/%,$(MENUCLUI_INC_LIBALX)) \
-#			$(patsubst %,$(DATA_INC_DIR)/%,$(MENUCLUI_INC_DATA))
-#MENUCLUI_INC_DIRS = -I $(INC_DIR) \
-#			-I $(LIBALX_INC_DIR) \
-#			-I $(DATA_INC_DIR)
+MENUCLUI_INC_LIBALX	= alx_getnum.h
+MENUCLUI_INC_ABOUT	= about.h
+MENUCLUI_INC_CTRL	= start.h
+MENUCLUI_INC_GAME	= game_iface.h
+MENUCLUI_INC_SAVE	= save.h
+MENUCLUI_INC		= menu_clui.h	menu_iface.h
+MENUCLUI_DEPS	= $(SRC_DIR)/menu_clui.c \
+			$(patsubst %,$(INC_DIR)/%,$(MENUCLUI_INC)) \
+			$(patsubst %,$(LIBALX_INC_DIR)/%,$(MENUCLUI_INC_LIBALX)) \
+			$(patsubst %,$(ABOUT_INC_DIR)/%,$(MENUCLUI_INC_ABOUT)) \
+			$(patsubst %,$(GAME_INC_DIR)/%,$(MENUCLUI_INC_GAME)) \
+			$(patsubst %,$(CTRL_INC_DIR)/%,$(MENUCLUI_INC_CTRL)) \
+			$(patsubst %,$(SAVE_INC_DIR)/%,$(MENUCLUI_INC_SAVE))
+MENUCLUI_INC_DIRS	= -I $(INC_DIR) \
+			-I $(LIBALX_INC_DIR) \
+			-I $(ABOUT_INC_DIR) \
+			-I $(CTRL_INC_DIR) \
+			-I $(GAME_INC_DIR) \
+			-I $(SAVE_INC_DIR)
 
 MENUTUI_INC_LIBALX	= alx_ncur.h
 MENUTUI_INC_ABOUT	= about.h
 MENUTUI_INC_CTRL	= start.h
+MENUTUI_INC_GAME	= game_iface.h
 MENUTUI_INC_SAVE	= save.h
 MENUTUI_INC		= menu_tui.h	menu_iface.h
 MENUTUI_DEPS	= $(SRC_DIR)/menu_tui.c \
 			$(patsubst %,$(INC_DIR)/%,$(MENUTUI_INC)) \
 			$(patsubst %,$(LIBALX_INC_DIR)/%,$(MENUTUI_INC_LIBALX)) \
 			$(patsubst %,$(ABOUT_INC_DIR)/%,$(MENUTUI_INC_ABOUT)) \
+			$(patsubst %,$(GAME_INC_DIR)/%,$(MENUTUI_INC_GAME)) \
 			$(patsubst %,$(CTRL_INC_DIR)/%,$(MENUTUI_INC_CTRL)) \
 			$(patsubst %,$(SAVE_INC_DIR)/%,$(MENUTUI_INC_SAVE))
 MENUTUI_INC_DIRS	= -I $(INC_DIR) \
 			-I $(LIBALX_INC_DIR) \
 			-I $(ABOUT_INC_DIR) \
 			-I $(CTRL_INC_DIR) \
+			-I $(GAME_INC_DIR) \
 			-I $(SAVE_INC_DIR)
 
 # target: dependencies
@@ -98,6 +113,11 @@ parser.o: $(PARS_DEPS)
 
 menu_iface.o: $(MENUI_DEPS)
 	$(Q)$(CC) $(CFLAGS) $(MENUI_INC_DIRS) -c $< -o $@ $(LIBS)
+	@echo  "\tCC $<"
+	@echo  ""
+
+menu_clui.o: $(MENUCLUI_DEPS)
+	$(Q)$(CC) $(CFLAGS) $(MENUCLUI_INC_DIRS) -c $< -o $@ $(LIBS)
 	@echo  "\tCC $<"
 	@echo  ""
 
