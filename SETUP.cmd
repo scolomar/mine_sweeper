@@ -15,8 +15,8 @@ mkdir	"%ProgramFiles(x86)%\mine_sweeper\bin\"
 echo	"Create %ProgramFiles(x86)%/mine_sweeper/bin/"
 mkdir	"%ProgramFiles(x86)%\mine_sweeper\share\"
 echo	"Create %ProgramFiles(x86)%/mine_sweeper/share/"
-::	mkdir	"%ProgramFiles(x86)%\mine_sweeper\var\"
-::	echo	"Create %ProgramFiles(x86)%/mine_sweeper/var/"
+mkdir	"%ProgramFiles(x86)%\mine_sweeper\var\"
+echo	"Create %ProgramFiles(x86)%/mine_sweeper/var/"
 echo	""
 
 copy	"%~dp0\UNINSTALL.cmd"		"%ProgramFiles(x86)%\mine_sweeper"
@@ -29,8 +29,8 @@ copy	"%~dp0\bin\mine_sweeper.exe"	"%ProgramFiles(x86)%\mine_sweeper\bin"
 echo	"Copy bin/mine_sweeper.exe"
 robocopy	"%~dp0\share"		"%ProgramFiles(x86)%\mine_sweeper\share"	/e
 echo	"Copy share/*"
-::robocopy	"%~dp0\var"		"%ProgramFiles(x86)%\mine_sweeper\var"	/e
-::echo	"Copy var/*"
+robocopy	"%~dp0\var"		"%ProgramFiles(x86)%\mine_sweeper\var"		/e
+echo	"Copy var/*"
 echo	""
 
 echo	"Done"

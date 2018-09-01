@@ -184,8 +184,8 @@ static	void	menu_tui_continue	(void)
 			break;
 
 		case 4:
-			alx_w_getfname(USER_SAVED_DIR, saved_name, w2, r2,
-						txt[0], saved_name, NULL);
+			alx_w_getfname(USER_SAVED_DIR, saved_name, true, w2, r2,
+								txt[0], NULL);
 			alx_win_del(win);
 			break;
 

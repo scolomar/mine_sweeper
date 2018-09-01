@@ -61,22 +61,23 @@ static	char	set_char	(int game_iface_visible);
 	/* Input */
 static	int	usr_input	(void);
 	/* Help */
-static	void	show_help	(const struct Game_Iface_Out	*board);
-static	void	show_help_start	(void);
-static	void	show_help_play	(void);
-static	void	show_help_pause	(void);
-static	void	show_help_xyzzy	(void);
-static	void	show_help_cheat	(void);
-static	void	show_help_end	(void);
+static	void	show_help		(const struct Game_Iface_Out	*board);
+static	void	show_help_start		(void);
+static	void	show_help_play		(void);
+static	void	show_help_pause		(void);
+static	void	show_help_xyzzy		(void);
+static	void	show_help_cheat		(void);
+static	void	show_help_safe		(void);
+static	void	show_help_gameover	(void);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	player_clui_start(const struct Player_Iface_Position	*position,
-			const char				*title,
-			const char				*subtitle,
-			int					*action)
+void	player_clui_start	(const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle,
+				int					*action)
 {
 	/* User action */
 	show_help_start();
@@ -86,11 +87,11 @@ void	player_clui_start(const struct Player_Iface_Position	*position,
 	oldaction	= *action;
 }
 
-void	player_clui	(const struct Game_Iface_Out		*board,
-			const struct Player_Iface_Position	*position,
-			const char				*title,
-			const char				*subtitle,
-			int					*action)
+void	player_clui		(const struct Game_Iface_Out		*board,
+				const struct Player_Iface_Position	*position,
+				const char				*title,
+				const char				*subtitle,
+				int					*action)
 {
 	/* User action */
 
@@ -101,6 +102,18 @@ void	player_clui	(const struct Game_Iface_Out		*board,
 	}
 	*action		= usr_input();
 	oldaction	= *action;
+}
+
+void	player_clui_save_name	(const char *filepath, char *filename)
+{
+	puts("File name:");
+	scanf(" %100c ", filename);
+}
+
+void	player_clui_score_name	(char *player_name)
+{
+	puts("Your name:");
+	scanf(" %100c ", player_name);
 }
 
 
@@ -416,7 +429,7 @@ static	int	usr_input	(void)
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Help	*	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
-static	void	show_help	(const struct Game_Iface_Out	*board)
+static	void	show_help		(const struct Game_Iface_Out	*board)
 {
 	switch (board->state) {
 	case GAME_IFACE_STATE_PLAYING:
@@ -436,13 +449,16 @@ static	void	show_help	(const struct Game_Iface_Out	*board)
 		break;
 
 	case GAME_IFACE_STATE_SAFE:
+		show_help_safe();
+		break;
+
 	case GAME_IFACE_STATE_GAMEOVER:
-		show_help_end();
+		show_help_gameover();
 		break;
 	}
 }
 
-static	void	show_help_start	(void)
+static	void	show_help_start		(void)
 {
 	puts("Move:");
 	/* hjkl */
@@ -471,7 +487,7 @@ static	void	show_help_start	(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_play	(void)
+static	void	show_help_play		(void)
 {
 	puts("Move:");
 	/* hjkl */
@@ -512,7 +528,7 @@ static	void	show_help_play	(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_pause	(void)
+static	void	show_help_pause		(void)
 {
 
 	puts("Continue:");
@@ -528,7 +544,7 @@ static	void	show_help_pause	(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_xyzzy	(void)
+static	void	show_help_xyzzy		(void)
 {
 	puts("XYZZY:");
 	printf(" %c", '1');
@@ -574,7 +590,7 @@ static	void	show_help_xyzzy	(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_cheat	(void)
+static	void	show_help_cheat		(void)
 {
 	puts("Move:");
 	/* hjkl */
@@ -612,7 +628,19 @@ static	void	show_help_cheat	(void)
 	printf(" Enter\n");
 }
 
-static	void	show_help_end	(void)
+static	void	show_help_safe		(void)
+{
+	puts("Save:");
+	printf(" %c\n", 's');
+
+	puts("Quit:");
+	printf(" %c\n", 'q');
+
+	puts("Confirm:");
+	printf(" Enter\n");
+}
+
+static	void	show_help_gameover	(void)
 {
 	puts("Quit:");
 	printf(" %c\n", 'q');

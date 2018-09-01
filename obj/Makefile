@@ -36,7 +36,7 @@ MAIN_INC_CTRL	= start.h
 MAIN_INC_GAME	= game.h
 MAIN_INC_MENU	= parser.h menu_iface.h
 MAIN_INC_PLAY	= player_iface.h
-MAIN_INC_SAVE	= save.h
+MAIN_INC_SAVE	= save.h score.h
 MAIN_DEPS	= $(SRC_DIR)/main.c \
 			$(patsubst %,$(LIBALX_INC_DIR)/%,$(MAIN_INC_LIBALX)) \
 			$(patsubst %,$(ABOUT_INC_DIR)/%,$(MAIN_INC_ABOUT)) \
