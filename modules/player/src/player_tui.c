@@ -72,13 +72,14 @@ static	void	show_char	(int row, int col, wchar_t wch);
 	/* Input */
 static	int	usr_input	(void);
 	/* Help */
-static	void	show_help	(const struct Game_Iface_Out	*board);
-static	void	show_help_start	(void);
-static	void	show_help_play	(void);
-static	void	show_help_pause	(void);
-static	void	show_help_xyzzy	(void);
-static	void	show_help_cheat	(void);
-static	void	show_help_end	(void);
+static	void	show_help		(const struct Game_Iface_Out	*board);
+static	void	show_help_start		(void);
+static	void	show_help_play		(void);
+static	void	show_help_pause		(void);
+static	void	show_help_xyzzy		(void);
+static	void	show_help_cheat		(void);
+static	void	show_help_safe		(void);
+static	void	show_help_gameover	(void);
 
 
 /******************************************************************************
@@ -159,6 +160,30 @@ int	player_tui		(const struct Game_Iface_Out		*board,
 	show_help(board);
 	show_board(board, position, title, subtitle);
 	*action	= usr_input();
+}
+
+void	player_tui_save_name	(const char *filepath, char *filename)
+{
+	/* Input box */
+	int	w;
+	int	r;
+	w	= 60;
+	r	= 10;
+
+	/* Request name */
+	alx_w_getfname(filepath, filename, false, w, r, "File name:", NULL);
+}
+
+void	player_tui_score_name	(char *player_name)
+{
+	/* Input box */
+	int	w;
+	int	r;
+	w	= 60;
+	r	= 10;
+
+	/* Request name */
+	alx_w_getstr(player_name, w, r, "Your name:", NULL);
 }
 
 void	player_tui_cleanup	(void)
@@ -633,7 +658,7 @@ static	int	usr_input	(void)
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Help	*	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
-static	void	show_help	(const struct Game_Iface_Out	*board)
+static	void	show_help		(const struct Game_Iface_Out	*board)
 {
 	/* Clear */
 	werase(win_help);
@@ -656,8 +681,11 @@ static	void	show_help	(const struct Game_Iface_Out	*board)
 		break;
 
 	case GAME_IFACE_STATE_SAFE:
+		show_help_safe();
+		break;
+
 	case GAME_IFACE_STATE_GAMEOVER:
-		show_help_end();
+		show_help_gameover();
 		break;
 	}
 
@@ -665,7 +693,7 @@ static	void	show_help	(const struct Game_Iface_Out	*board)
 	wrefresh(win_help);
 }
 
-static	void	show_help_start	(void)
+static	void	show_help_start		(void)
 {
 	int	r;
 	int	c;
@@ -707,7 +735,7 @@ static	void	show_help_start	(void)
 	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_play	(void)
+static	void	show_help_play		(void)
 {
 	int	r;
 	int	c;
@@ -761,7 +789,7 @@ static	void	show_help_play	(void)
 	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_pause	(void)
+static	void	show_help_pause		(void)
 {
 	int	r;
 	int	c;
@@ -781,7 +809,7 @@ static	void	show_help_pause	(void)
 	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_xyzzy	(void)
+static	void	show_help_xyzzy		(void)
 {
 	int	r;
 	int	c;
@@ -844,7 +872,7 @@ static	void	show_help_xyzzy	(void)
 	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_cheat	(void)
+static	void	show_help_cheat		(void)
 {
 	int	r;
 	int	c;
@@ -895,7 +923,21 @@ static	void	show_help_cheat	(void)
 	mvwprintw(win_help, r++, c, " %c", 'q');
 }
 
-static	void	show_help_end	(void)
+static	void	show_help_safe		(void)
+{
+	int	r;
+	int	c;
+
+	r =	0;
+	c =	0;
+	mvwaddstr(win_help, r++, c, "Save:");
+	mvwprintw(win_help, r++, c, " %c", 's');
+
+	mvwaddstr(win_help, r++, c, "Quit:");
+	mvwprintw(win_help, r++, c, " %c", 'q');
+}
+
+static	void	show_help_gameover	(void)
 {
 	int	r;
 	int	c;

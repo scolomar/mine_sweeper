@@ -24,6 +24,7 @@
 	#include "player_iface.h"
 	#include "parser.h"
 	#include "save.h"
+	#include "score.h"
 	#include "start.h"
 
 
@@ -72,6 +73,7 @@ void	init_all	(void)
 	game_init();
 	about_init();
 	save_init();
+	score_init();
 
 	/* Modes */
 	start_mode		= START_FOO;

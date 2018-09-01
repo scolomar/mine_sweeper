@@ -36,10 +36,10 @@ static	double	loop_w_getdbl		(WINDOW *win,
 					double m, double def, double M);
 static	int64_t	loop_w_getint		(WINDOW *win,
 					double m, int64_t def, double M);
-static	void	loop_w_getstr		(char *str, WINDOW *win,
-					const char *def);
-static	void	loop_w_getfname		(const char *fpath, char *fname,
-					WINDOW *win, const char *def);
+static	void	loop_w_getstr		(char *str, WINDOW *win);
+
+static	void	loop_w_getfname		(const char *fpath, char *fname, bool exist,
+					WINDOW *win);
 static	void	manage_w_error		(WINDOW *win, int err);
 
 
@@ -80,6 +80,7 @@ void	alx_end_curses		(void)
 void	alx_win_del		(WINDOW *win)
 {
 	/* Delete window */
+	wbkgd(win, 0);
 	wclear(win);
 	wrefresh(win);
 	delwin(win);
@@ -271,8 +272,7 @@ int64_t	alx_w_getint		(int w, int r, const char *title,
 
 
 void	alx_w_getstr		(char *str,
-				const int w, const int r, const char *title,
-				const char *def,
+				int w, int r, const char *title,
 				const char *format, ...)
 {
 	/* Varargs */
@@ -285,24 +285,24 @@ void	alx_w_getstr		(char *str,
 	int	w1;
 	int	r1;
 	int	c1;
+	h1 =	3;
+	w1 =	w;
+	r1 =	r;
+	c1 =	(80 - w) / 2;
 	WINDOW	*win2;
 	int	h2;
 	int	w2;
 	int	r2;
 	int	c2;
+	h2 =	1;
+	w2 =	w1 - 4;
+	r2 =	r1 + 3;
+	c2 =	c1 + 2;
 	WINDOW	*win3;
 	int	h3;
 	int	w3;
 	int	r3;
 	int	c3;
-	h1 =	3;
-	w1 =	w;
-	r1 =	r;
-	c1 =	(80 - w) / 2;
-	h2 =	1;
-	w2 =	w1 - 4;
-	r2 =	r1 + 3;
-	c2 =	c1 + 2;
 	h3 =	1;
 	w3 =	w1 - 2;
 	r3 =	r1 + 1;
@@ -318,7 +318,7 @@ void	alx_w_getstr		(char *str,
 	/* Help */
 	win2 =	newwin(h2, w2, r2, c2);
 	if (format == NULL) {
-		waddstr(win2, "Introduce a file path");
+		waddstr(win2, "Introduce a string");
 	} else {
 		vw_printw(win2, format, args);
 	}
@@ -328,7 +328,7 @@ void	alx_w_getstr		(char *str,
 	win3 =	newwin(h3, w3, r3, c3);
 	wbkgd(win3, A_REVERSE);
 	wrefresh(win3);
-	loop_w_getstr(str, win3, def);
+	loop_w_getstr(str, win3);
 
 	/* Delete window */
 	alx_win_del(win3);
@@ -340,9 +340,8 @@ void	alx_w_getstr		(char *str,
 }
 
 
-void	alx_w_getfname		(const char *fpath, char *fname,
-				const int w, const int r, const char *title,
-				const char *def,
+void	alx_w_getfname		(const char *fpath, char *fname, bool exist,
+				int w, int r, const char *title,
 				const char *format, ...)
 {
 	/* Varargs */
@@ -398,7 +397,7 @@ void	alx_w_getfname		(const char *fpath, char *fname,
 	win3 =	newwin(h3, w3, r3, c3);
 	wbkgd(win3, A_REVERSE);
 	wrefresh(win3);
-	loop_w_getfname(fpath, fname, win3, def);
+	loop_w_getfname(fpath, fname, exist, win3);
 
 	/* Delete window */
 	alx_win_del(win3);
@@ -548,7 +547,7 @@ static	double	loop_w_getdbl		(WINDOW *win,
 
 	for (i = 0; i < MAX_TRIES; i++) {
 		echo();
-		x =	mvwgetstr(win, 0, 0, buff);
+		x =	mvwgetnstr(win, 0, 0, buff, BUFF_SIZE);
 		noecho();
 		wclear(win);
 		wrefresh(win);
@@ -581,7 +580,7 @@ static	int64_t	loop_w_getint		(WINDOW *win,
 
 	for (i = 0; i < MAX_TRIES; i++) {
 		echo();
-		x =	mvwgetstr(win, 0, 0, buff);
+		x =	mvwgetnstr(win, 0, 0, buff, BUFF_SIZE);
 		noecho();
 		wclear(win);
 		wrefresh(win);
@@ -603,8 +602,7 @@ static	int64_t	loop_w_getint		(WINDOW *win,
 	return	Z;
 }
 
-static	void	loop_w_getstr		(char *str, WINDOW *win,
-					const char *def)
+static	void	loop_w_getstr		(char *str, WINDOW *win)
 {
 	int	i;
 	char	buff [BUFF_SIZE];
@@ -613,7 +611,7 @@ static	void	loop_w_getstr		(char *str, WINDOW *win,
 
 	for (i = 0; i < MAX_TRIES; i++) {
 		echo();
-		x =	mvwgetstr(win, 0, 0, buff);
+		x =	mvwgetnstr(win, 0, 0, buff, BUFF_SIZE);
 		noecho();
 		wclear(win);
 		wrefresh(win);
@@ -625,14 +623,15 @@ static	void	loop_w_getstr		(char *str, WINDOW *win,
 		}
 
 		manage_w_error(win, err);
-		strcpy(buff, def);
 	}
 
-	strcpy(str, buff);
+	if (!err) {
+		strcpy(str, buff);
+	}
 }
 
-static	void	loop_w_getfname		(const char *fpath, char *fname,
-					WINDOW *win, const char *def)
+static	void	loop_w_getfname		(const char *fpath, char *fname, bool exist,
+					WINDOW *win)
 {
 	int	i;
 	char	buff [FILENAME_MAX];
@@ -643,7 +642,7 @@ static	void	loop_w_getfname		(const char *fpath, char *fname,
 
 	for (i = 0; i < MAX_TRIES; i++) {
 		echo();
-		x =	mvwgetstr(win, 0, 0, buff);
+		x =	mvwgetnstr(win, 0, 0, buff, FILENAME_MAX);
 		noecho();
 		wclear(win);
 		wrefresh(win);
@@ -655,19 +654,29 @@ static	void	loop_w_getfname		(const char *fpath, char *fname,
 			strcat(file_path, buff);
 			fp =	fopen(file_path, "r");
 
-			if (fp == NULL) {
-				err =	ERR_FPTR;
+			if (exist) {
+				if (fp == NULL) {
+					err =	ERR_FPTR;
+				} else {
+					fclose(fp);
+					break;
+				}
 			} else {
-				fclose(fp);
-				break;
+				if (fp != NULL) {
+					err =	ERR_FPTR;
+					fclose(fp);
+				} else {
+					break;
+				}
 			}
 		}
 
 		manage_w_error(win, err);
-		strcpy(buff, def);
 	}
 
-	strcpy(fname, buff);
+	if (!err) {
+		strcpy(fname, buff);
+	}
 }
 
 static	void	manage_w_error		(WINDOW *win, int err)

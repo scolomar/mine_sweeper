@@ -87,7 +87,7 @@ void	game_init_rand		(int rows, int cols, int mines,
 
 void	game_init_load		(int *rows, int *cols)
 {
-	load_game_file();
+	load_game_file(NULL, NULL);
 
 	game_board.state	= GAME_STATE_PLAYING;
 

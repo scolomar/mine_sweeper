@@ -1,8 +1,8 @@
 # License: GPL-2.0
 # This Makefile has parts of the linux kernel Makefile code.
 VERSION	= 3
-PATCHLEVEL = a
-SUBLEVEL = 10
+PATCHLEVEL = b
+SUBLEVEL = 2
 EXTRAVERSION =
 NAME = instalable
 
@@ -103,15 +103,18 @@ export	MAIN_DIR
 export	LIBALX_DIR
 export	MODULES_DIR
 
-
 ifeq ($(OS), linux)
   INSTALL_BIN_DIR	= /usr/local/games/
   INSTALL_SHARE_DIR	= /usr/local/share/
   SHARE_DIR		= mine_sweeper/
+  INSTALL_VAR_DIR	= /var/local/
+  VAR_DIR		= mine_sweeper/
 else ifeq ($(OS), win)
   INSTALL_DIR		= c:/Program files (x86)/
   INSTALL_SHARE_DIR	= $(INSTALL_DIR)/mine_sweeper/
   SHARE_DIR		= share/
+  INSTALL_VAR_DIR	= $(INSTALL_DIR)/mine_sweeper/
+  VAR_DIR		= var/
 endif
 
 export	INSTALL_DIR
@@ -136,6 +139,8 @@ CFLAGS		= -std=c11
 CFLAGS	       += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
 CFLAGS	       += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
 CFLAGS	       += -D SHARE_DIR=\"$(SHARE_DIR)\"
+CFLAGS	       += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
+CFLAGS	       += -D VAR_DIR=\"$(VAR_DIR)\"
 
 ifeq ($(OS), linux)
   CFLAGS       += -D OS_LINUX
@@ -180,21 +185,34 @@ binary:
 
 PHONY += install
 install: uninstall
-	$(Q)cp $(BIN_DIR)/mine_sweeper		$(INSTALL_BIN_DIR)/
 	@echo "Copy mine_sweeper"
+	$(Q)cp $(BIN_DIR)/mine_sweeper		$(INSTALL_BIN_DIR)/
 	@echo  ""
-	$(Q)mkdir $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
+	
 	@echo  "Create $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
-	$(Q)cp -r ./share/*			$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
+	$(Q)mkdir $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
 	@echo "Copy share/*"
+	$(Q)cp -r ./share/*			$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
+	
+	@echo  "Create $(INSTALL_VAR_DIR)/$(VAR_DIR)/"
+	$(Q)mkdir $(INSTALL_VAR_DIR)/$(VAR_DIR)/
+	@echo "Copy var/*"
+	$(Q)cp -r ./var/*			$(INSTALL_VAR_DIR)/$(VAR_DIR)/
+	@echo "Change owner"
+	$(Q)chown root:games -R $(INSTALL_VAR_DIR)/$(VAR_DIR)/
+	@echo "Change permissions"
+	$(Q)chmod 664 -R $(INSTALL_VAR_DIR)/$(VAR_DIR)/
+	$(Q)chmod +X -R $(INSTALL_VAR_DIR)/$(VAR_DIR)/
 	@echo  ""
+	
 	@echo  "Done"
 	@echo  ""
 
 PHONY += uninstall
 uninstall:
 	$(Q)rm -f $(INSTALL_BIN_DIR)/mine_sweeper
-	$(Q)rm -f -r $(INSTALL_SHARE_DIR)/mine_sweeper//
+	$(Q)rm -f -r $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
+	$(Q)rm -f -r $(INSTALL_VAR_DIR)/$(VAR_DIR)/
 	@echo  "Clean old installations"
 	@echo  ""
 

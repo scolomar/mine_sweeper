@@ -11,6 +11,7 @@
  *	*	*	*	*	*	*	*	*	*/
 	#include <getopt.h>
 	#include <stdio.h>
+		/* exit() */
 	#include <stdlib.h>
 	#include <string.h>
 

@@ -27,6 +27,8 @@
  *	*	*	*	*	*	*	*	*	*/
 		/* struct Game_Board */
 	#include "game.h"
+		/* player_iface_save_name() */
+	#include "player_iface.h"
 
 	#include "save.h"
 
@@ -58,6 +60,7 @@ void	save_init	(void)
 	strcat(saved_path, "/");
 
 	strcpy(saved_name, SAVED_NAME_DEFAULT);
+	strcat(saved_name, FILE_EXTENSION);
 
 	int	err;
 #if defined	OS_LINUX
@@ -91,7 +94,7 @@ void	save_init	(void)
 	}
 }
 
-void	load_game_file	(void)
+void	load_game_file	(char *filepath, char *filename)
 {
 	char	file_name [FILENAME_MAX];
 	FILE	*fp;
@@ -99,8 +102,16 @@ void	load_game_file	(void)
 	int	i;
 	int	j;
 
-	strcpy(file_name, saved_path);
-	strcat(file_name, saved_name);
+	if (filepath == NULL) {
+		strcpy(file_name, saved_path);
+	} else {
+		strcpy(file_name, filepath);
+	}
+	if (filename == NULL) {
+		strcat(file_name, saved_name);
+	} else {
+		strcat(file_name, filename);
+	}
 
 	fp	= fopen(file_name, "r");
 	if (fp) {
@@ -129,30 +140,52 @@ void	load_game_file	(void)
 	}
 }
 
-void	save_game_file	(void)
+void	save_game_file	(char *filepath)
 {
 	char	file_name [FILENAME_MAX];
+	char	file_num [6]	= "";
 	FILE	*fp;
 
 	int	i;
 	int	j;
-	bool	x;
 
-	/* Look for an unused name of the type 'saved_XXX.mine'. */
-	x	= true;
+	/* Input box size */
+	int	w;
+	int	r;
+	w	= 70;
+	r	= 10;
+
+	/* Default name */
 	strcpy(saved_name, SAVED_NAME_DEFAULT);
+
+	/* Request file name */
+	player_iface_save_name(filepath, saved_name);
+
+	/* Look for an unused name of the type 'name_XXX.mine'. */
+	bool	x;
+	x	= true;
 	for (i = 0; x; i++) {
-		strcpy(file_name, saved_path);
+		if (filepath == NULL) {
+			strcpy(file_name, saved_path);
+		} else {
+			strcpy(file_name, filepath);
+		}
 		strcat(file_name, saved_name);
+		strcat(file_name, file_num);
+		strcat(file_name, FILE_EXTENSION);
 
 		fp =	fopen(file_name, "r");
 		if (fp) {
 			fclose(fp);
-			saved_name[6] =	'0' + ((i / 100) % 10);
-			saved_name[7] =	'0' + ((i / 10) % 10);
-			saved_name[8] =	'0' + (i % 10);
+			file_num[0] =	'_';
+			file_num[1] =	'0' + ((i / 100) % 10);
+			file_num[2] =	'0' + ((i / 10) % 10);
+			file_num[3] =	'0' + (i % 10);
+			file_num[4] =	'\0';
 		} else {
 			x	= false;
+			strcat(saved_name, file_num);
+			strcat(saved_name, FILE_EXTENSION);
 		}
 	}
 
