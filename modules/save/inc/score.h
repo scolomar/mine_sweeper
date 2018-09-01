@@ -57,6 +57,7 @@ extern	char	var_hiscores_expert_name [FILENAME_MAX];
  ******************************************************************************/
 void	score_init	(void);
 void	save_score	(const struct Game_Iface_Score  *game_iface_score);
+void	read_scores	(void);
 
 
 /******************************************************************************

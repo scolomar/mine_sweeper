@@ -24,6 +24,7 @@
 	#include "about.h"
 	#include "game_iface.h"
 	#include "save.h"
+	#include "score.h"
 	#include "start.h"
 
 	#include "menu_iface.h"
@@ -126,19 +127,20 @@ static	void	menu_tui_continue	(void)
 	int	w;
 	int	r;
 	int	c;
-	h	= 17;
+	h	= 18;
 	w	= 50;
 	r	= 1;
 	c	= (80 - w) / 2;
 	int	N;
-	N	= 6;
-	struct alx_optn	mnu[6]	= {
-		{10, 4, "[0]	Back"},
+	N	= 7;
+	struct alx_optn	mnu[7]	= {
+		{11, 4, "[0]	Back"},
 		{2, 4, "[1]	Start"},
 		{4, 4, "[2]	Select map"},
 		{5, 4, "[3]	Change difficulty"},
 		{6, 4, "[4]	Change file name"},
-		{8, 4, "[5]	DEVEL"}
+		{7, 4, "[5]	Hi scores"},
+		{9, 4, "[6]	DEVEL"}
 	};
 
 	/* Input box */
@@ -190,6 +192,14 @@ static	void	menu_tui_continue	(void)
 			break;
 
 		case 5:
+			alx_win_del(win);
+			alx_pause_curses();
+			read_scores();
+			getchar();
+			alx_resume_curses();
+			break;
+
+		case 6:
 			alx_win_del(win);
 			menu_tui_devel();
 			break;

@@ -78,7 +78,7 @@ MENUTUI_INC_LIBALX	= alx_ncur.h
 MENUTUI_INC_ABOUT	= about.h
 MENUTUI_INC_CTRL	= start.h
 MENUTUI_INC_GAME	= game_iface.h
-MENUTUI_INC_SAVE	= save.h
+MENUTUI_INC_SAVE	= save.h score.h
 MENUTUI_INC		= menu_tui.h	menu_iface.h
 MENUTUI_DEPS	= $(SRC_DIR)/menu_tui.c \
 			$(patsubst %,$(INC_DIR)/%,$(MENUTUI_INC)) \
