@@ -54,16 +54,15 @@
 					int		w,
 					int		r,
 					const char	*title,
-					const char	*def,
 					const char	*format,
 							...);
 
 	void	alx_w_getfname		(const char	*fpath,
 					char		*fname,
+					bool		exist,
 					int		w,
 					int		r,
 					const char	*title,
-					const char	*def,
 					const char	*format,
 							...);
 

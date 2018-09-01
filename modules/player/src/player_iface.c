@@ -181,6 +181,32 @@ void	player_iface		(const	struct Game_Iface_Out	*game_iface_out,
 	player_iface_act(game_iface_in, player_action);
 }
 
+void	player_iface_save_name	(const char *filepath, char *filename)
+{
+	switch (player_iface_mode) {
+	case PLAYER_IFACE_CLUI:
+		player_clui_save_name(filepath, filename);
+		break;
+
+	case PLAYER_IFACE_TUI:
+		player_tui_save_name(filepath, filename);
+		break;
+	}
+}
+
+void	player_iface_score_name	(char *player_name)
+{
+	switch (player_iface_mode) {
+	case PLAYER_IFACE_CLUI:
+		player_clui_score_name(player_name);
+		break;
+
+	case PLAYER_IFACE_TUI:
+		player_tui_score_name(player_name);
+		break;
+	}
+}
+
 void	player_iface_cleanup	(void)
 {
 	switch (player_iface_mode) {

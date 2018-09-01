@@ -20,6 +20,8 @@
 	#include "player_iface.h"
 		/* save_game_file() */
 	#include "save.h"
+		/* save_score() */
+	#include "score.h"
 		/* xyzzy_...() */
 	#include "xyzzy.h"
 
@@ -50,7 +52,8 @@ static	void	game_iface_playing_act	(void);
 static	void	game_iface_xyzzy_act	(void);
 static	void	game_iface_cheated_act	(void);
 static	void	game_iface_pause_act	(void);
-static	void	game_iface_end_act	(void);
+static	void	game_iface_safe_act	(void);
+static	void	game_iface_gameover_act	(void);
 	/* Actions:  game */
 static	void	game_iface_act_game	(void);
 	/* Actions:  game_iface */
@@ -58,6 +61,7 @@ static	void	game_iface_pause	(void);
 static	void	game_iface_unpause	(void);
 static	void	game_iface_xyzzy_on	(void);
 static	void	game_iface_xyzzy_off	(void);
+static	void	game_iface_save_score	(void);
 static	void	game_iface_quit		(void);
 	/* Output */
 static	void	game_iface_update_out	(void);
@@ -93,6 +97,8 @@ void	game_iface_init_load	(void)
 {
 	game_iface_init_cheated();
 
+	game_iface_out.rows	= game_board.rows;
+	game_iface_out.cols	= game_board.cols;
 	game_iface_out.mines	= game_board.mines;
 	game_iface_update_out();
 	game_iface_clean_in();
@@ -156,8 +162,11 @@ static	void	game_iface_act		(void)
 		break;
 
 	case GAME_IFACE_STATE_SAFE:
+		game_iface_safe_act();
+		break;
+
 	case GAME_IFACE_STATE_GAMEOVER:
-		game_iface_end_act();
+		game_iface_gameover_act();
 		break;
 	}
 }
@@ -178,7 +187,7 @@ static	void	game_iface_playing_act	(void)
 		break;
 
 	case GAME_IFACE_ACT_SAVE:
-		save_game_file();
+		save_game_file(saved_path);
 		break;
 
 	case GAME_IFACE_ACT_QUIT:
@@ -217,7 +226,7 @@ static	void	game_iface_xyzzy_act	(void)
 			break;
 
 		case GAME_IFACE_ACT_SAVE:
-			save_game_file();
+			save_game_file(saved_path);
 			wh	= false;
 			break;
 
@@ -245,7 +254,7 @@ static	void	game_iface_cheated_act	(void)
 		break;
 
 	case GAME_IFACE_ACT_SAVE:
-		save_game_file();
+		save_game_file(saved_path);
 		break;
 
 	case GAME_IFACE_ACT_QUIT:
@@ -266,7 +275,7 @@ static	void	game_iface_pause_act	(void)
 		break;
 
 	case GAME_IFACE_ACT_SAVE:
-		save_game_file();
+		save_game_file(saved_path);
 		break;
 
 	case GAME_IFACE_ACT_QUIT:
@@ -275,7 +284,21 @@ static	void	game_iface_pause_act	(void)
 	}
 }
 
-static	void	game_iface_end_act	(void)
+static	void	game_iface_safe_act	(void)
+{
+	switch (game_iface_in.action) {
+	case GAME_IFACE_ACT_SAVE:
+		game_iface_save_score();
+		game_iface_quit();
+		break;
+
+	case GAME_IFACE_ACT_QUIT:
+		game_iface_quit();
+		break;
+	}
+}
+
+static	void	game_iface_gameover_act	(void)
 {
 	switch (game_iface_in.action) {
 	case GAME_IFACE_ACT_QUIT:
@@ -331,6 +354,30 @@ static	void	game_iface_xyzzy_on	(void)
 static	void	game_iface_xyzzy_off	(void)
 {
 	game_iface_out.state	= GAME_IFACE_STATE_CHEATED;
+}
+
+static	void	game_iface_save_score	(void)
+{
+	switch (game_iface_score.level) {
+	case GAME_IFACE_LEVEL_BEGINNER:
+		save_game_file(var_boards_beginner_path);
+		save_score(&game_iface_score);
+		break;
+
+	case GAME_IFACE_LEVEL_INTERMEDIATE:
+		save_game_file(var_boards_intermediate_path);
+		save_score(&game_iface_score);
+		break;
+
+	case GAME_IFACE_LEVEL_EXPERT:
+		save_game_file(var_boards_expert_path);
+		save_score(&game_iface_score);
+		break;
+
+	case GAME_IFACE_LEVEL_CUSTOM:
+		save_game_file(var_boards_custom_path);
+		break;
+	}
 }
 
 static	void	game_iface_quit		(void)
